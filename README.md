@@ -119,6 +119,8 @@ Once completed, the Hospital Management System will offer:
 - **Detailed Analytics** for data-driven insights
 - **Patient Portal** for viewing appointments and medical history
 - **Integration with Third-Party Systems** for expanded functionality
+- **Aadhar Authentication** for added security and details fetching
+- **Medical Records** making a centralized platform for storing all the records in a encrypted way for easy accessibility.
 
 ## Contribution Guidelines 🤝
 As the project is still under active development, we welcome feedback and suggestions to help shape its direction. Contributions at this stage are focused on ideas and suggestions that could enhance the project's functionality.
