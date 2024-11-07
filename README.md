@@ -71,9 +71,9 @@ To get your application up and running, follow these steps:
 
 2. **Set up the Database**:
     - Create a MySQL database named `hospital_db`. You can do this using a MySQL client or command line:
-      ```sql
-      CREATE DATABASE hospital_db;
-      ```
+    ```sql
+    CREATE DATABASE hospital_db;
+    ```
     - Update your database credentials in `src/main/resources/application.properties`. Below is an example of the database configuration:
 
    ```properties
