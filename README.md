@@ -105,9 +105,25 @@ To get your application up and running, follow these steps:
         - [Swagger UI](http://localhost:8080/swagger-ui.html) - A user-friendly interface to test the API endpoints.
         - [Swagger API Documentation](http://localhost:8080/v3/api-docs) - View the API documentation in JSON format.
 
-## Contribution Guidelines 🤝
+## Current Status
 
-We welcome contributions to this project! If you'd like to contribute, please follow these steps:
+🚧 **Project Status**: _In Progress_
+
+The core features of the system are actively being developed and tested. Expect ongoing updates as new features are added and existing ones are refined. Please check back for future updates as we move towards a complete version.
+
+## Future Plans
+
+Once completed, the Hospital Management System will offer:
+
+- **Comprehensive Dashboard** for hospital administrators and managers
+- **Detailed Analytics** for data-driven insights
+- **Patient Portal** for viewing appointments and medical history
+- **Integration with Third-Party Systems** for expanded functionality
+
+## Contribution Guidelines 🤝
+As the project is still under active development, we welcome feedback and suggestions to help shape its direction. Contributions at this stage are focused on ideas and suggestions that could enhance the project's functionality.
+
+If you'd like to contribute, please follow these steps:
 
 1. **Fork the Repository**: Click the "Fork" button at the top right of the repository page.
 2. **Create a Feature Branch**: Use the command:
@@ -131,5 +147,5 @@ Your contributions will help enhance functionality, add new features, improve co
 
 ---
 
-Elevate hospital and OPD management with this all-in-one solution for a seamless healthcare experience. Thank you for checking out the project! 🎉
+Thank you for checking out this project! Stay tuned for more updates as we continue development! 🎉
 
