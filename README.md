@@ -56,8 +56,6 @@ spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
 
-# File Upload Config
-file.upload-dir=./uploads
 ```
 
 ## Getting Started 🚀
