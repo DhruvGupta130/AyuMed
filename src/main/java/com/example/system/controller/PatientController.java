@@ -2,10 +2,12 @@ package com.example.system.controller;
 
 import com.example.system.dto.AvailableDTO;
 import com.example.system.dto.DoctorDTO;
+import com.example.system.dto.HospitalDTO;
 import com.example.system.entity.*;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
 import com.example.system.service.DoctorService;
+import com.example.system.service.HospitalService;
 import com.example.system.service.PatientService;
 import com.example.system.service.utils.Utility;
 import jakarta.transaction.Transactional;
@@ -72,5 +74,4 @@ public class PatientController {
         List<DoctorDTO> doctorDTOS = patientService.findDoctorsByDepartment(department);
         return ResponseEntity.ok(doctorDTOS);
     }
-
 }

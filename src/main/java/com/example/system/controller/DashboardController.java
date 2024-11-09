@@ -1,9 +1,11 @@
 package com.example.system.controller;
 
 import com.example.system.dto.AppointmentStatus;
+import com.example.system.dto.HospitalDTO;
+import com.example.system.dto.Search;
 import com.example.system.entity.Appointment;
-import com.example.system.service.AppointmentService;
 import com.example.system.service.DashboardService;
+import com.example.system.service.HospitalService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,7 @@ import java.util.Map;
 public class DashboardController {
 
     private final DashboardService dashboardService;
+    private final HospitalService hospitalService;
 
     @GetMapping("/statistics")
     public ResponseEntity<Map<String, Object>> getGeneralStatistics() {
@@ -57,6 +60,20 @@ public class DashboardController {
             @RequestParam(required = false) AppointmentStatus status,
             @RequestParam(required = false) Long doctorId) {
         return ResponseEntity.ok(dashboardService.filterAppointments(startDate, endDate, status, doctorId));
+    }
+
+    @GetMapping("/nearby")
+    public ResponseEntity<List<HospitalDTO>> getHospitalsNearby(
+            @RequestParam double latitude,
+            @RequestParam double longitude,
+            @RequestParam double radius) {
+        List<HospitalDTO> hospitals = hospitalService.getWithinRadius(latitude, longitude, radius);
+        return ResponseEntity.ok(hospitals);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Search> search(@RequestParam String keyword) {
+        return ResponseEntity.ok(dashboardService.searchByKeyword(keyword));
     }
 
 }

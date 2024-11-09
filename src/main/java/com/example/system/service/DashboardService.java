@@ -1,6 +1,7 @@
 package com.example.system.service;
 
 import com.example.system.dto.AppointmentStatus;
+import com.example.system.dto.Search;
 import com.example.system.entity.Appointment;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ public interface DashboardService {
     Map<String, Object> getTrendData();
     Map<String, Integer> getAllDepartments();
     List<Appointment> filterAppointments(LocalDate startDate, LocalDate endDate, AppointmentStatus status, Long doctorId);
+    Search searchByKeyword(String keyword);
 
 
 }

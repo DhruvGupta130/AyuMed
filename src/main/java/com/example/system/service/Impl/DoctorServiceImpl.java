@@ -1,11 +1,11 @@
 package com.example.system.service.Impl;
 
+import com.example.system.dto.DoctorDTO;
 import com.example.system.dto.ProfileUpdateDTO;
 import com.example.system.entity.*;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
 import com.example.system.service.DoctorService;
-import com.example.system.service.ScheduleService;
 import com.example.system.service.SlotInitializationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -65,7 +65,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public List<Doctor> searchDoctors(String specialty, Boolean available, String department) {
-        return doctorRepo.searchDoctors(specialty, available, department);
+        return doctorRepo.searchDoctorsByKeyword(specialty, available, department);
     }
 
     @Override
@@ -75,6 +75,16 @@ public class DoctorServiceImpl implements DoctorService {
         doctor.setImage(updateDTO.getImage());
         slotInitializationService.initializeAvailableSlots(doctor, updateDTO.getSchedule());
         doctorRepo.save(doctor);
+    }
+
+    @Override
+    public List<DoctorDTO> getDoctorBySearch(String keyword) {
+        List<Doctor> doctors = doctorRepo.searchDoctorsByKeyword(keyword);
+        return doctors.stream().map(doctor ->
+                new DoctorDTO(doctor.getFirstName(), doctor.getLastName(),
+                        doctor.getSpecialty(), doctor.getDepartment(),
+                        doctor.getExperience(), doctor.getImage(), doctor.getDegree())
+        ).toList();
     }
 
 }
