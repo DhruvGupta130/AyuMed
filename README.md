@@ -8,6 +8,7 @@ A robust and scalable **Hospital and Outpatient Department (OPD) Management Syst
 - **Doctor and Staff Administration**: Efficiently manage doctor schedules, departments, and specialties 🩺
 - **Appointment Scheduling**: Book and track patient appointments for seamless interaction 📅
 - **Billing and Payments**: Manage billing, track payments, and generate invoices 💳
+- **Search Hospital Nearby**: Get Hospitals nearby your location by selecting the radius 🌍
 - **Medical History and Test Records**: Securely store patient medical histories and test results 🧬
 - **Feedback Mechanism**: Gather and analyze patient feedback to improve service quality ⭐
 - **Excel Import**: Import bulk doctor or patient data from Excel files using Apache POI 📊
@@ -56,8 +57,6 @@ spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
 
-# File Upload Config
-file.upload-dir=./uploads
 ```
 
 ## Getting Started 🚀
