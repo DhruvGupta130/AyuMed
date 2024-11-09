@@ -3,7 +3,6 @@ package com.example.system.service.Impl;
 import com.example.system.dto.DoctorDTO;
 import com.example.system.dto.ProfileUpdateDTO;
 import com.example.system.entity.*;
-import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
 import com.example.system.service.DoctorService;
 import com.example.system.service.SlotInitializationService;
@@ -22,11 +21,6 @@ public class DoctorServiceImpl implements DoctorService {
     private final AppointmentRepo appointmentRepo;
     private final TimeSlotRepo timeSlotRepo;
     private final SlotInitializationService slotInitializationService;
-
-    @Override
-    public Doctor getDoctorById(long id) {
-        return doctorRepo.getDoctorById(id).orElseThrow(() -> new HospitalManagementException("Doctor not found"));
-    }
 
     @Override
     public void deleteProfile(Doctor doctor) {

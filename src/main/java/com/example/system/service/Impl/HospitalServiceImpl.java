@@ -4,7 +4,6 @@ import com.example.system.dto.HospitalDTO;
 import com.example.system.entity.Hospital;
 import com.example.system.entity.HospitalManager;
 import com.example.system.repository.AddressRepo;
-import com.example.system.repository.DoctorRepo;
 import com.example.system.repository.HospitalRepo;
 import com.example.system.repository.ManagerRepo;
 import com.example.system.service.HospitalService;
@@ -13,14 +12,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class HospitalServiceImpl implements HospitalService {
 
-    private final DoctorRepo doctorRepo;
     private final HospitalRepo hospitalRepo;
     private final ManagerRepo managerRepo;
     private final AddressRepo addressRepo;
