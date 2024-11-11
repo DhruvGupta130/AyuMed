@@ -1,9 +1,7 @@
 package com.example.system.controller;
 
-import com.example.system.dto.AppointmentStatus;
 import com.example.system.dto.HospitalDTO;
 import com.example.system.dto.Search;
-import com.example.system.entity.Appointment;
 import com.example.system.service.DashboardService;
 import com.example.system.service.HospitalService;
 import lombok.AllArgsConstructor;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -51,15 +48,6 @@ public class DashboardController {
     @GetMapping("/departments")
     public ResponseEntity<Map<String, Integer>> getDepartments() {
         return ResponseEntity.ok(dashboardService.getAllDepartments());
-    }
-
-    @GetMapping("/api/patient/appointments/filter")
-    public ResponseEntity<List<Appointment>> filterAppointments(
-            @RequestParam(required = false) LocalDate startDate,
-            @RequestParam(required = false) LocalDate endDate,
-            @RequestParam(required = false) AppointmentStatus status,
-            @RequestParam(required = false) Long doctorId) {
-        return ResponseEntity.ok(dashboardService.filterAppointments(startDate, endDate, status, doctorId));
     }
 
     @GetMapping("/nearby")

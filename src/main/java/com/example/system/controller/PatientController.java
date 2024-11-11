@@ -1,10 +1,12 @@
 package com.example.system.controller;
 
+import com.example.system.dto.AppointmentStatus;
 import com.example.system.dto.AvailableDTO;
 import com.example.system.dto.DoctorDTO;
 import com.example.system.entity.*;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
+import com.example.system.service.DashboardService;
 import com.example.system.service.DoctorService;
 import com.example.system.service.PatientService;
 import com.example.system.service.utils.Utility;
@@ -13,6 +15,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -25,6 +28,7 @@ public class PatientController {
     private final DoctorService doctorService;
     private final ScheduleRepo scheduleRepo;
     private final PatientService patientService;
+    private final DashboardService dashboardService;
 
     @GetMapping("/profile")
     public ResponseEntity<Patient> getPatientProfile(@RequestHeader("Authorization") String token) {
@@ -71,5 +75,14 @@ public class PatientController {
     public ResponseEntity<List<DoctorDTO>> getDoctorsByDepartment(@RequestParam String department) {
         List<DoctorDTO> doctorDTOS = patientService.findDoctorsByDepartment(department);
         return ResponseEntity.ok(doctorDTOS);
+    }
+
+    @GetMapping("/appointments/filter")
+    public ResponseEntity<List<Appointment>> filterAppointments(
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(required = false) AppointmentStatus status,
+            @RequestParam(required = false) Long doctorId) {
+        return ResponseEntity.ok(dashboardService.filterAppointments(startDate, endDate, status, doctorId));
     }
 }
