@@ -3,7 +3,6 @@ package com.example.system.controller;
 import com.example.system.dto.HospitalDTO;
 import com.example.system.entity.Hospital;
 import com.example.system.entity.HospitalManager;
-import com.example.system.exception.HospitalManagementException;
 import com.example.system.service.DoctorService;
 import com.example.system.service.HospitalService;
 import com.example.system.service.utils.Utility;
@@ -41,11 +40,7 @@ public class HospitalController {
     @PostMapping("/upload")
     public ResponseEntity<String> addDoctors(@RequestHeader("Authorization") String token, @RequestParam("file") MultipartFile file) {
         HospitalManager manager = (HospitalManager) utility.getUserFromToken(token);
-        try{
-            doctorService.saveFromExcel(file, manager.getHospital().getId());
-        }catch (Exception e){
-            throw new  HospitalManagementException(e.getMessage());
-        }
+        doctorService.saveFromExcel(file, manager.getHospital().getId());
         return ResponseEntity.ok("Doctors added successfully");
     }
 }
