@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
 
@@ -101,6 +102,7 @@ public class DoctorServiceImpl implements DoctorService {
             if (rows.hasNext()) rows.next();
             while (rows.hasNext()) {
                 Row row = rows.next();
+                if(doctorRepo.findByUsername(row.getCell(0).getStringCellValue()).isPresent()) continue;
                 RegistrationDTO registrationDTO = createRegistrationDTO(row, hospitalId);
                 System.out.println(registrationDTO);
                 authService.createDoctor(registrationDTO);
@@ -134,10 +136,14 @@ public class DoctorServiceImpl implements DoctorService {
     private String getCellValue(Row row, int cellIndex) {
         Cell cell = row.getCell(cellIndex);
         return switch (cell.getCellType()){
-                case NUMERIC-> throw new HospitalManagementException("Numerical Value not supported, please convert it in text.");
+                case NUMERIC-> this.getNumericalCellValue(cell);
                 case STRING -> cell.getStringCellValue().trim();
                 default -> throw new HospitalManagementException("Your Excel File structure is incorrect.");
         };
+    }
+
+    private String getNumericalCellValue(Cell cell) {
+        return BigDecimal.valueOf(cell.getNumericCellValue()).toPlainString();
     }
 
     private Gender parseGender(String genderString) {
