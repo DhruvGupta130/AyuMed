@@ -104,7 +104,6 @@ public class DoctorServiceImpl implements DoctorService {
                 Row row = rows.next();
                 if(doctorRepo.findByUsername(row.getCell(0).getStringCellValue()).isPresent()) continue;
                 RegistrationDTO registrationDTO = createRegistrationDTO(row, hospitalId);
-                System.out.println(registrationDTO);
                 authService.createDoctor(registrationDTO);
             }
         } catch (IOException e) {
