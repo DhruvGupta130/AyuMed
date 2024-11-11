@@ -125,6 +125,8 @@ To bulk register doctors in the system, use the following Excel format:
 2. Fill in the doctor information as per the required format.
 3. Upload the Excel file to the system to register the doctors.
 
+###Important: Store Phone numbers as text to avoid problens.
+
 
 ## Current Status
 
