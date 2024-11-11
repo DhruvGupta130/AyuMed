@@ -8,6 +8,7 @@ import com.example.system.service.AuthService;
 import com.example.system.service.DoctorService;
 import com.example.system.service.SlotInitializationService;
 import lombok.AllArgsConstructor;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -101,7 +102,8 @@ public class DoctorServiceImpl implements DoctorService {
             while (rows.hasNext()) {
                 Row row = rows.next();
                 RegistrationDTO registrationDTO = createRegistrationDTO(row, hospitalId);
-                if (registrationDTO != null) authService.createDoctor(registrationDTO);
+                System.out.println(registrationDTO);
+                authService.createDoctor(registrationDTO);
             }
         } catch (IOException e) {
             throw new HospitalManagementException("Error reading the Excel file: " + e.getMessage(), e);
@@ -124,14 +126,18 @@ public class DoctorServiceImpl implements DoctorService {
             registrationDTO.setLicenseNumber(getCellValue(row, 9));
             registrationDTO.setHospitalId(hospitalId);
             return registrationDTO;
-        } catch (Exception _) {
-            return null;
+        } catch (Exception e) {
+            throw new HospitalManagementException("Error creating registrationDTO: " + e.getMessage(), e);
         }
     }
 
     private String getCellValue(Row row, int cellIndex) {
-        if (row.getCell(cellIndex) != null) return row.getCell(cellIndex).getStringCellValue().trim();
-        return "";
+        Cell cell = row.getCell(cellIndex);
+        return switch (cell.getCellType()){
+                case NUMERIC-> throw new HospitalManagementException("Numerical Value not supported, please convert it in text.");
+                case STRING -> cell.getStringCellValue().trim();
+                default -> throw new HospitalManagementException("Your Excel File structure is incorrect.");
+        };
     }
 
     private Gender parseGender(String genderString) {
