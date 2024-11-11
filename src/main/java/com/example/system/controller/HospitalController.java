@@ -3,13 +3,13 @@ package com.example.system.controller;
 import com.example.system.dto.HospitalDTO;
 import com.example.system.entity.Hospital;
 import com.example.system.entity.HospitalManager;
+import com.example.system.service.DoctorService;
 import com.example.system.service.HospitalService;
 import com.example.system.service.utils.Utility;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @AllArgsConstructor
@@ -18,6 +18,7 @@ public class HospitalController {
 
     private final HospitalService hospitalService;
     private final Utility utility;
+    private final DoctorService doctorService;
 
     @PostMapping("/register")
     public ResponseEntity<String> registerHospital(@RequestHeader("Authorization") String token, @RequestBody HospitalDTO hospitalDTO) {
@@ -34,5 +35,12 @@ public class HospitalController {
     public ResponseEntity<Hospital> getHospital(@RequestHeader("Authorization") String token) {
         HospitalManager manager = (HospitalManager) utility.getUserFromToken(token);
         return ResponseEntity.ok(hospitalService.getHospitalProfile(manager));
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<String> addDoctors(@RequestHeader("Authorization") String token, @RequestParam("file") MultipartFile file) {
+        HospitalManager manager = (HospitalManager) utility.getUserFromToken(token);
+        doctorService.saveFromExcel(file, manager.getHospital().getId());
+        return ResponseEntity.ok("Doctors added successfully");
     }
 }

@@ -1,14 +1,23 @@
 package com.example.system.service.Impl;
 
-import com.example.system.dto.DoctorDTO;
-import com.example.system.dto.ProfileUpdateDTO;
+import com.example.system.dto.*;
 import com.example.system.entity.*;
+import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
+import com.example.system.service.AuthService;
 import com.example.system.service.DoctorService;
 import com.example.system.service.SlotInitializationService;
 import lombok.AllArgsConstructor;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -21,6 +30,7 @@ public class DoctorServiceImpl implements DoctorService {
     private final AppointmentRepo appointmentRepo;
     private final TimeSlotRepo timeSlotRepo;
     private final SlotInitializationService slotInitializationService;
+    private final AuthService authService;
 
     @Override
     public void deleteProfile(Doctor doctor) {
@@ -81,4 +91,55 @@ public class DoctorServiceImpl implements DoctorService {
         ).toList();
     }
 
+    @Override
+    public void saveFromExcel(MultipartFile file, long hospitalId) throws HospitalManagementException {
+        try (InputStream is = file.getInputStream()) {
+            Workbook workbook = new XSSFWorkbook(is);
+            Sheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rows = sheet.iterator();
+            if (rows.hasNext()) rows.next();
+            while (rows.hasNext()) {
+                Row row = rows.next();
+                RegistrationDTO registrationDTO = createRegistrationDTO(row, hospitalId);
+                if (registrationDTO != null) authService.createDoctor(registrationDTO);
+            }
+        } catch (IOException e) {
+            throw new HospitalManagementException("Error reading the Excel file: " + e.getMessage(), e);
+        }
+    }
+
+    private RegistrationDTO createRegistrationDTO(Row row, long hospitalId) {
+        try {
+            RegistrationDTO registrationDTO = new RegistrationDTO();
+            registrationDTO.setUsername(getCellValue(row, 0));
+            registrationDTO.setPassword(getCellValue(row, 1));
+            registrationDTO.setRole(UserRole.ROLE_DOCTOR);
+            registrationDTO.setFirstName(getCellValue(row, 2));
+            registrationDTO.setLastName(getCellValue(row, 3));
+            registrationDTO.setGender(parseGender(getCellValue(row, 4)));
+            registrationDTO.setEmail(getCellValue(row, 5));
+            registrationDTO.setMobile(getCellValue(row, 6));
+            registrationDTO.setDepartment(getCellValue(row, 7));
+            registrationDTO.setSpecialty(getCellValue(row, 8));
+            registrationDTO.setLicenseNumber(getCellValue(row, 9));
+            registrationDTO.setHospitalId(hospitalId);
+            return registrationDTO;
+        } catch (Exception _) {
+            return null;
+        }
+    }
+
+    private String getCellValue(Row row, int cellIndex) {
+        if (row.getCell(cellIndex) != null) return row.getCell(cellIndex).getStringCellValue().trim();
+        return "";
+    }
+
+    private Gender parseGender(String genderString) {
+        if (genderString != null && !genderString.isEmpty()) {
+            try {
+                return Gender.valueOf(genderString.toUpperCase());
+            } catch (Exception _) {}
+        }
+        return Gender.OTHER;
+    }
 }
