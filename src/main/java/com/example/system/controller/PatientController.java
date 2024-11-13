@@ -7,7 +7,6 @@ import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
-import com.example.system.service.DashboardService;
 import com.example.system.service.DoctorService;
 import com.example.system.service.PatientService;
 import com.example.system.service.utils.Utility;
