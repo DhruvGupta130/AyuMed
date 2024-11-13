@@ -29,7 +29,6 @@ public class PatientController {
     private final DoctorService doctorService;
     private final ScheduleRepo scheduleRepo;
     private final PatientService patientService;
-    private final DashboardService dashboardService;
 
     @GetMapping("/profile")
     public ResponseEntity<Patient> getPatientProfile(@RequestHeader("Authorization") String token) {
