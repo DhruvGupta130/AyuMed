@@ -39,7 +39,4 @@ public class Manager {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private LoginUser loginUser = new LoginUser();
 
-    public String getFullName() {
-        return firstName + " " + lastName;
-    }
 }

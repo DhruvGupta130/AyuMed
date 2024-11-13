@@ -1,6 +1,5 @@
 package com.example.system.controller;
 
-import com.example.system.dto.AppointmentStatus;
 import com.example.system.dto.AvailableDTO;
 import com.example.system.dto.DoctorDTO;
 import com.example.system.entity.*;
@@ -18,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @RestController

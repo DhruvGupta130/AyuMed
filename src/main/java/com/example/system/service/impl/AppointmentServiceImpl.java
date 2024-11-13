@@ -8,7 +8,6 @@ import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
 import com.example.system.service.AppointmentService;
 import com.example.system.service.utils.EmailService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;

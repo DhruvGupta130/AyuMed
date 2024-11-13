@@ -24,7 +24,6 @@ public class UpdateController {
     private final Utility utility;
     private final PatientService patientService;
     private final DoctorService doctorService;
-    private final AdminService adminService;
     private final HospitalService hospitalService;
     private final PharmacyService pharmacyService;
 
