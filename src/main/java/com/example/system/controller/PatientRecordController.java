@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,6 +56,7 @@ public class PatientRecordController {
                 .body(file);
     }
 
+    @Transactional
     @DeleteMapping("/{fileId}/delete")
     public ResponseEntity<String> deleteFile(@PathVariable Long fileId) {
         try {

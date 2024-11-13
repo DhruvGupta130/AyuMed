@@ -5,20 +5,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class HospitalDTO {
+public class PharmacyDTO {
 
-    private String hospitalName;
+    private String pharmacyName;
     private Address address;
     private String mobile;
     private String email;
-    private String website;
-    private int establishedYear;
-    private String description;
+    private LocalTime openingTime;
+    private LocalTime closingTime;
     private List<String> images;
-
+    private boolean open = true;
 }

@@ -18,7 +18,6 @@ public interface DashboardService {
     Map<String, Object> getPerformanceMetrics();
     Map<String, Object> getTrendData();
     Map<String, Integer> getAllDepartments();
-    List<Appointment> filterAppointments(LocalDate startDate, LocalDate endDate, AppointmentStatus status, Long doctorId);
     Search searchByKeyword(String keyword);
 
 

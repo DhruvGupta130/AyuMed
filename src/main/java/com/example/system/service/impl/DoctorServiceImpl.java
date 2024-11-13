@@ -1,7 +1,8 @@
-package com.example.system.service.Impl;
+package com.example.system.service.impl;
 
 import com.example.system.dto.*;
 import com.example.system.entity.*;
+import com.example.system.entity.Doctor;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
 import com.example.system.service.AuthService;
@@ -14,6 +15,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -35,6 +37,13 @@ public class DoctorServiceImpl implements DoctorService {
     private final AuthService authService;
 
     @Override
+    public Doctor getDoctorById(long id) {
+        return doctorRepo.findById(id)
+                .orElseThrow(() -> new HospitalManagementException("Doctor not found"));
+    }
+
+    @Override
+    @Transactional
     public void deleteProfile(Doctor doctor) {
         LoginUser user = doctor.getLoginUser();
         Hospital hospital = doctor.getHospital();
@@ -75,6 +84,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    @Transactional
     public void updateDoctor(Doctor doctor, ProfileUpdateDTO updateDTO) {
         doctor.setStartDate(updateDTO.getStartDate());
         doctor.setDegree(updateDTO.getDegree());
@@ -94,6 +104,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    @Transactional
     public void saveFromExcel(MultipartFile file, long hospitalId) throws HospitalManagementException {
         try (InputStream is = file.getInputStream()) {
             Workbook workbook = new XSSFWorkbook(is);

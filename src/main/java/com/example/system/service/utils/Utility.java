@@ -12,8 +12,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import javax.print.Doc;
-
 @Service
 @AllArgsConstructor
 public class Utility {
@@ -24,6 +22,7 @@ public class Utility {
     private final PatientRepo patientRepo;
     private final AdminRepo adminRepo;
     private final ManagerRepo managerRepo;
+    private final PharmacistRepo pharmacistRepo;
 
     public Object getUserFromToken(String token) {
         String userName = jwtUtils.getUserNameFromToken(token);
@@ -34,6 +33,8 @@ public class Utility {
                     .orElseThrow(() -> new HospitalManagementException("Patient Not Found"));
             case ROLE_DOCTOR -> doctorRepo.findByUsername(userName)
                     .orElseThrow(() -> new HospitalManagementException("Doctor Not Found"));
+            case ROLE_PHARMACIST -> pharmacistRepo.findByUsername(userName)
+                    .orElseThrow(() -> new HospitalManagementException("Pharmacist Not Found"));
             case ROLE_ADMIN -> adminRepo.findByUsername(userName)
                     .orElseThrow(() -> new HospitalManagementException("Admin Not Found"));
             case ROLE_MANAGEMENT -> managerRepo.findByUsername(userName)

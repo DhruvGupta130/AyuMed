@@ -2,7 +2,6 @@
 package com.example.system.configuration;
 
 import com.example.system.configuration.filter.JwtAuthFilter;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,7 +39,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/doctor/**").hasRole("DOCTOR")
                         .requestMatchers("/api/patient/**").hasRole("PATIENT")
                         .requestMatchers("/api/hospital/**").hasRole("MANAGEMENT")
-                        .requestMatchers("/api/**").hasAnyRole("ADMIN", "DOCTOR", "PATIENT", "MANAGEMENT")
+                        .requestMatchers("/api/pharmacy/**").hasRole("PHARMACIST")
+                        .requestMatchers("/api/**").hasAnyRole("ADMIN", "DOCTOR", "PATIENT", "MANAGEMENT","PHARMACIST")
                         .anyRequest().permitAll()
                 )
                 .csrf(AbstractHttpConfigurer::disable)

@@ -7,22 +7,21 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
 @Setter
-public class Hospital {
+public class Pharmacy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
+    private Long id;
     @NotNull
-    private String HospitalName;
+    private String pharmacyName;
 
-    @NotNull
     @ManyToOne
     private Address address;
 
@@ -31,26 +30,20 @@ public class Hospital {
     @Pattern(regexp = "^[0-9]{10}$", message = "Invalid mobile number")
     private String mobile;
 
-    @OneToMany(mappedBy = "hospital", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Doctor> doctors;
+    @OneToMany(mappedBy = "pharmacy", cascade = CascadeType.ALL)
+    private List<Medication> medications;
+
+    @NotNull
+    @OneToOne(cascade = CascadeType.ALL)
+    private Pharmacist pharmacist;
+
+    private boolean open;
+
+    @NotNull
+    private LocalTime openingTime;
+    @NotNull
+    private LocalTime closingTime;
 
     @ElementCollection
-    private Set<String> departments;
-
-    @NotNull
-    @OneToOne(mappedBy = "hospital", cascade = CascadeType.ALL)
-    private Manager manager;
-
-    @NotNull
-    private String website;
-    @NotNull
-    private Integer establishedYear;
-
-    @NotNull
-    @Column(length = 500)
-    private String description;
-
-    @NotNull
-    @ElementCollection
-    private List<String> images;
+    private List<String> images = new ArrayList<>();
 }

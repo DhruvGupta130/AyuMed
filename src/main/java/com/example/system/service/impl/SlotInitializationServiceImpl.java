@@ -1,4 +1,4 @@
-package com.example.system.service.Impl;
+package com.example.system.service.impl;
 
 import com.example.system.entity.Doctor;
 import com.example.system.entity.Schedule;
@@ -19,14 +19,13 @@ public class SlotInitializationServiceImpl implements SlotInitializationService 
 
     private final ScheduleRepo scheduleRepo;
 
-    @Transactional
     @Override
-    public void initializeAvailableSlots(Doctor doctor, List<Schedule> schedulesDTO) {
-        List<Schedule> schedules = doctor.getSchedules();
+    @Transactional
+    public void initializeAvailableSlots(Doctor doctor, List<Schedule> schedules) {
         LocalDate today = LocalDate.now();
         LocalDate endDate = today.plusMonths(1);
 
-        for (Schedule scheduleTemplate : schedulesDTO) {
+        for (Schedule scheduleTemplate : schedules) {
             DayOfWeek scheduledDay = scheduleTemplate.getDayOfWeek();
             LocalTime startTime = scheduleTemplate.getStartTime();
             LocalTime endTime = scheduleTemplate.getEndTime();

@@ -11,6 +11,7 @@ import java.util.List;
 @Service
 public interface DoctorService {
 
+    Doctor getDoctorById(long id);
     void deleteProfile(Doctor doctor);
     List<Doctor> searchDoctors(String specialty, Boolean available, String department);
     void updateDoctor(Doctor doctor, ProfileUpdateDTO updateDTO);

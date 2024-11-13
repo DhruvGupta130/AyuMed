@@ -1,7 +1,10 @@
 package com.example.system.controller;
 
 import com.example.system.dto.AppointmentData;
+import com.example.system.dto.AppointmentStatus;
 import com.example.system.entity.*;
+import com.example.system.entity.Doctor;
+import com.example.system.entity.Patient;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.AppointmentRepo;
 import com.example.system.repository.DoctorRepo;
@@ -131,10 +134,13 @@ public class AppointmentController {
         throw new HospitalManagementException("Patient not found");
     }
 
-    @GetMapping("/appointments/filter")
-    public ResponseEntity<List<Appointment>> filterAppointments(@RequestParam LocalDate startDate,
-                                                                @RequestParam LocalDate endDate) {
-        List<Appointment> appointments = appointmentService.filterAppointments(startDate, endDate, null, null);
+    @GetMapping("/admin/appointments/filter")
+    public ResponseEntity<List<Appointment>> filterAppointments(
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(required = false) AppointmentStatus status,
+            @RequestParam(required = false) Long doctorId) {
+        List<Appointment> appointments = appointmentService.filterAppointments(startDate, endDate, status, doctorId);
         return ResponseEntity.ok(appointments);
     }
 

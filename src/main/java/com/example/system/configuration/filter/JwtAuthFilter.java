@@ -2,7 +2,7 @@
 package com.example.system.configuration.filter;
 
 import com.example.system.configuration.JwtUtils;
-import com.example.system.service.Impl.CustomUserDetailsService;
+import com.example.system.service.impl.CustomUserDetailsService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

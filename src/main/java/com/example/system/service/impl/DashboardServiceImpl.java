@@ -1,4 +1,4 @@
-package com.example.system.service.Impl;
+package com.example.system.service.impl;
 
 import com.example.system.dto.AppointmentStatus;
 import com.example.system.dto.DoctorDTO;
@@ -7,13 +7,11 @@ import com.example.system.dto.Search;
 import com.example.system.entity.Appointment;
 import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
+import com.example.system.entity.Medication;
 import com.example.system.repository.AppointmentRepo;
 import com.example.system.repository.DoctorRepo;
 import com.example.system.repository.PatientRepo;
-import com.example.system.service.AppointmentService;
-import com.example.system.service.DashboardService;
-import com.example.system.service.DoctorService;
-import com.example.system.service.HospitalService;
+import com.example.system.service.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,9 +28,9 @@ public class DashboardServiceImpl implements DashboardService {
     private final DoctorRepo doctorRepo;
     private final PatientRepo patientRepo;
     private final AppointmentRepo appointmentRepo;
-    private final AppointmentService appointmentService;
     private final HospitalService hospitalService;
     private final DoctorService doctorService;
+    private final PharmacyService pharmacyService;
 
     @Override
     public Map<String, Object> getGeneralStatistics() {
@@ -117,15 +115,11 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public List<Appointment> filterAppointments(LocalDate startDate, LocalDate endDate, AppointmentStatus status, Long doctorId) {
-        return appointmentService.filterAppointments(startDate, endDate, status, doctorId);
-    }
-
-    @Override
     public Search searchByKeyword(String keyword) {
         List<HospitalDTO> hospitals = hospitalService.searchHospital(keyword);
         List<DoctorDTO> doctors = doctorService.getDoctorBySearch(keyword);
-        return new Search(hospitals, doctors);
+        List<Medication> medications = pharmacyService.getMedicationsByKeyword(keyword);
+        return new Search(hospitals, doctors, medications);
     }
 
 }

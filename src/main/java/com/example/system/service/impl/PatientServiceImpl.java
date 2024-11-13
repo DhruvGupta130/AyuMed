@@ -1,14 +1,17 @@
-package com.example.system.service.Impl;
+package com.example.system.service.impl;
 
 import com.example.system.dto.DoctorDTO;
 import com.example.system.dto.ProfileUpdateDTO;
 import com.example.system.entity.*;
+import com.example.system.entity.Doctor;
+import com.example.system.entity.Patient;
 import com.example.system.repository.*;
 import com.example.system.service.PatientService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -21,8 +24,10 @@ public class PatientServiceImpl implements PatientService {
     private final AppointmentRepo appointmentRepo;
     private final UserRepo userRepo;
     private final DoctorRepo doctorRepo;
+    private final ScheduleRepo scheduleRepo;
 
     @Override
+    @Transactional
     public void updatePatient(Patient patient, ProfileUpdateDTO updateDTO) {
         patient.setAadhaarId(updateDTO.getAadhaarId());
         patient.setNationality(updateDTO.getNationality());
@@ -83,5 +88,18 @@ public class PatientServiceImpl implements PatientService {
                 doctor.getExperience(), doctor.getImage(),
                 doctor.getDegree())
         ).toList();
+    }
+
+    @Override
+    public void updateAddress(Patient patient, Address addresses) {
+        Address address = addressRepo.findById(patient.getAddress().getId())
+                .orElseThrow(() -> new RuntimeException("Address not found"));
+        addresses.setId(address.getId());
+        addressRepo.save(addresses);
+    }
+
+    @Override
+    public List<TimeSlot> getAvailableSlots(LocalDate date, Doctor doctor){
+        return scheduleRepo.findAllByDateAndAvailableAAndDoctor(date, doctor);
     }
 }

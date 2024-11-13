@@ -33,7 +33,6 @@ public class ReminderService {
             String appointmentDate = appointment.getAppointmentDate().format(dateFormatter);
             String appointmentTime = appointment.getAppointmentDate().format(timeFormatter);
 
-            String doctorEmail = appointment.getDoctor().getEmail();
             String doctorName = appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName();
             String specialty = appointment.getDoctor().getSpecialty();
             String location = appointment.getDoctor().getLocation();

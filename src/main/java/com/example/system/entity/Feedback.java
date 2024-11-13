@@ -14,7 +14,6 @@ public class Feedback {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "appointment_id", nullable = false)
     private Appointment appointment;
 
     private Long patientId;

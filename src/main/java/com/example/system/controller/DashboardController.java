@@ -1,9 +1,11 @@
 package com.example.system.controller;
 
 import com.example.system.dto.HospitalDTO;
+import com.example.system.dto.PharmacyDTO;
 import com.example.system.dto.Search;
 import com.example.system.service.DashboardService;
 import com.example.system.service.HospitalService;
+import com.example.system.service.PharmacyService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,7 @@ public class DashboardController {
 
     private final DashboardService dashboardService;
     private final HospitalService hospitalService;
+    private final PharmacyService pharmacyService;
 
     @GetMapping("/statistics")
     public ResponseEntity<Map<String, Object>> getGeneralStatistics() {
@@ -50,13 +53,22 @@ public class DashboardController {
         return ResponseEntity.ok(dashboardService.getAllDepartments());
     }
 
-    @GetMapping("/nearby")
+    @GetMapping("/nearby/hospital")
     public ResponseEntity<List<HospitalDTO>> getHospitalsNearby(
             @RequestParam double latitude,
             @RequestParam double longitude,
             @RequestParam double radius) {
-        List<HospitalDTO> hospitals = hospitalService.getWithinRadius(latitude, longitude, radius);
+        List<HospitalDTO> hospitals = hospitalService.getHospitalsWithinRadius(latitude, longitude, radius);
         return ResponseEntity.ok(hospitals);
+    }
+
+    @GetMapping("/nearby/pharmacy")
+    public ResponseEntity<List<PharmacyDTO>> getPharmaciesNearby(
+            @RequestParam double latitude,
+            @RequestParam double longitude,
+            @RequestParam double radius) {
+        List<PharmacyDTO> pharmacies = pharmacyService.getPharmaciesWithinRadius(latitude, longitude, radius);
+        return ResponseEntity.ok(pharmacies);
     }
 
     @GetMapping("/search")

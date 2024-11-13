@@ -1,10 +1,14 @@
-package com.example.system.service.Impl;
+package com.example.system.service.impl;
 
 import com.example.system.configuration.JwtUtils;
 import com.example.system.dto.LoginRequest;
 import com.example.system.dto.LoginResponse;
 import com.example.system.dto.RegistrationDTO;
 import com.example.system.entity.*;
+import com.example.system.entity.Pharmacist;
+import com.example.system.entity.Doctor;
+import com.example.system.entity.Manager;
+import com.example.system.entity.Patient;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
 import com.example.system.service.AuthService;
@@ -34,8 +38,10 @@ public class AuthServiceImpl implements AuthService {
     private final AdminRepo adminRepo;
     private final ManagerRepo managerRepo;
     private final HospitalRepo hospitalRepo;
+    private final PharmacistRepo pharmacistRepo;
 
     @Override
+    @Transactional
     public void createPatient(RegistrationDTO registrationDTO) {
         Patient patient = new Patient();
         setCommonAttributes(patient.getLoginUser(), registrationDTO);
@@ -73,6 +79,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public void createAdmin(RegistrationDTO registrationDTO) {
         Admin admin = new Admin();
         setCommonAttributes(admin.getLoginUser(), registrationDTO);
@@ -80,23 +87,38 @@ public class AuthServiceImpl implements AuthService {
         admin.setLastName(registrationDTO.getLastName());
         admin.setEmail(registrationDTO.getEmail());
         admin.setMobile(registrationDTO.getMobile());
-        admin.setDepartment(registrationDTO.getDepartment());
         admin.setGender(registrationDTO.getGender());
         adminRepo.save(admin);
     }
 
     @Override
+    @Transactional
     public void createManager(RegistrationDTO registrationDTO) {
-        HospitalManager manager = new HospitalManager();
+        Manager manager = new Manager();
         setCommonAttributes(manager.getLoginUser(), registrationDTO);
         manager.setFirstName(registrationDTO.getFirstName());
         manager.setLastName(registrationDTO.getLastName());
+        manager.setGender(registrationDTO.getGender());
         manager.setEmail(registrationDTO.getEmail());
         manager.setMobile(registrationDTO.getMobile());
         managerRepo.save(manager);
     }
 
     @Override
+    @Transactional
+    public void createPharmacist(RegistrationDTO registrationDTO) {
+        Pharmacist pharmacist = new Pharmacist();
+        setCommonAttributes(pharmacist.getLoginUser(), registrationDTO);
+        pharmacist.setFirstName(registrationDTO.getFirstName());
+        pharmacist.setLastName(registrationDTO.getLastName());
+        pharmacist.setEmail(registrationDTO.getEmail());
+        pharmacist.setGender(registrationDTO.getGender());
+        pharmacist.setMobile(registrationDTO.getMobile());
+        pharmacistRepo.save(pharmacist);
+    }
+
+    @Override
+    @Transactional
     public LoginResponse loginService(LoginRequest request) {
         LoginUser user = userRepo.findByUsername(request.getUsername()).orElseThrow(() -> new HospitalManagementException("Wrong UserName or Password"));
         authenticationManager.authenticate(
@@ -104,7 +126,6 @@ public class AuthServiceImpl implements AuthService {
         );
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getUsername());
         String token = jwtUtils.generateToken(userDetails);
-
         LoginResponse response = new LoginResponse();
         response.setToken(token);
         response.setUsername(user.getUsername());

@@ -15,7 +15,6 @@ public class Billing {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "appointment_id")
     private Appointment appointment;
 
     private BigDecimal totalAmount;

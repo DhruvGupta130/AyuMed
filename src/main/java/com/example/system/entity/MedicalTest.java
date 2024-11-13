@@ -16,16 +16,12 @@ public class MedicalTest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String testName; // Name of the test (e.g., "Fasting Blood Sugar")
-
-    private LocalDate testDate; // Date when the test was conducted
-
-    private String result; // Result of the test (e.g., "Normal", "Elevated")
-
-    private String notes; // Any additional notes about the test or results
+    private String testName;
+    private LocalDate testDate;
+    private String result;
+    private String notes;
 
     @ManyToOne
-    @JoinColumn
     @JsonIgnore
     private MedicalHistory history;
 

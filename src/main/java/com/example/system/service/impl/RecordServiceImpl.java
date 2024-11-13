@@ -1,4 +1,4 @@
-package com.example.system.service.Impl;
+package com.example.system.service.impl;
 
 import com.example.system.entity.Patient;
 import com.example.system.entity.PatientRecord;
@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
@@ -30,6 +31,7 @@ public class RecordServiceImpl implements PatientRecordService {
     }
 
     @Override
+    @Transactional
     public PatientRecord uploadFile(Patient patient, MultipartFile file, String description) throws IOException {
         String patientDirPath = storagePath + "/" + patient.getId();
         String filePath = patientDirPath + "/" + file.getOriginalFilename();
@@ -56,6 +58,7 @@ public class RecordServiceImpl implements PatientRecordService {
     }
 
     @Override
+    @Transactional
     public void deleteFile(Long fileId) throws IOException {
         PatientRecord record = patientRecordRepo.findById(fileId)
                 .orElseThrow(() -> new FileNotFoundException("File not found"));

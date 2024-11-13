@@ -16,6 +16,4 @@ public interface AdminService {
     List<DoctorDTO> getAllDoctors();
     List<PatientDTO> getAllPatients();
     List<AppointmentDTO> getAllAppointments();
-    void updateProfile(Admin admin, ProfileUpdateDTO updateDTO);
-
 }

@@ -36,7 +36,6 @@ public class Schedule {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "doctor_id")
     private Doctor doctor;
 
     @Transient
@@ -58,9 +57,9 @@ public class Schedule {
     public void bookSlot(int slotIndex) {
         TimeSlot slot = findTimeSlotByStartTimeAndSlot(slotIndex);
         if (slot != null && slot.isAvailable()) {
-            slot.reduceAvailability(); // Decrease availability
+            slot.reduceAvailability();
         } else {
-            throw new IllegalStateException("Time slot not available or doesn't exist.");
+            throw new HospitalManagementException("Time slot not available or doesn't exist.");
         }
     }
 
@@ -72,7 +71,7 @@ public class Schedule {
     }
     public LocalTime getAppointmentTime(int slotIndex) {
         if (slotIndex < 0 || slotIndex >= timeSlots.size()) {
-            throw new IndexOutOfBoundsException("Slot index is out of bounds.");
+            throw new HospitalManagementException("Slot index is out of bounds.");
         }
         return timeSlots.get(slotIndex).getStartTime();
     }
@@ -87,7 +86,7 @@ public class Schedule {
 
     public TimeSlot findTimeSlotByStartTimeAndSlot(long slotIndex) {
         return timeSlots.stream()
-                .filter(slot -> slot.getSlotIndex().equals(slotIndex)).findFirst()
+                .filter(slot -> slot.getSlotIndex() == slotIndex).findFirst()
                 .orElseThrow(() -> new HospitalManagementException("Time slot not found."));
     }
 

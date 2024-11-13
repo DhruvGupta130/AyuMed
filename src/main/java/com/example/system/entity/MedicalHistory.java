@@ -18,29 +18,27 @@ public class MedicalHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String problems; // E.g., "Diabetes", "Hypertension", etc.
-
-    private String diagnosisDetails; // Details about the diagnosis, if any.
+    private String problems;
+    private String diagnosisDetails;
 
     @ElementCollection
-    private List<String> medications; // List of medications prescribed.
+    private List<String> medications;
 
     @PastOrPresent
-    private LocalDate treatmentStartDate; // Start date of the treatment.
+    private LocalDate treatmentStartDate;
 
     @PastOrPresent
-    private LocalDate treatmentEndDate;   // End date of the treatment, if applicable.
+    private LocalDate treatmentEndDate;
 
-    private String treatmentPlan; // Description of the treatment plan.
-    private String followUpInstructions; // Instructions for follow-up care.
+    private String treatmentPlan;
+    private String followUpInstructions;
 
     @OneToMany(mappedBy = "history", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<MedicalTest> testsConducted; // List of tests conducted relevant to the condition.
+    private List<MedicalTest> testsConducted;
 
     @ManyToOne
-    @JoinColumn
     @JsonIgnore
     private Patient patient;
 
-    private String notes;     // Any additional notes regarding the condition.
+    private String notes;
 }

@@ -1,4 +1,4 @@
-package com.example.system.service.Impl;
+package com.example.system.service.impl;
 
 import com.example.system.dto.UserRole;
 import com.example.system.entity.LoginUser;

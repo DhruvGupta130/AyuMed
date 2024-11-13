@@ -1,7 +1,9 @@
-package com.example.system.service.Impl;
+package com.example.system.service.impl;
 
 import com.example.system.dto.*;
 import com.example.system.entity.*;
+import com.example.system.entity.Doctor;
+import com.example.system.entity.Patient;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
 import com.example.system.service.AppointmentService;
@@ -38,11 +40,11 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public Appointment getAppointmentById(Long id) {
         return appointmentRepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Appointment not found with id: " + id));
+                .orElseThrow(() -> new HospitalManagementException("Appointment not found with id: " + id));
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void scheduleAppointment(Patient patient, Doctor doctor,
                                     LocalDate appointmentDate, String createdBy, int slotIndex) {
 
@@ -169,8 +171,8 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointment.getStatus() == AppointmentStatus.CANCELED;
     }
 
-    @Transactional
     @Override
+    @Transactional
     public boolean removeOldCanceledAppointments(Patient patient, Appointment appointment) {
         if (!appointment.getPatient().getId().equals(patient.getId())) {
             throw new HospitalManagementException("You are not authorized to perform this action.");

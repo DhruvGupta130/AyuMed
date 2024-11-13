@@ -1,6 +1,6 @@
 package com.example.system.controller;
 
-import com.example.system.entity.*;
+import com.example.system.entity.Doctor;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.service.DoctorService;
 import com.example.system.service.utils.Utility;

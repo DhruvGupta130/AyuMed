@@ -12,5 +12,6 @@ public interface AuthService {
     void createDoctor(RegistrationDTO registrationDTO);
     void createAdmin(RegistrationDTO registrationDTO);
     void createManager(RegistrationDTO registrationDTO);
+    void createPharmacist(RegistrationDTO registrationDTO);
     LoginResponse loginService(LoginRequest request);
 }

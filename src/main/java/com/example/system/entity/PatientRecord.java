@@ -16,9 +16,8 @@ public class PatientRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "patient_id", nullable = false)
     @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     private Patient patient;
 
     private String fileName;
@@ -30,7 +29,7 @@ public class PatientRecord {
 
     private String fileType;
 
-    @Column(length = 500)
+    @Column(length = 1000)
     private String description;
 
 }
