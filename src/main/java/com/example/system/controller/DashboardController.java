@@ -3,7 +3,6 @@ package com.example.system.controller;
 import com.example.system.dto.HospitalDTO;
 import com.example.system.dto.PharmacyDTO;
 import com.example.system.dto.Search;
-import com.example.system.repository.PatientRepo;
 import com.example.system.service.DashboardService;
 import com.example.system.service.HospitalService;
 import com.example.system.service.PharmacyService;
