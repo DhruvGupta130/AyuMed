@@ -27,7 +27,6 @@ public class DashboardController {
     private final DashboardService dashboardService;
     private final HospitalService hospitalService;
     private final PharmacyService pharmacyService;
-    private final PatientRepo patientRepo;
 
     @GetMapping("/statistics")
     public ResponseEntity<Map<String, Object>> getGeneralStatistics() {
