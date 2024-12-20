@@ -3,17 +3,29 @@ package com.example.system.controller;
 import com.example.system.dto.HospitalDTO;
 import com.example.system.dto.PharmacyDTO;
 import com.example.system.dto.Search;
+import com.example.system.entity.Patient;
+import com.example.system.exception.HospitalManagementException;
+import com.example.system.repository.PatientRepo;
 import com.example.system.service.DashboardService;
 import com.example.system.service.HospitalService;
 import com.example.system.service.PharmacyService;
 import lombok.AllArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import org.springframework.core.io.FileSystemResource;
 
 @RestController
 @AllArgsConstructor
@@ -22,6 +34,7 @@ public class DashboardController {
     private final DashboardService dashboardService;
     private final HospitalService hospitalService;
     private final PharmacyService pharmacyService;
+    private final PatientRepo patientRepo;
 
     @GetMapping("/statistics")
     public ResponseEntity<Map<String, Object>> getGeneralStatistics() {
@@ -75,5 +88,15 @@ public class DashboardController {
     public ResponseEntity<Search> search(@RequestParam String keyword) {
         return ResponseEntity.ok(dashboardService.searchByKeyword(keyword));
     }
+
+    @GetMapping("/get/profile")
+    public ResponseEntity<Resource> downloadFile(@RequestParam("image") String filePath) {
+        Resource file = new FileSystemResource(Paths.get(filePath));
+        if (!file.exists() || !file.isReadable()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(file);
+    }
+
 
 }

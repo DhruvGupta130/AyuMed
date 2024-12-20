@@ -26,8 +26,7 @@ public class Manager {
 
     @Email
     private String email;
-    @Pattern(regexp = "^[0-9]{10}$", message = "Invalid mobile number")
-    private String mobile;
+    private long mobile;
 
     @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)

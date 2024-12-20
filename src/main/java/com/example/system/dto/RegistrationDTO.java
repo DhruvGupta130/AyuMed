@@ -17,7 +17,7 @@ public class RegistrationDTO {
     private String lastName;
     private Gender gender;
     private String email;
-    private String Mobile;
+    private long Mobile;
     private String department;
 
     // For doctors

@@ -14,6 +14,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,6 +36,7 @@ public class DoctorServiceImpl implements DoctorService {
     private final TimeSlotRepo timeSlotRepo;
     private final SlotInitializationService slotInitializationService;
     private final AuthService authService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public Doctor getDoctorById(long id) {
@@ -85,11 +87,26 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     @Transactional
-    public void updateDoctor(Doctor doctor, ProfileUpdateDTO updateDTO) {
+    public void updateDoctor(Doctor doctor, ProfileUpdateDTO updateDTO, MultipartFile image) {
         doctor.setStartDate(updateDTO.getStartDate());
         doctor.setDegree(updateDTO.getDegree());
-        doctor.setImage(updateDTO.getImage());
+        if (image != null && !image.isEmpty()) {
+            try {
+                String imagePath = null;
+                doctor.setImage(null);
+            } catch (Exception e) {
+                throw new HospitalManagementException(e.getMessage());
+            }
+        }
         slotInitializationService.initializeAvailableSlots(doctor, updateDTO.getSchedule());
+        doctorRepo.save(doctor);
+    }
+
+    @Override
+    public void updatePassword(Doctor doctor, Password password) {
+        if(!passwordEncoder.matches(password.getOldPassword(), doctor.getLoginUser().getPassword()))
+            throw new HospitalManagementException("Provided password is incorrect");
+        doctor.getLoginUser().setPassword(passwordEncoder.encode(password.getNewPassword()));
         doctorRepo.save(doctor);
     }
 
@@ -132,7 +149,7 @@ public class DoctorServiceImpl implements DoctorService {
             registrationDTO.setLastName(getCellValue(row, 3));
             registrationDTO.setGender(parseGender(getCellValue(row, 4)));
             registrationDTO.setEmail(getCellValue(row, 5));
-            registrationDTO.setMobile(getCellValue(row, 6));
+            registrationDTO.setMobile(Long.parseLong(getCellValue(row, 6)));
             registrationDTO.setDepartment(getCellValue(row, 7));
             registrationDTO.setSpecialty(getCellValue(row, 8));
             registrationDTO.setLicenseNumber(getCellValue(row, 9));

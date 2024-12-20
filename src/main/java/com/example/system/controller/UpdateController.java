@@ -1,5 +1,6 @@
 package com.example.system.controller;
 
+import com.example.system.dto.Password;
 import com.example.system.dto.ProfileUpdateDTO;
 import com.example.system.entity.*;
 import com.example.system.entity.Pharmacist;
@@ -13,6 +14,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,15 +32,11 @@ public class UpdateController {
     @Transactional
     @PutMapping("/updateProfile")
     public ResponseEntity<String> updateProfile(@RequestHeader("Authorization") String token,
-                                                @RequestBody ProfileUpdateDTO profileUpdateDTO){
+                                                @RequestParam ProfileUpdateDTO profileUpdateDTO, @RequestParam("image") MultipartFile image) {
         Object object = utility.getUserFromToken(token);
-        if(object instanceof Patient patient){
-            if(patient.getAadhaarId()!=null) throw new HospitalManagementException("Profile is already up-to-date");
-            patientService.updatePatient(patient, profileUpdateDTO);
-            return ResponseEntity.ok("Patient profile updated successfully");
-        }else if(object instanceof Doctor doctor){
+        if(object instanceof Doctor doctor){
             if(!doctor.getSchedules().isEmpty()) throw new HospitalManagementException("Profile is already up-to-date");
-            doctorService.updateDoctor(doctor, profileUpdateDTO);
+            doctorService.updateDoctor(doctor, profileUpdateDTO, image);
             return ResponseEntity.ok("Doctor profile updated successfully");
         }
         throw new HospitalManagementException("Something went wrong. Please try again later.");
@@ -65,6 +63,21 @@ public class UpdateController {
             pharmacyService.updateAddress(pharmacist, address);
         }
         return ResponseEntity.ok("Address updated successfully");
+    }
+
+    @PutMapping("/update/password")
+    public ResponseEntity<String> updatePassword(@RequestHeader("Authorization") String token, @RequestBody Password password) {
+        Object object = utility.getUserFromToken(token);
+        if(object instanceof Patient patient){
+            patientService.updatePassword(patient, password);
+        } else if (object instanceof Manager manager) {
+            hospitalService.updatePassword(manager, password);
+        } else if (object instanceof Pharmacist pharmacist) {
+            pharmacyService.updatePassword(pharmacist, password);
+        } else if (object instanceof Doctor doctor) {
+            doctorService.updatePassword(doctor, password);
+        }
+        return ResponseEntity.ok("Password updated successfully");
     }
 
 }

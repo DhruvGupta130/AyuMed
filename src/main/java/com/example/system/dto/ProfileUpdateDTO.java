@@ -22,7 +22,4 @@ public class ProfileUpdateDTO {
     private String degree;
     private List<Schedule> schedule;
 
-    //Common
-    private String image;
-
 }

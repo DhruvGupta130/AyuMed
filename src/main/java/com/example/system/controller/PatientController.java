@@ -2,6 +2,7 @@ package com.example.system.controller;
 
 import com.example.system.dto.AvailableDTO;
 import com.example.system.dto.DoctorDTO;
+import com.example.system.dto.Gender;
 import com.example.system.entity.*;
 import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
@@ -10,10 +11,13 @@ import com.example.system.repository.*;
 import com.example.system.service.DoctorService;
 import com.example.system.service.PatientService;
 import com.example.system.service.utils.Utility;
+import io.jsonwebtoken.security.Password;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -34,6 +38,40 @@ public class PatientController {
         Patient patient = (Patient) utility.getUserFromToken(token);
         if (patient == null) throw new HospitalManagementException("Patient not found");
         return ResponseEntity.ok(patient);
+    }
+
+    @Transactional
+    @PutMapping("/updateProfile")
+    public ResponseEntity<String> updateProfile(@RequestHeader("Authorization") String token,
+                                                @RequestParam("aadhaarId") long aadhaarId,
+                                                @RequestParam("nationality") String nationality,
+                                                @RequestParam("image") MultipartFile image,
+                                                @RequestParam("mobile") long mobile) {
+        Object object = utility.getUserFromToken(token);
+        if(object instanceof Patient patient) {
+            if (patient.getAadhaarId() != null) throw new HospitalManagementException("Profile is already up-to-date");
+            patientService.updatePatient(patient, aadhaarId, mobile, nationality, image);
+            return ResponseEntity.ok("Patient profile updated successfully");
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Patient profile not found");
+    }
+
+    @PostMapping("/address")
+    public ResponseEntity<String> addAddress(@RequestHeader("Authorization") String token, @RequestBody Address address){
+        Object object = utility.getUserFromToken(token);
+        if(object instanceof Patient patient){
+            patientService.addAddress(patient, address);
+        }
+        return ResponseEntity.ok("Address added successfully");
+    }
+
+    @PutMapping("/address")
+    public ResponseEntity<String> updateAddress(@RequestHeader("Authorization") String token, @RequestBody Address address) {
+        Object object = utility.getUserFromToken(token);
+        if (object instanceof Patient patient) {
+            patientService.updateAddress(patient, address);
+        }
+        return ResponseEntity.ok("Address updated successfully!");
     }
 
     @GetMapping("/available")
@@ -74,6 +112,13 @@ public class PatientController {
     public ResponseEntity<List<DoctorDTO>> getDoctorsByDepartment(@RequestParam String department) {
         List<DoctorDTO> doctorDTOS = patientService.findDoctorsByDepartment(department);
         return ResponseEntity.ok(doctorDTOS);
+    }
+
+    @GetMapping("/lab")
+    public ResponseEntity<List<MedicalTest>> getMedicalTests(@RequestHeader("Authorization") String token) {
+        Patient patient = (Patient) utility.getUserFromToken(token);
+        if (patient == null) throw new HospitalManagementException("Patient not found");
+        return ResponseEntity.ok().body(patientService.getMedicalTests(patient));
     }
 
     @GetMapping("/slots/{id}")

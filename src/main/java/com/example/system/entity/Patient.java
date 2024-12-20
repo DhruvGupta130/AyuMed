@@ -1,12 +1,11 @@
 package com.example.system.entity;
 
 import com.example.system.dto.Gender;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -37,10 +36,11 @@ public class Patient {
 
     @Email
     private String email;
-    @Pattern(regexp = "^[0-9]{10}$", message = "Invalid mobile number")
-    private String mobile;
+    private Long mobile;
+    private Long alternateMobile;
 
-    private Long AadhaarId;
+    private Long aadhaarId;
+
     private String nationality;
     private String image;
 
@@ -50,7 +50,6 @@ public class Patient {
     @ManyToOne
     private Address address;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -58,6 +57,10 @@ public class Patient {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Appointment> appointments;
+
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "patient")
+    private List<PatientRecord> patientRecords;
 
     public String getFullName() {
         return firstName + " " + lastName;

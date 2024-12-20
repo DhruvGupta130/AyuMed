@@ -8,12 +8,15 @@ import com.example.system.service.utils.Utility;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -43,15 +46,31 @@ public class PatientRecordController {
     }
 
     @GetMapping("/{fileId}/download")
-    public ResponseEntity<Resource> downloadFile(@PathVariable Long fileId){
+    public ResponseEntity<Resource> downloadFile(@PathVariable Long fileId) {
         Resource file;
         try {
             file = patientRecordService.downloadFile(fileId);
         } catch (IOException e) {
             throw new HospitalManagementException(e.getMessage());
         }
+
+        String contentType = "application/octet-stream";
+        try {
+            if(file.getFilename()!=null)
+                contentType = Files.probeContentType(Paths.get(file.getFilename()));
+        } catch (IOException e) {
+            throw new HospitalManagementException(e.getMessage());
+        }
+
+        if (contentType.startsWith("image/") || contentType.equals("application/pdf")) {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(file);
+        }
+
         String contentDisposition = "attachment; filename=\"" + file.getFilename() + "\"";
         return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
                 .body(file);
     }

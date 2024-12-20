@@ -180,4 +180,26 @@ public class EmailStructures {
                 """.formatted(doctorName, status, patientName, appointmentDate, appointmentTime, status);
     }
 
+    public static String registrationEmailBody(String patientName) {
+        return """
+            Dear %s,
+        
+            Congratulations on registering with AyuMed! 🎉
+            We are thrilled to welcome you to our platform, where healthcare meets convenience.
+        
+            With AyuMed, you can:
+            - Book appointments with top doctors.
+            - Access your medical records securely.
+            - Stay updated with health tips and services.
+        
+            Thank you for choosing AyuMed. We look forward to being your trusted healthcare partner.
+        
+            Warm regards,
+            The AyuMed Team
+        
+            **Contact Us:**
+            If you have any questions, feel free to reach out to our support team at {supportEmail} or call us at {supportPhone}.
+            """.formatted(patientName);
+
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.system.service.impl;
 
 import com.example.system.dto.HospitalDTO;
+import com.example.system.dto.Password;
 import com.example.system.entity.Address;
 import com.example.system.entity.Hospital;
 import com.example.system.entity.Manager;
@@ -11,6 +12,7 @@ import com.example.system.repository.ManagerRepo;
 import com.example.system.service.HospitalService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,7 @@ public class HospitalServiceImpl implements HospitalService {
     private final HospitalRepo hospitalRepo;
     private final ManagerRepo managerRepo;
     private final AddressRepo addressRepo;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -41,6 +44,14 @@ public class HospitalServiceImpl implements HospitalService {
         HospitalDTO hospitalDTO = new HospitalDTO();
         BeanUtils.copyProperties(manager.getHospital(), hospitalDTO);
         return hospitalDTO;
+    }
+
+    @Override
+    public void updatePassword(Manager manager, Password password) {
+        if(!passwordEncoder.matches(password.getOldPassword(), manager.getLoginUser().getPassword()))
+            throw new HospitalManagementException("Provided password is incorrect");
+        manager.getLoginUser().setPassword(passwordEncoder.encode(password.getNewPassword()));
+        managerRepo.save(manager);
     }
 
     @Override

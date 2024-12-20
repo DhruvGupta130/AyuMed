@@ -1,5 +1,6 @@
 package com.example.system.service.impl;
 
+import com.example.system.dto.Password;
 import com.example.system.dto.PharmacyDTO;
 import com.example.system.entity.Address;
 import com.example.system.entity.Medication;
@@ -18,6 +19,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,6 +39,7 @@ public class PharmacyServiceImpl implements PharmacyService {
     private final PharmacistRepo pharmacistRepo;
     private final AddressRepo addressRepo;
     private final MedicationRepo medicationRepo;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -128,6 +131,14 @@ public class PharmacyServiceImpl implements PharmacyService {
             pharmacy.setOpen(false);
         }else pharmacy.setOpen(!pharmacy.isOpen());
         pharmacyRepo.save(pharmacy);
+    }
+
+    @Override
+    public void updatePassword(Pharmacist pharmacist, Password password) {
+        if(!passwordEncoder.matches(password.getOldPassword(), pharmacist.getLoginUser().getPassword()))
+            throw new HospitalManagementException("Provided password is incorrect");
+        pharmacist.getLoginUser().setPassword(passwordEncoder.encode(password.getNewPassword()));
+        pharmacistRepo.save(pharmacist);
     }
 
     @Override

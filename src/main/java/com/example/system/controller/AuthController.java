@@ -1,8 +1,6 @@
 package com.example.system.controller;
 
-import com.example.system.dto.LoginRequest;
-import com.example.system.dto.LoginResponse;
-import com.example.system.dto.RegistrationDTO;
+import com.example.system.dto.*;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.UserRepo;
 import com.example.system.service.AuthService;
