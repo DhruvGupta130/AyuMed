@@ -2,7 +2,6 @@ package com.example.system.controller;
 
 import com.example.system.dto.AvailableDTO;
 import com.example.system.dto.DoctorDTO;
-import com.example.system.dto.Gender;
 import com.example.system.entity.*;
 import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
@@ -11,7 +10,6 @@ import com.example.system.repository.*;
 import com.example.system.service.DoctorService;
 import com.example.system.service.PatientService;
 import com.example.system.service.utils.Utility;
-import io.jsonwebtoken.security.Password;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

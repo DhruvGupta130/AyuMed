@@ -18,12 +18,13 @@ public class FolderCleanupService {
     @Scheduled(cron = "0 0 0 * * *")
     public void cleanEmptyFolders() {
         try {
-            Files.walkFileTree(Paths.get(storagePath).getParent(), new SimpleFileVisitor<Path>() {
+            Files.walkFileTree(Paths.get(storagePath).getParent(), new SimpleFileVisitor<>() {
                 @Override
                 @NonNull
-                public FileVisitResult visitFile(Path file, @NonNull  BasicFileAttributes attrs) {
+                public FileVisitResult visitFile(Path file, @NonNull BasicFileAttributes attrs) {
                     return FileVisitResult.CONTINUE;
                 }
+
                 @Override
                 @NonNull
                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {

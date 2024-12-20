@@ -8,6 +8,7 @@ import com.example.system.repository.*;
 import com.example.system.service.AuthService;
 import com.example.system.service.DoctorService;
 import com.example.system.service.SlotInitializationService;
+import com.example.system.service.utils.Utility;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -92,8 +93,8 @@ public class DoctorServiceImpl implements DoctorService {
         doctor.setDegree(updateDTO.getDegree());
         if (image != null && !image.isEmpty()) {
             try {
-                String imagePath = null;
-                doctor.setImage(null);
+                String imagePath = Utility.saveImage(image);
+                doctor.setImage(imagePath);
             } catch (Exception e) {
                 throw new HospitalManagementException(e.getMessage());
             }

@@ -1,7 +1,6 @@
 package com.example.system.service.utils;
 
 import com.example.system.dto.OtpData;
-import lombok.Getter;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
