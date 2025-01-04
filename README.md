@@ -118,12 +118,12 @@ To bulk register doctors in the system, use the following Excel format:
 
 [Download the sample file here](https://iiitranchiacin-my.sharepoint.com/:x:/g/personal/dhruv_2022ug2022_iiitranchi_ac_in/Ee2ReM-OWBFAjgF3XYg3k1kB6GZT62M4n02lzetVwwPtIw?e=o15MJd)
 
-| Username  | Password    | Gender | First Name | Last Name | Email                       | Mobile     | Department     |  Specialty        | License Number |
-|-----------|-------------|--------|------------|-----------|-----------------------------|------------|----------------|-------------------|----------------|
-| ram123    | password123 | MALE   | Ram        | Sharma    | ram.sharma@example.com      | 9876543210 | Cardiology     | Heart Surgery     | ABC12345       |
-| shiv456   | password456 | MALE   | Shiva      | Pandey    | shivam456.smith@example.com | 9876543211 | Neurology      | Brain Surgery     | DEF67890       |
-| sam789    | password789 | FEMALE | Samira     | Singh     | sameera@example.com         | 9876543212 | Orthopedics    | Joint Replacement | GHI11223       |
-| pankaj101 | password101 | MALE   | Pankaj     | Dubey     | dubey.pankaj@example.com    | 9876543213 | Pediatrics     | Pediatric Surgery | JKL33445       |
+| Username  | Password    | First Name | Last Name | Gender | Email                       | Mobile     | Department     |  Specialty        | License Number |
+|-----------|-------------|------------|-----------|--------|-----------------------------|------------|----------------|-------------------|----------------|
+| ram123    | password123 | Ram        | Sharma    | MALE   | ram.sharma@example.com      | 9876543210 | Cardiology     | Heart Surgery     | ABC12345       |
+| shiv456   | password456 | Shiva      | Pandey    | MALE   | shivam456.smith@example.com | 9876543211 | Neurology      | Brain Surgery     | DEF67890       |
+| sam789    | password789 | Samira     | Singh     | FEMALE | sameera@example.com         | 9876543212 | Orthopedics    | Joint Replacement | GHI11223       |
+| pankaj101 | password101 | Pankaj     | Dubey     | MALE   | dubey.pankaj@example.com    | 9876543213 | Pediatrics     | Pediatric Surgery | JKL33445       |
 
 ## Sample Excel File for Medications Import
 
