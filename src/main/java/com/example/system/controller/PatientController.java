@@ -90,9 +90,10 @@ public class PatientController {
                                                          @RequestParam(required = false) String department) {
         List<Doctor> doctors = doctorService.searchDoctors(specialty, available, department);
         List<DoctorDTO> doctorDTOS = doctors.stream()
-                .map(doctor -> new DoctorDTO(doctor.getFirstName(), doctor.getLastName(),
+                .map(doctor -> new DoctorDTO(doctor.getId(),
+                        doctor.getFirstName(), doctor.getLastName(),
                         doctor.getSpecialty(), doctor.getDepartment(), doctor.getExperience(),
-                        doctor.getImage(), doctor.getDegree())
+                        doctor.getImage(), doctor.getDegree(), doctor.getEmail())
                 ).toList();
         return ResponseEntity.ok(doctorDTOS);
     }

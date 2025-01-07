@@ -1,5 +1,6 @@
 package com.example.system.service.impl;
 
+import com.example.system.dto.DoctorDTO;
 import com.example.system.dto.HospitalDTO;
 import com.example.system.dto.Password;
 import com.example.system.entity.Address;
@@ -9,6 +10,7 @@ import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.AddressRepo;
 import com.example.system.repository.HospitalRepo;
 import com.example.system.repository.ManagerRepo;
+import com.example.system.service.DoctorService;
 import com.example.system.service.HospitalService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -26,6 +28,7 @@ public class HospitalServiceImpl implements HospitalService {
     private final ManagerRepo managerRepo;
     private final AddressRepo addressRepo;
     private final PasswordEncoder passwordEncoder;
+    private final DoctorService doctorService;
 
     @Override
     @Transactional
@@ -58,7 +61,8 @@ public class HospitalServiceImpl implements HospitalService {
     public List<HospitalDTO> getHospitalsWithinRadius(double latitude, double longitude, double radius) {
         List<Hospital> hospitals = hospitalRepo.findHospitalsWithinRadius(latitude, longitude, radius);
         return hospitals.stream()
-                .map(hospital -> new HospitalDTO(hospital.getHospitalName(),
+                .map(hospital -> new HospitalDTO(hospital.getId(),
+                        hospital.getHospitalName(),
                         hospital.getAddress(), hospital.getMobile(),
                         hospital.getEmail(), hospital.getWebsite(),
                         hospital.getEstablishedYear(), hospital.getDescription(),
@@ -70,11 +74,17 @@ public class HospitalServiceImpl implements HospitalService {
     public List<HospitalDTO> searchHospital(String keyword) {
         List<Hospital> hospitals = hospitalRepo.searchByKeyword(keyword);
         return hospitals.stream().map(hospital ->
-                new HospitalDTO(hospital.getHospitalName(), hospital.getAddress(),
+                new HospitalDTO(hospital.getId(),
+                        hospital.getHospitalName(), hospital.getAddress(),
                         hospital.getMobile(), hospital.getEmail(), hospital.getWebsite(),
                         hospital.getEstablishedYear(), hospital.getDescription(),
                         hospital.getImages())
         ).toList();
+    }
+
+    @Override
+    public List<DoctorDTO> getAllDoctors(Hospital hospital) {
+        return doctorService.getHospitalDoctors(hospital);
     }
 
     @Override

@@ -8,36 +8,39 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
 
 @Service
 public class FolderCleanupService {
 
-    @Value("${file.storage.path}")
-    private String storagePath;
+    @Value("${file.storage.servicePaths}")
+    private List<String> storagePaths;
 
     @Scheduled(cron = "0 0 0 * * *")
     public void cleanEmptyFolders() {
-        try {
-            Files.walkFileTree(Paths.get(storagePath).getParent(), new SimpleFileVisitor<>() {
-                @Override
-                @NonNull
-                public FileVisitResult visitFile(Path file, @NonNull BasicFileAttributes attrs) {
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                @NonNull
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    if (isDirectoryEmpty(dir)) {
-                        Files.delete(dir);
-                        System.out.println("Deleted empty folder: " + dir);
+        storagePaths.forEach(storagePath -> {
+            try {
+                Files.walkFileTree(Paths.get(storagePath).getParent(), new SimpleFileVisitor<>() {
+                    @Override
+                    @NonNull
+                    public FileVisitResult visitFile(Path file, @NonNull BasicFileAttributes attrs) {
+                        return FileVisitResult.CONTINUE;
                     }
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-        } catch (IOException e) {
-            System.err.println("Error during folder cleanup: " + e.getMessage());
-        }
+
+                    @Override
+                    @NonNull
+                    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                        if (isDirectoryEmpty(dir)) {
+                            Files.delete(dir);
+                            System.out.println("Deleted empty folder: " + dir);
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+            } catch (IOException e) {
+                System.err.println("Error during folder cleanup: " + e.getMessage());
+            }
+        });
     }
 
     private boolean isDirectoryEmpty(Path dir) throws IOException {

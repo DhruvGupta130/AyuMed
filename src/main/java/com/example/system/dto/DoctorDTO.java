@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class DoctorDTO {
 
+    private long id;
     private String firstName;
     private String lastName;
     private String specialty;
@@ -16,4 +17,5 @@ public class DoctorDTO {
     private Integer experience;
     private String image;
     private String degree;
+    private String email;
 }

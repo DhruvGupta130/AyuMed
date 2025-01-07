@@ -45,7 +45,6 @@ public class Doctor {
     @ManyToOne
     private Hospital hospital;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

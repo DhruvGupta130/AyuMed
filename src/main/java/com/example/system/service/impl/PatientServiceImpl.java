@@ -37,6 +37,7 @@ public class PatientServiceImpl implements PatientService {
     private final MedicalTestRepo medicalTestRepo;
     private final PasswordEncoder passwordEncoder;
     private final PatientRecordRepo patientRecordRepo;
+    private final Utility utility;
 
     @Override
     @Transactional
@@ -46,7 +47,7 @@ public class PatientServiceImpl implements PatientService {
         patient.setAlternateMobile(mobile);
         if (image != null && !image.isEmpty()) {
             try {
-                String imagePath = Utility.saveImage(image);
+                String imagePath = utility.saveImage(image);
                 patient.setImage(imagePath);
             } catch (Exception e) {
                 throw new HospitalManagementException(e.getMessage());
@@ -141,11 +142,11 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public List<DoctorDTO> findDoctorsByDepartment(String department) {
         List<Doctor> doctors = doctorRepo.findAllByDepartment(department);
-        return doctors.stream().map(doctor -> new DoctorDTO(
+        return doctors.stream().map(doctor -> new DoctorDTO(doctor.getId(),
                 doctor.getFirstName(), doctor.getLastName(),
                 doctor.getSpecialty(), department,
                 doctor.getExperience(), doctor.getImage(),
-                doctor.getDegree())
+                doctor.getDegree(), doctor.getEmail())
         ).toList();
     }
 

@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class PharmacyDTO {
 
+    private long id;
     private String pharmacyName;
     private Address address;
     private String mobile;

@@ -1,8 +1,10 @@
 package com.example.system.service;
 
+import com.example.system.dto.DoctorDTO;
 import com.example.system.dto.HospitalDTO;
 import com.example.system.dto.Password;
 import com.example.system.entity.Address;
+import com.example.system.entity.Hospital;
 import com.example.system.entity.Manager;
 import org.springframework.stereotype.Service;
 
@@ -16,5 +18,6 @@ public interface HospitalService {
     void updatePassword(Manager manager, Password password);
     List<HospitalDTO> getHospitalsWithinRadius(double latitude, double longitude, double radius);
     List<HospitalDTO> searchHospital(String keyword);
+    List<DoctorDTO> getAllDoctors(Hospital hospital);
     void updateAddress(Manager manager, Address address);
 }

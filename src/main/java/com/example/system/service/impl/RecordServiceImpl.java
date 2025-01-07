@@ -23,7 +23,7 @@ public class RecordServiceImpl implements PatientRecordService {
 
     private final PatientRecordRepo patientRecordRepo;
 
-    @Value("${file.storage.path}")
+    @Value("${file.storage.records.path}")
     private String storagePath;
 
     public RecordServiceImpl(PatientRecordRepo patientRecordRepo) {

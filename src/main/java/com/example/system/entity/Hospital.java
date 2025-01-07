@@ -47,7 +47,7 @@ public class Hospital {
     private Integer establishedYear;
 
     @NotNull
-    @Column(length = 500)
+    @Column(length = 50000)
     private String description;
 
     @NotNull

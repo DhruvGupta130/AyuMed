@@ -2,7 +2,7 @@
 package com.example.system.configuration;
 
 import com.example.system.configuration.filter.JwtAuthFilter;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,10 +25,16 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@AllArgsConstructor
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
+
+    @Value("${hospital.frontendUrl}")
+    private String frontendUrl;
+
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
+        this.jwtAuthFilter = jwtAuthFilter;
+    }
 
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
@@ -52,7 +58,7 @@ public class SecurityConfig {
     private CorsConfigurationSource corsConfiguration() {
         return _ -> {
             CorsConfiguration config = new CorsConfiguration();
-            config.addAllowedOriginPattern("*");
+            config.addAllowedOriginPattern(frontendUrl);
             config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
             config.setAllowedHeaders(Collections.singletonList("*"));
             config.setExposedHeaders(Collections.singletonList("Authorization"));

@@ -180,7 +180,7 @@ public class PharmacyServiceImpl implements PharmacyService {
     @Override
     public List<PharmacyDTO> getPharmaciesWithinRadius(double latitude, double longitude, double radius) {
         List<Pharmacy> pharmacies = medicationRepo.findPharmacyWithinRadius(latitude, longitude, radius);
-        return pharmacies.stream().map(pharmacy -> new PharmacyDTO(
+        return pharmacies.stream().map(pharmacy -> new PharmacyDTO(pharmacy.getId(),
                 pharmacy.getPharmacyName(), pharmacy.getAddress(),
                 pharmacy.getMobile(), pharmacy.getEmail(), pharmacy.getOpeningTime(),
                 pharmacy.getClosingTime(), pharmacy.getImages(), pharmacy.isOpen())

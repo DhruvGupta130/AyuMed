@@ -30,7 +30,7 @@ public class Utility {
     private final PharmacistRepo pharmacistRepo;
 
     @Value("${file.storage.path}")
-    private static String storagePath;
+    private String storagePath;
 
     public Utility(JwtUtils jwtUtils, UserRepo userRepo, DoctorRepo doctorRepo, PatientRepo patientRepo, AdminRepo adminRepo, ManagerRepo managerRepo, PharmacistRepo pharmacistRepo) {
         this.jwtUtils = jwtUtils;
@@ -72,7 +72,7 @@ public class Utility {
         return doctorDTO;
     }
 
-    public static String saveImage(MultipartFile imageFile) throws IOException {
+    public String saveImage(MultipartFile imageFile) throws IOException {
         String patientDirPath = storagePath + "/";
         String filePath = patientDirPath + "/" + imageFile.getOriginalFilename();
         Path parentDir = Paths.get(patientDirPath);
@@ -84,4 +84,20 @@ public class Utility {
         return filePath;
     }
 
+    public String deleteImage(String fileName) throws IOException {
+
+        if (fileName == null || fileName.isEmpty()) {
+            throw new IllegalArgumentException("Invalid file name provided.");
+        }
+
+        String filePath = storagePath + "/" + fileName;
+        Path fileToDelete = Paths.get(filePath);
+
+        if (Files.exists(fileToDelete)) {
+            Files.delete(fileToDelete);
+            return "File " + fileName + " deleted successfully.";
+        } else {
+            throw new IOException("File " + fileName + " does not exist.");
+        }
+    }
 }

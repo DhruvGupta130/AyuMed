@@ -120,7 +120,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public LoginResponse loginService(LoginRequest request) {
-        LoginUser user = userRepo.findByUsername(request.getUsername()).orElseThrow(() -> new HospitalManagementException("Wrong UserName or Password"));
+        LoginUser user = userRepo.findByUsername(request.getUsername()).orElseThrow(() -> new HospitalManagementException("Invalid UserName or Password"));
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );

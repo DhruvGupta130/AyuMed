@@ -39,11 +39,11 @@ public class AdminServiceImpl implements AdminService {
     public List<DoctorDTO> getAllDoctors() {
         List<Doctor> doctors = doctorRepo.findAll();
         return doctors.stream()
-                .map(doctor -> new DoctorDTO(
+                .map(doctor -> new DoctorDTO(doctor.getId(),
                     doctor.getFirstName(), doctor.getLastName(),
                     doctor.getSpecialty(), doctor.getDepartment(),
                     doctor.getExperience(), doctor.getImage(),
-                    doctor.getDegree())
+                    doctor.getDegree(), doctor.getEmail())
                 ).toList();
     }
 
@@ -51,7 +51,7 @@ public class AdminServiceImpl implements AdminService {
     public List<PatientDTO> getAllPatients() {
         List<Patient> patients = patientRepo.findAll();
         return patients.stream()
-                .map(patient -> new PatientDTO(
+                .map(patient -> new PatientDTO(patient.getId(),
                         patient.getFirstName(), patient.getLastName(),
                         patient.getDateOfBirth(), patient.getGender(),
                         patient.getNationality(), patient.getImage())

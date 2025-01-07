@@ -38,6 +38,7 @@ public class DoctorServiceImpl implements DoctorService {
     private final SlotInitializationService slotInitializationService;
     private final AuthService authService;
     private final PasswordEncoder passwordEncoder;
+    private final Utility utility;
 
     @Override
     public Doctor getDoctorById(long id) {
@@ -93,7 +94,7 @@ public class DoctorServiceImpl implements DoctorService {
         doctor.setDegree(updateDTO.getDegree());
         if (image != null && !image.isEmpty()) {
             try {
-                String imagePath = Utility.saveImage(image);
+                String imagePath = utility.saveImage(image);
                 doctor.setImage(imagePath);
             } catch (Exception e) {
                 throw new HospitalManagementException(e.getMessage());
@@ -115,10 +116,29 @@ public class DoctorServiceImpl implements DoctorService {
     public List<DoctorDTO> getDoctorBySearch(String keyword) {
         List<Doctor> doctors = doctorRepo.searchDoctorsByKeyword(keyword);
         return doctors.stream().map(doctor ->
-                new DoctorDTO(doctor.getFirstName(), doctor.getLastName(),
+                new DoctorDTO(doctor.getId(),
+                        doctor.getFirstName(), doctor.getLastName(),
                         doctor.getSpecialty(), doctor.getDepartment(),
-                        doctor.getExperience(), doctor.getImage(), doctor.getDegree())
+                        doctor.getExperience(), doctor.getImage(),
+                        doctor.getDegree(), doctor.getEmail())
         ).toList();
+    }
+
+    @Override
+    public List<DoctorDTO> getHospitalDoctors(Hospital hospital) {
+        List<Doctor> doctors = doctorRepo.getDoctorByHospital(hospital);
+        return doctors.stream().map(doctor ->
+                new DoctorDTO(doctor.getId(),
+                        doctor.getFirstName(), doctor.getLastName(),
+                        doctor.getSpecialty(), doctor.getDepartment(),
+                        doctor.getExperience(), doctor.getImage(),
+                        doctor.getDegree(), doctor.getEmail())
+        ).toList();
+    }
+
+    @Override
+    public void registerDoctor(RegistrationDTO doctor) {
+        authService.createDoctor(doctor);
     }
 
     @Override
@@ -128,10 +148,13 @@ public class DoctorServiceImpl implements DoctorService {
             Workbook workbook = new XSSFWorkbook(is);
             Sheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rows = sheet.iterator();
-            if (rows.hasNext()) rows.next();
+            if (rows.hasNext()) {
+                Row headerRow = rows.next();
+                verifyHeaders(headerRow);
+            }
             while (rows.hasNext()) {
                 Row row = rows.next();
-                if(doctorRepo.findByUsername(row.getCell(0).getStringCellValue()).isPresent()) continue;
+                if(userRepo.findByUsername(row.getCell(0).getStringCellValue()).isPresent()) continue;
                 RegistrationDTO registrationDTO = createRegistrationDTO(row, hospitalId);
                 authService.createDoctor(registrationDTO);
             }
@@ -182,4 +205,19 @@ public class DoctorServiceImpl implements DoctorService {
         }
         return Gender.OTHER;
     }
+
+    private void verifyHeaders(Row headerRow) {
+        String[] expectedHeaders = {
+                "Username", "Password", "First Name", "Last Name",
+                "Gender", "Email", "Mobile", "Department",
+                "Specialty", "License Number"
+        };
+        for (int i = 0; i < expectedHeaders.length; i++) {
+            Cell headerCell = headerRow.getCell(i);
+            if (headerCell == null || !expectedHeaders[i].equalsIgnoreCase(headerCell.getStringCellValue().trim())) {
+                throw new HospitalManagementException("Invalid Excel file structure. Expected header: " + expectedHeaders[i]);
+            }
+        }
+    }
+
 }

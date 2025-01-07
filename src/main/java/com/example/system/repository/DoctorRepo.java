@@ -1,6 +1,7 @@
 package com.example.system.repository;
 
 import com.example.system.entity.Doctor;
+import com.example.system.entity.Hospital;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -35,6 +36,8 @@ public interface DoctorRepo extends JpaRepository<Doctor, Long> {
             "(d.firstName LIKE %:keyword% OR d.lastName LIKE %:keyword% OR d.department LIKE %:keyword% OR d.specialty LIKE %:keyword%) " +
             "OR :keyword IS null")
     List<Doctor> searchDoctorsByKeyword(@Param("keyword") String keyword);
+
+    List<Doctor> getDoctorByHospital(Hospital hospital);
 
 
 }

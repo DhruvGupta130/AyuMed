@@ -4,6 +4,7 @@ import com.example.system.entity.Address;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class HospitalDTO {
 
+    private long id;
     private String hospitalName;
     private Address address;
     private String mobile;
