@@ -2,6 +2,7 @@ package com.example.system.controller;
 
 import com.example.system.dto.AvailableDTO;
 import com.example.system.dto.DoctorDTO;
+import com.example.system.dto.PatientDTO;
 import com.example.system.entity.*;
 import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
@@ -32,10 +33,9 @@ public class PatientController {
     private final PatientService patientService;
 
     @GetMapping("/profile")
-    public ResponseEntity<Patient> getPatientProfile(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<PatientDTO> getPatientProfile(@RequestHeader("Authorization") String token) {
         Patient patient = (Patient) utility.getUserFromToken(token);
-        if (patient == null) throw new HospitalManagementException("Patient not found");
-        return ResponseEntity.ok(patient);
+        return ResponseEntity.ok(patientService.getPatientProfile(patient));
     }
 
     @Transactional
@@ -90,11 +90,7 @@ public class PatientController {
                                                          @RequestParam(required = false) String department) {
         List<Doctor> doctors = doctorService.searchDoctors(specialty, available, department);
         List<DoctorDTO> doctorDTOS = doctors.stream()
-                .map(doctor -> new DoctorDTO(doctor.getId(),
-                        doctor.getFirstName(), doctor.getLastName(),
-                        doctor.getSpecialty(), doctor.getDepartment(), doctor.getExperience(),
-                        doctor.getImage(), doctor.getDegree(), doctor.getEmail())
-                ).toList();
+                .map(doctorService::getDoctorProfile).toList();
         return ResponseEntity.ok(doctorDTOS);
     }
 

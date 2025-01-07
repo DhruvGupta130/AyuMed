@@ -16,6 +16,7 @@ public interface DoctorService {
 
     Doctor getDoctorById(long id);
     void deleteProfile(Doctor doctor);
+    DoctorDTO getDoctorProfile(Doctor doctor);
     List<Doctor> searchDoctors(String specialty, Boolean available, String department);
     void updateDoctor(Doctor doctor, ProfileUpdateDTO updateDTO, MultipartFile file);
     void updatePassword(Doctor doctor, Password password);

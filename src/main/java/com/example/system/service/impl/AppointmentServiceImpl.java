@@ -172,12 +172,16 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     @Transactional
-    public boolean removeOldCanceledAppointments(Patient patient, Appointment appointment) {
+    public void removeOldCanceledAppointments(Patient patient, Appointment appointment) {
         if (!appointment.getPatient().getId().equals(patient.getId())) {
             throw new HospitalManagementException("You are not authorized to perform this action.");
         }
-        return appointment.getStatus() == AppointmentStatus.CANCELED &&
-                ChronoUnit.MONTHS.between(appointment.getAppointmentDate(), LocalDateTime.now()) > 1;
+        if (appointment.getStatus() == AppointmentStatus.CANCELED &&
+                ChronoUnit.MONTHS.between(appointment.getAppointmentDate(), LocalDateTime.now()) > 1){
+            appointmentRepo.delete(appointment);
+            return true;
+        }
+        throw new HospitalManagementException("Only cancelled and older appointments can be removed.");
     }
 
     @Override

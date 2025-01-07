@@ -1,14 +1,9 @@
 package com.example.system.service.utils;
 
 import com.example.system.configuration.JwtUtils;
-import com.example.system.dto.DoctorDTO;
-import com.example.system.dto.PatientDTO;
-import com.example.system.entity.Doctor;
 import com.example.system.entity.LoginUser;
-import com.example.system.entity.Patient;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,18 +53,6 @@ public class Utility {
             case ROLE_MANAGEMENT -> managerRepo.findByUsername(userName)
                     .orElseThrow(() -> new HospitalManagementException("Manager Not Found"));
         };
-    }
-
-    public static PatientDTO getPatientDTO(Patient patient){
-        PatientDTO patientDTO = new PatientDTO();
-        BeanUtils.copyProperties(patient, patientDTO);
-        return patientDTO;
-    }
-
-    public static DoctorDTO getDoctorDTO(Doctor doctor){
-        DoctorDTO doctorDTO = new DoctorDTO();
-        BeanUtils.copyProperties(doctor, doctorDTO);
-        return doctorDTO;
     }
 
     public String saveImage(MultipartFile imageFile) throws IOException {

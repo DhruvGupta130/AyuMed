@@ -2,6 +2,7 @@ package com.example.system.controller;
 
 import com.example.system.dto.Password;
 import com.example.system.dto.ProfileUpdateDTO;
+import com.example.system.dto.Response;
 import com.example.system.entity.*;
 import com.example.system.entity.Pharmacist;
 import com.example.system.entity.Doctor;
@@ -11,6 +12,7 @@ import com.example.system.exception.HospitalManagementException;
 import com.example.system.service.*;
 import com.example.system.service.utils.Utility;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -31,53 +33,97 @@ public class UpdateController {
 
     @Transactional
     @PutMapping("/updateProfile")
-    public ResponseEntity<String> updateProfile(@RequestHeader("Authorization") String token,
-                                                @RequestParam ProfileUpdateDTO profileUpdateDTO, @RequestParam("image") MultipartFile image) {
-        Object object = utility.getUserFromToken(token);
-        if(object instanceof Doctor doctor){
-            if(!doctor.getSchedules().isEmpty()) throw new HospitalManagementException("Profile is already up-to-date");
-            doctorService.updateDoctor(doctor, profileUpdateDTO, image);
-            return ResponseEntity.ok("Doctor profile updated successfully");
+    public ResponseEntity<Response> updateProfile(@RequestHeader("Authorization") String token,
+                                                  @ModelAttribute ProfileUpdateDTO profileUpdateDTO,
+                                                  @RequestParam("image") MultipartFile image) {
+        Response response = new Response();
+        Doctor doctor = (Doctor) utility.getUserFromToken(token);
+        try {
+            if (doctor.getSchedules().isEmpty()) {
+                doctorService.updateDoctor(doctor, profileUpdateDTO, image);
+                response.setMessage("Profile updated successfully");
+                response.setStatus(HttpStatus.OK);
+            } else {
+                response.setMessage("Profile is already up-to-date");
+                response.setStatus(HttpStatus.BAD_REQUEST);
+            }
+        } catch (HospitalManagementException e) {
+            response.setError(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setError("Error updating profile: " + e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        throw new HospitalManagementException("Something went wrong. Please try again later.");
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @PutMapping("/add-medical")
-    public ResponseEntity<String> addMedicalHistory(String token, @RequestBody List<MedicalHistory> medicalHistories){
-        Object object = utility.getUserFromToken(token);
-        if(object instanceof Patient patient){
+    public ResponseEntity<Response> addMedicalHistory(@RequestHeader("Authorization") String token,
+                                                      @RequestBody List<MedicalHistory> medicalHistories){
+        Response response = new Response();
+        try {
+            Patient patient = (Patient) utility.getUserFromToken(token);
             patientService.addMedicalHistory(patient, medicalHistories);
-            return ResponseEntity.ok("Medical history added successfully");
+            response.setMessage("Medical history added successfully");
+            response.setStatus(HttpStatus.OK);
+        } catch (HospitalManagementException e) {
+            response.setError(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setError("Error while adding Medical History: " + e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        throw new HospitalManagementException("Something went wrong. Please try again later.");
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @PutMapping("/address")
-    public ResponseEntity<String> updateAddress(@RequestHeader("Authorization") String token, @RequestBody Address address){
-        Object object = utility.getUserFromToken(token);
-        if(object instanceof Patient patient){
-            patientService.updateAddress(patient, address);
-        } else if (object instanceof Manager manager) {
-            hospitalService.updateAddress(manager, address);
-        } else if (object instanceof Pharmacist pharmacist) {
-            pharmacyService.updateAddress(pharmacist, address);
+    public ResponseEntity<Response> updateAddress(@RequestHeader("Authorization") String token,
+                                                  @RequestBody Address address){
+        Response response = new Response();
+        try {
+            Object user = utility.getUserFromToken(token);
+            switch (user) {
+                case Patient patient -> patientService.updateAddress(patient, address);
+                case Manager manager -> hospitalService.updateAddress(manager, address);
+                case Pharmacist pharmacist -> pharmacyService.updateAddress(pharmacist, address);
+                case null, default ->
+                        throw new HospitalManagementException("User type not supported for address update");
+            }
+            response.setMessage("Address updated successfully");
+            response.setStatus(HttpStatus.OK);
+        } catch (HospitalManagementException e) {
+            response.setError(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setError("Error while updating address: " + e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseEntity.ok("Address updated successfully");
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @PutMapping("/update/password")
-    public ResponseEntity<String> updatePassword(@RequestHeader("Authorization") String token, @RequestBody Password password) {
-        Object object = utility.getUserFromToken(token);
-        if(object instanceof Patient patient){
-            patientService.updatePassword(patient, password);
-        } else if (object instanceof Manager manager) {
-            hospitalService.updatePassword(manager, password);
-        } else if (object instanceof Pharmacist pharmacist) {
-            pharmacyService.updatePassword(pharmacist, password);
-        } else if (object instanceof Doctor doctor) {
-            doctorService.updatePassword(doctor, password);
+    public ResponseEntity<Response> updatePassword(@RequestHeader("Authorization") String token, @RequestBody Password password) {
+        Response response = new Response();
+        try {
+            Object user = utility.getUserFromToken(token);
+            switch (user) {
+                case Patient patient -> patientService.updatePassword(patient, password);
+                case Manager manager -> hospitalService.updatePassword(manager, password);
+                case Pharmacist pharmacist -> pharmacyService.updatePassword(pharmacist, password);
+                case Doctor doctor -> doctorService.updatePassword(doctor, password);
+                case null, default ->
+                        throw new HospitalManagementException("User type not supported for password update");
+            }
+            response.setMessage("Password updated successfully");
+            response.setStatus(HttpStatus.OK);
+        } catch (HospitalManagementException e) {
+            response.setError(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setError("Error while updating password: " + e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseEntity.ok("Password updated successfully");
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
 }

@@ -13,6 +13,7 @@ import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
 import com.example.system.service.AuthService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -120,18 +121,17 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public LoginResponse loginService(LoginRequest request) {
-        LoginUser user = userRepo.findByUsername(request.getUsername()).orElseThrow(() -> new HospitalManagementException("Invalid UserName or Password"));
+        LoginUser user = userRepo.findByUsername(request.getUsername())
+                .orElseThrow(() -> new HospitalManagementException("Invalid UserName or Password"));
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getUsername());
         String token = jwtUtils.generateToken(userDetails);
-        LoginResponse response = new LoginResponse();
-        response.setToken(token);
-        response.setUsername(user.getUsername());
-        response.setRole(user.getRole().name());
-        response.setMessage("Successfully logged in");
-        return response;
+        return new LoginResponse(
+                token, user.getUsername(), user.getRole(),
+                "Login Successful", HttpStatus.OK
+        );
     }
 
     private void setCommonAttributes(LoginUser loginUser, RegistrationDTO registrationDTO) {

@@ -10,16 +10,15 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class PharmacyDTO {
 
     private long id;
     private String pharmacyName;
     private Address address;
-    private String mobile;
     private String email;
+    private String mobile;
+    private boolean open = true;
     private LocalTime openingTime;
     private LocalTime closingTime;
     private List<String> images;
-    private boolean open = true;
 }

@@ -29,4 +29,8 @@ public class Admin {
     @JoinColumn(name = "user_id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private LoginUser loginUser = new LoginUser();
+
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 }

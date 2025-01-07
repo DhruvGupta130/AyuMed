@@ -1,9 +1,7 @@
 package com.example.system.controller;
 
-import com.example.system.dto.DoctorDTO;
-import com.example.system.dto.HospitalDTO;
-import com.example.system.dto.RegistrationDTO;
-import com.example.system.dto.UserRole;
+import com.example.system.dto.*;
+import com.example.system.entity.Hospital;
 import com.example.system.entity.Manager;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.UserRepo;
@@ -33,48 +31,74 @@ public class HospitalController {
     @PostMapping("/register")
     public ResponseEntity<String> registerHospital(
             @RequestHeader("Authorization") String token,
-            @RequestBody HospitalDTO hospitalDTO
+            @RequestBody Hospital hospital
     ) {
         Manager manager = (Manager) utility.getUserFromToken(token);
-        hospitalService.registerHospital(hospitalDTO, manager);
+        if(manager == null) throw new HospitalManagementException("Hospital manager not found");
+        hospitalService.registerHospital(hospital, manager);
         return ResponseEntity.ok("Hospital registered successfully");
     }
     @GetMapping("/manager")
-    public ResponseEntity<Manager> getHospitalManager(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<ManagerDTO> getHospitalManager(@RequestHeader("Authorization") String token) {
         Manager manager = (Manager) utility.getUserFromToken(token);
-        return ResponseEntity.ok(manager);
+        if(manager == null) throw new HospitalManagementException("Hospital manager not found");
+        return ResponseEntity.ok(hospitalService.getManagerProfile(manager));
     }
     @GetMapping
     public ResponseEntity<HospitalDTO> getHospital(@RequestHeader("Authorization") String token) {
         Manager manager = (Manager) utility.getUserFromToken(token);
-        if (manager.getHospital() == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return ResponseEntity.ok(hospitalService.getHospitalProfile(manager));
+        if(manager == null) throw new HospitalManagementException("Hospital manager not found");
+        return ResponseEntity.ok(hospitalService.getHospitalProfile(manager.getHospital()));
     }
 
     @GetMapping("/doctors")
     public ResponseEntity<List<DoctorDTO>> getAllDoctors(@RequestHeader("Authorization") String token) {
         Manager manager = (Manager) utility.getUserFromToken(token);
+        if(manager == null) throw new HospitalManagementException("Hospital manager not found");
         return ResponseEntity.ok(hospitalService.getAllDoctors(manager.getHospital()));
     }
 
     @PostMapping("/doctors/register")
-    public ResponseEntity<String> registerDoctor(@RequestHeader("Authorization") String token, @RequestBody RegistrationDTO registrationDTO) {
-        userRepo.findByUsername(registrationDTO.getUsername()).ifPresent(_ -> {
-            throw new HospitalManagementException("User already exists");
-        });
-        Manager manager = (Manager) utility.getUserFromToken(token);
-        registrationDTO.setHospitalId(manager.getHospital().getId());
-        registrationDTO.setRole(UserRole.ROLE_DOCTOR);
-        doctorService.registerDoctor(registrationDTO);
-        return ResponseEntity.ok("Doctor registered successfully");
+    public ResponseEntity<Response> registerDoctor(@RequestHeader("Authorization") String token, @RequestBody RegistrationDTO registrationDTO) {
+        Response response = new Response();
+        try {
+            userRepo.findByUsername(registrationDTO.getUsername()).ifPresent(_ -> {
+                throw new HospitalManagementException("User already exists");
+            });
+            Manager manager = (Manager) utility.getUserFromToken(token);
+            if (manager == null) throw new HospitalManagementException("Hospital manager not found");
+            registrationDTO.setHospitalId(manager.getHospital().getId());
+            registrationDTO.setRole(UserRole.ROLE_DOCTOR);
+            doctorService.registerDoctor(registrationDTO);
+            response.setMessage("Doctor registered successfully");
+            response.setStatus(HttpStatus.CREATED);
+        } catch (HospitalManagementException e) {
+            response.setError(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setError("Error registering doctor" + e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @PostMapping("/doctors/upload")
-    public ResponseEntity<String> addDoctors(@RequestHeader("Authorization") String token, @RequestParam("file") MultipartFile file) {
-        Manager manager = (Manager) utility.getUserFromToken(token);
-        doctorService.saveFromExcel(file, manager.getHospital().getId());
-        return ResponseEntity.ok("Doctors added successfully");
+    public ResponseEntity<Response> addDoctors(@RequestHeader("Authorization") String token,
+                                               @RequestParam("file") MultipartFile file) {
+        Response response = new Response();
+        try {
+            Manager manager = (Manager) utility.getUserFromToken(token);
+            if (manager == null) throw new HospitalManagementException("Hospital manager not found");
+            doctorService.saveFromExcel(file, manager.getHospital().getId());
+            response.setMessage("Doctors added successfully");
+            response.setStatus(HttpStatus.CREATED);
+        } catch (HospitalManagementException e) {
+            response.setError(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setError("Error adding doctor" + e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.system.service.impl;
 
+import com.example.system.dto.AdminDTO;
 import com.example.system.dto.AppointmentDTO;
 import com.example.system.dto.DoctorDTO;
 import com.example.system.dto.PatientDTO;
@@ -8,7 +9,8 @@ import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
 import com.example.system.repository.*;
 import com.example.system.service.AdminService;
-import com.example.system.service.utils.Utility;
+import com.example.system.service.DoctorService;
+import com.example.system.service.PatientService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,8 @@ public class AdminServiceImpl implements AdminService {
     private final DoctorRepo doctorRepo;
     private final PatientRepo patientRepo;
     private final AppointmentRepo appointmentRepo;
+    private final DoctorService doctorService;
+    private final PatientService patientService;
 
     @Override
     @Transactional
@@ -36,26 +40,27 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    public AdminDTO getProfile(Admin admin) {
+        return new AdminDTO(
+                admin.getId(), admin.getFirstName(),
+                admin.getLastName(), admin.getGender(),
+                admin.getEmail(), admin.getMobile(),
+                admin.getFullName()
+        );
+    }
+
+    @Override
     public List<DoctorDTO> getAllDoctors() {
         List<Doctor> doctors = doctorRepo.findAll();
         return doctors.stream()
-                .map(doctor -> new DoctorDTO(doctor.getId(),
-                    doctor.getFirstName(), doctor.getLastName(),
-                    doctor.getSpecialty(), doctor.getDepartment(),
-                    doctor.getExperience(), doctor.getImage(),
-                    doctor.getDegree(), doctor.getEmail())
-                ).toList();
+                .map(doctorService::getDoctorProfile).toList();
     }
 
     @Override
     public List<PatientDTO> getAllPatients() {
         List<Patient> patients = patientRepo.findAll();
         return patients.stream()
-                .map(patient -> new PatientDTO(patient.getId(),
-                        patient.getFirstName(), patient.getLastName(),
-                        patient.getDateOfBirth(), patient.getGender(),
-                        patient.getNationality(), patient.getImage())
-                ).toList();
+                .map(patientService::getPatientProfile).toList();
     }
 
     @Override
@@ -63,8 +68,8 @@ public class AdminServiceImpl implements AdminService {
         List<Appointment> appointments = appointmentRepo.findAll();
         return appointments.stream()
                 .map(appointment -> new AppointmentDTO(
-                        Utility.getPatientDTO(appointment.getPatient()),
-                        Utility.getDoctorDTO(appointment.getDoctor()),
+                        patientService.getPatientProfile(appointment.getPatient()),
+                        doctorService.getDoctorProfile(appointment.getDoctor()),
                         appointment.getAppointmentDate(), appointment.getStatus())
                 ).toList();
     }

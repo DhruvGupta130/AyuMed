@@ -27,7 +27,10 @@ public class Hospital {
     private Address address;
 
     @Email
+    @NotNull
     private String email;
+
+    @NotNull
     @Pattern(regexp = "^[0-9]{10}$", message = "Invalid mobile number")
     private String mobile;
 
@@ -43,6 +46,7 @@ public class Hospital {
 
     @NotNull
     private String website;
+
     @NotNull
     private Integer establishedYear;
 

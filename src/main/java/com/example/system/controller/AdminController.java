@@ -1,5 +1,6 @@
 package com.example.system.controller;
 
+import com.example.system.dto.AdminDTO;
 import com.example.system.dto.AppointmentDTO;
 import com.example.system.dto.DoctorDTO;
 import com.example.system.dto.PatientDTO;
@@ -23,10 +24,10 @@ public class AdminController {
     private final AdminService adminService;
 
     @GetMapping("/profile")
-    public ResponseEntity<Admin> getProfile(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<AdminDTO> getProfile(@RequestHeader("Authorization") String token) {
         Admin admin = (Admin) utility.getUserFromToken(token);
         if(admin == null) throw new HospitalManagementException("Admin not found");
-        return ResponseEntity.ok(admin);
+        return ResponseEntity.ok(adminService.getProfile(admin));
     }
 
     @GetMapping("/doctors")

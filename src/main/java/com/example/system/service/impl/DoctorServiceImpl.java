@@ -83,6 +83,18 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    public DoctorDTO getDoctorProfile(Doctor doctor) {
+        return new DoctorDTO(
+                doctor.getId(), doctor.getFirstName(),
+                doctor.getLastName(), doctor.getGender(),
+                doctor.getEmail(), doctor.getMobile(),
+                doctor.getSpecialty(), doctor.getLicenseNumber(),
+                doctor.getDepartment(), doctor.getExperience(),
+                doctor.getImage(), doctor.getDegree()
+        );
+    }
+
+    @Override
     public List<Doctor> searchDoctors(String specialty, Boolean available, String department) {
         return doctorRepo.searchDoctorsByKeyword(specialty, available, department);
     }
@@ -115,25 +127,13 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public List<DoctorDTO> getDoctorBySearch(String keyword) {
         List<Doctor> doctors = doctorRepo.searchDoctorsByKeyword(keyword);
-        return doctors.stream().map(doctor ->
-                new DoctorDTO(doctor.getId(),
-                        doctor.getFirstName(), doctor.getLastName(),
-                        doctor.getSpecialty(), doctor.getDepartment(),
-                        doctor.getExperience(), doctor.getImage(),
-                        doctor.getDegree(), doctor.getEmail())
-        ).toList();
+        return doctors.stream().map(this::getDoctorProfile).toList();
     }
 
     @Override
     public List<DoctorDTO> getHospitalDoctors(Hospital hospital) {
         List<Doctor> doctors = doctorRepo.getDoctorByHospital(hospital);
-        return doctors.stream().map(doctor ->
-                new DoctorDTO(doctor.getId(),
-                        doctor.getFirstName(), doctor.getLastName(),
-                        doctor.getSpecialty(), doctor.getDepartment(),
-                        doctor.getExperience(), doctor.getImage(),
-                        doctor.getDegree(), doctor.getEmail())
-        ).toList();
+        return doctors.stream().map(this::getDoctorProfile).toList();
     }
 
     @Override

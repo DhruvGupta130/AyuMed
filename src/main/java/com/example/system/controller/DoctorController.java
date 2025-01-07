@@ -1,5 +1,6 @@
 package com.example.system.controller;
 
+import com.example.system.dto.DoctorDTO;
 import com.example.system.entity.Doctor;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.service.DoctorService;
@@ -18,10 +19,10 @@ public class DoctorController {
     private final DoctorService doctorService;
 
     @GetMapping("/profile")
-    public ResponseEntity<Doctor> getDoctorProfile(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<DoctorDTO> getDoctorProfile(@RequestHeader("Authorization") String token) {
         Doctor doctor = (Doctor) utility.getUserFromToken(token);
         if (doctor == null) throw new HospitalManagementException("Doctor not found");
-        return ResponseEntity.ok(doctor);
+        return ResponseEntity.ok(doctorService.getDoctorProfile(doctor));
     }
 
     @Transactional

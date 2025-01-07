@@ -1,9 +1,10 @@
 package com.example.system.controller;
 
+import com.example.system.dto.RecordsDTO;
 import com.example.system.entity.Patient;
 import com.example.system.entity.PatientRecord;
 import com.example.system.exception.HospitalManagementException;
-import com.example.system.service.PatientRecordService;
+import com.example.system.service.RecordService;
 import com.example.system.service.utils.Utility;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -24,24 +25,24 @@ import java.util.List;
 @RequestMapping("/api/patient")
 public class PatientRecordController {
 
-    private final PatientRecordService patientRecordService;
+    private final RecordService recordService;
     private final Utility utility;
 
     @PostMapping("/upload")
-    public ResponseEntity<PatientRecord> uploadFile(
+    public ResponseEntity<RecordsDTO> uploadFile(
             @RequestHeader("Authorization") String token,
             @RequestParam("file") MultipartFile file,
             @RequestParam("description") String description) throws IOException {
 
         Patient patient = (Patient) utility.getUserFromToken(token);
-        PatientRecord record = patientRecordService.uploadFile(patient, file, description);
-        return ResponseEntity.ok(record);
+        PatientRecord record = recordService.uploadFile(patient, file, description);
+        return ResponseEntity.ok(recordService.getPatientRecords(record));
     }
 
     @GetMapping("/files")
-    public ResponseEntity<List<PatientRecord>> getFilesByPatient(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<RecordsDTO>> getFilesByPatient(@RequestHeader("Authorization") String token) {
         Patient patient = (Patient) utility.getUserFromToken(token);
-        List<PatientRecord> records = patientRecordService.getFilesByPatientId(patient);
+        List<RecordsDTO> records = recordService.getFilesByPatientId(patient);
         return ResponseEntity.ok(records);
     }
 
@@ -49,7 +50,7 @@ public class PatientRecordController {
     public ResponseEntity<Resource> downloadFile(@PathVariable Long fileId) {
         Resource file;
         try {
-            file = patientRecordService.downloadFile(fileId);
+            file = recordService.downloadFile(fileId);
         } catch (IOException e) {
             throw new HospitalManagementException(e.getMessage());
         }
@@ -79,7 +80,7 @@ public class PatientRecordController {
     @DeleteMapping("/{fileId}/delete")
     public ResponseEntity<String> deleteFile(@PathVariable Long fileId) {
         try {
-            patientRecordService.deleteFile(fileId);
+            recordService.deleteFile(fileId);
         } catch (IOException e) {
             throw new HospitalManagementException(e.getMessage());
         }

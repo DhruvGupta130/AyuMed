@@ -2,11 +2,13 @@ package com.example.system.service.impl;
 
 import com.example.system.dto.DoctorDTO;
 import com.example.system.dto.Password;
+import com.example.system.dto.PatientDTO;
 import com.example.system.entity.*;
 import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
+import com.example.system.service.DoctorService;
 import com.example.system.service.PatientService;
 import com.example.system.service.utils.Utility;
 import jakarta.transaction.Transactional;
@@ -38,6 +40,7 @@ public class PatientServiceImpl implements PatientService {
     private final PasswordEncoder passwordEncoder;
     private final PatientRecordRepo patientRecordRepo;
     private final Utility utility;
+    private final DoctorService doctorService;
 
     @Override
     @Transactional
@@ -140,14 +143,22 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
+    public PatientDTO getPatientProfile(Patient patient) {
+        return new PatientDTO(
+                patient.getId(), patient.getFirstName(),
+                patient.getLastName(), patient.getDateOfBirth(),
+                patient.getGender(), patient.getEmail(),
+                patient.getMobile(), patient.getAlternateMobile(),
+                patient.getAadhaarId(), patient.getNationality(),
+                patient.getImage(), patient.getFullName(),
+                patient.getAddress()
+        );
+    }
+
+    @Override
     public List<DoctorDTO> findDoctorsByDepartment(String department) {
         List<Doctor> doctors = doctorRepo.findAllByDepartment(department);
-        return doctors.stream().map(doctor -> new DoctorDTO(doctor.getId(),
-                doctor.getFirstName(), doctor.getLastName(),
-                doctor.getSpecialty(), department,
-                doctor.getExperience(), doctor.getImage(),
-                doctor.getDegree(), doctor.getEmail())
-        ).toList();
+        return doctors.stream().map(doctorService::getDoctorProfile).toList();
     }
 
     @Override

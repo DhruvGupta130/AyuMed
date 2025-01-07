@@ -20,25 +20,38 @@ public class AuthController {
 
     @Transactional
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegistrationDTO registrationDTO) {
-        if(userRepo.findByUsername(registrationDTO.getUsername()).isPresent()){
-            throw new HospitalManagementException("Username is already registered. Please login");
+    public ResponseEntity<Response> register(@RequestBody RegistrationDTO registrationDTO) {
+        Response response = new Response();
+        try {
+            if (userRepo.findByUsername(registrationDTO.getUsername()).isPresent()) {
+                throw new HospitalManagementException("Username is already registered. Please login");
+            }
+            switch (registrationDTO.getRole()) {
+                case ROLE_PATIENT -> authService.createPatient(registrationDTO);
+                case ROLE_DOCTOR -> authService.createDoctor(registrationDTO);
+                case ROLE_ADMIN -> authService.createAdmin(registrationDTO);
+                case ROLE_MANAGEMENT -> authService.createManager(registrationDTO);
+                case ROLE_PHARMACIST -> authService.createPharmacist(registrationDTO);
+                case null, default ->
+                        throw new HospitalManagementException("Invalid role specified");
+            }
+            response.setMessage("User registered successfully");
+            response.setStatus(HttpStatus.CREATED);
+        } catch (HospitalManagementException e) {
+            response.setError(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setError("An unexpected error occurred during registration");
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        switch (registrationDTO.getRole()) {
-            case ROLE_PATIENT -> authService.createPatient(registrationDTO);
-            case ROLE_DOCTOR -> authService.createDoctor(registrationDTO);
-            case ROLE_ADMIN -> authService.createAdmin(registrationDTO);
-            case ROLE_MANAGEMENT -> authService.createManager(registrationDTO);
-            case ROLE_PHARMACIST -> authService.createPharmacist(registrationDTO);
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully.");
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         try {
-            LoginResponse response = authService.loginService(loginRequest);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            LoginResponse responseDTO = authService.loginService(loginRequest);
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
         } catch (AuthenticationException e) {
             throw new HospitalManagementException("Invalid username or password", e);
         }

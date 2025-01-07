@@ -1,6 +1,7 @@
 package com.example.system.service.impl;
 
 import com.example.system.dto.Password;
+import com.example.system.dto.PharmacistDTO;
 import com.example.system.dto.PharmacyDTO;
 import com.example.system.entity.Address;
 import com.example.system.entity.Medication;
@@ -66,6 +67,26 @@ public class PharmacyServiceImpl implements PharmacyService {
         if(pharmacyDTO.getImages()!=null) pharmacy.setImages(pharmacyDTO.getImages());
         pharmacy.setOpen(true);
         pharmacyRepo.save(pharmacy);
+    }
+
+    @Override
+    public PharmacyDTO getPharmacyProfile(Pharmacy pharmacy) {
+        return new PharmacyDTO(
+                pharmacy.getId(), pharmacy.getPharmacyName(),
+                pharmacy.getAddress(), pharmacy.getEmail(),
+                pharmacy.getMobile(), pharmacy.isOpen(),
+                pharmacy.getOpeningTime(), pharmacy.getClosingTime(),
+                pharmacy.getImages()
+        );
+    }
+
+    @Override
+    public PharmacistDTO getPharmacistProfile(Pharmacist pharmacist) {
+        return new PharmacistDTO(
+                pharmacist.getId(), pharmacist.getFirstName(),
+                pharmacist.getLastName(), pharmacist.getGender(),
+                pharmacist.getEmail(), pharmacist.getMobile()
+        );
     }
 
     @Override
@@ -172,19 +193,13 @@ public class PharmacyServiceImpl implements PharmacyService {
 
     @Override
     public PharmacyDTO getPharmacy(Pharmacist pharmacist) {
-        PharmacyDTO pharmacyDTO = new PharmacyDTO();
-        BeanUtils.copyProperties(pharmacist.getPharmacy(), pharmacyDTO);
-        return pharmacyDTO;
+        return this.getPharmacyProfile(pharmacist.getPharmacy());
     }
 
     @Override
     public List<PharmacyDTO> getPharmaciesWithinRadius(double latitude, double longitude, double radius) {
         List<Pharmacy> pharmacies = medicationRepo.findPharmacyWithinRadius(latitude, longitude, radius);
-        return pharmacies.stream().map(pharmacy -> new PharmacyDTO(pharmacy.getId(),
-                pharmacy.getPharmacyName(), pharmacy.getAddress(),
-                pharmacy.getMobile(), pharmacy.getEmail(), pharmacy.getOpeningTime(),
-                pharmacy.getClosingTime(), pharmacy.getImages(), pharmacy.isOpen())
-        ).toList();
+        return pharmacies.stream().map(this::getPharmacyProfile).toList();
     }
 
     @Override

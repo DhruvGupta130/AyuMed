@@ -2,6 +2,7 @@ package com.example.system.service.impl;
 
 import com.example.system.dto.DoctorDTO;
 import com.example.system.dto.HospitalDTO;
+import com.example.system.dto.ManagerDTO;
 import com.example.system.dto.Password;
 import com.example.system.entity.Address;
 import com.example.system.entity.Hospital;
@@ -32,9 +33,7 @@ public class HospitalServiceImpl implements HospitalService {
 
     @Override
     @Transactional
-    public void registerHospital(HospitalDTO hospitalDTO, Manager manager) {
-        Hospital hospital = new Hospital();
-        BeanUtils.copyProperties(hospitalDTO, hospital);
+    public void registerHospital(Hospital hospital, Manager manager) {
         addressRepo.save(hospital.getAddress());
         hospital.setManager(manager);
         hospitalRepo.save(hospital);
@@ -43,10 +42,14 @@ public class HospitalServiceImpl implements HospitalService {
     }
 
     @Override
-    public HospitalDTO getHospitalProfile(Manager manager) {
-        HospitalDTO hospitalDTO = new HospitalDTO();
-        BeanUtils.copyProperties(manager.getHospital(), hospitalDTO);
-        return hospitalDTO;
+    public HospitalDTO getHospitalProfile(Hospital hospital) {
+        return new HospitalDTO(
+                hospital.getId(), hospital.getHospitalName(),
+                hospital.getAddress(), hospital.getEmail(),
+                hospital.getMobile(), hospital.getDepartments(),
+                hospital.getWebsite(), hospital.getEstablishedYear(),
+                hospital.getDescription(), hospital.getImages()
+        );
     }
 
     @Override
@@ -58,28 +61,25 @@ public class HospitalServiceImpl implements HospitalService {
     }
 
     @Override
+    public ManagerDTO getManagerProfile(Manager manager) {
+        return new ManagerDTO(
+                manager.getId(), manager.getFirstName(),
+                manager.getLastName(), manager.getGender(),
+                manager.getEmail(), manager.getMobile(),
+                manager.getFullName()
+        );
+    }
+
+    @Override
     public List<HospitalDTO> getHospitalsWithinRadius(double latitude, double longitude, double radius) {
         List<Hospital> hospitals = hospitalRepo.findHospitalsWithinRadius(latitude, longitude, radius);
-        return hospitals.stream()
-                .map(hospital -> new HospitalDTO(hospital.getId(),
-                        hospital.getHospitalName(),
-                        hospital.getAddress(), hospital.getMobile(),
-                        hospital.getEmail(), hospital.getWebsite(),
-                        hospital.getEstablishedYear(), hospital.getDescription(),
-                        hospital.getImages())
-                ).toList();
+        return hospitals.stream().map(this::getHospitalProfile).toList();
     }
 
     @Override
     public List<HospitalDTO> searchHospital(String keyword) {
         List<Hospital> hospitals = hospitalRepo.searchByKeyword(keyword);
-        return hospitals.stream().map(hospital ->
-                new HospitalDTO(hospital.getId(),
-                        hospital.getHospitalName(), hospital.getAddress(),
-                        hospital.getMobile(), hospital.getEmail(), hospital.getWebsite(),
-                        hospital.getEstablishedYear(), hospital.getDescription(),
-                        hospital.getImages())
-        ).toList();
+        return hospitals.stream().map(this::getHospitalProfile).toList();
     }
 
     @Override

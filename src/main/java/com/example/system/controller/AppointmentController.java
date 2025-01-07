@@ -2,6 +2,7 @@ package com.example.system.controller;
 
 import com.example.system.dto.AppointmentData;
 import com.example.system.dto.AppointmentStatus;
+import com.example.system.dto.Response;
 import com.example.system.entity.*;
 import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
@@ -31,82 +32,73 @@ public class AppointmentController {
 
     @Transactional
     @PostMapping("/patient/appointment")
-    public ResponseEntity<String> scheduleAppointment(@RequestHeader("Authorization") String token,
-                                                    @RequestBody AppointmentData appointmentData) {
-        Object user = utility.getUserFromToken(token);
-        if(user instanceof Patient patient) {
+    public ResponseEntity<Response> scheduleAppointment(@RequestHeader("Authorization") String token,
+                                                        @RequestBody AppointmentData appointmentData) {
+        Response response = new Response();
+        try {
+            Patient patient = (Patient) utility.getUserFromToken(token);
+            if(patient == null) throw new HospitalManagementException("Patient not found.");
             Doctor doctor = doctorRepo.getDoctorById(appointmentData.getDoctorId()).orElseThrow(
-                    ()-> new HospitalManagementException("Doctor not found"));
+                    () -> new HospitalManagementException("Doctor not found"));
             appointmentService.scheduleAppointment(patient, doctor, appointmentData.getAppointmentDate(),
                     patient.getFirstName() + " " + patient.getLastName(), appointmentData.getSlot());
-            return new ResponseEntity<>("Appointment scheduled Successfully", HttpStatus.OK);
+            response.setMessage("Appointment scheduled Successfully");
+            response.setStatus(HttpStatus.OK);
+        } catch (HospitalManagementException e) {
+            response.setError(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setError("Error while scheduling appointment: "+ e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        throw new HospitalManagementException("Patient not found");
-    }
-
-    @PutMapping("/doctor/appointment")
-    public ResponseEntity<String> updateAppointmentStatus(@RequestHeader("Authorization") String token,
-                                                          @RequestBody AppointmentData appointmentData) {
-        Object user = utility.getUserFromToken(token);
-        if(user instanceof Doctor doctor) {
-            Appointment appointment = appointmentRepo.findById(appointmentData.getId()).orElseThrow(
-                    () -> new HospitalManagementException("Appointment not found"));
-            if(doctor.getAppointments().stream().noneMatch(a -> a.equals(appointment))) throw new HospitalManagementException("You are not authorized to access this appointment.");
-            if (!appointment.getDoctor().getId().equals(doctor.getId()))
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to access this appointment.");
-            appointmentService.UpdateAppointmentStatus(appointment, appointmentData.getStatus());
-            return ResponseEntity.ok("Status Updated Successfully");
-        }
-        throw new HospitalManagementException("Doctor not found");
-    }
-
-    @PutMapping("/doctor/appointment/cancel")
-    public ResponseEntity<String> cancelAppointmentDoctor(@RequestHeader("Authorization") String token,
-                                                          @RequestBody AppointmentData appointmentData){
-        Object user = utility.getUserFromToken(token);
-        if(user instanceof Doctor doctor) {
-            if(doctor.getAppointments().stream().noneMatch(appointment -> appointment.getId().equals(appointmentData.getId()))) throw new HospitalManagementException("You are not authorized to access this appointment.");
-            appointmentService.cancelAppointment(appointmentData.getId(), appointmentData.getCancellationReason(),
-                    doctor.getFirstName() + " " + doctor.getLastName());
-            return ResponseEntity.ok("Appointment Cancelled Successfully");
-        }
-        throw new HospitalManagementException("Doctor not found");
-    }
-
-    @PutMapping("/admin/appointment/cancel")
-    public ResponseEntity<String> cancelAppointmentAdmin(@RequestHeader("Authorization") String token,
-                                                         @RequestBody AppointmentData appointmentData){
-        Object user = utility.getUserFromToken(token);
-        if(user instanceof Admin admin) {
-            appointmentService.cancelAppointment(appointmentData.getId(), appointmentData.getCancellationReason(),
-                    admin.getFirstName() + " " + admin.getLastName());
-            return ResponseEntity.ok("Appointment Cancelled Successfully");
-        }
-        throw new HospitalManagementException("Admin not found");
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @PutMapping("/patient/appointment/cancel")
-    public ResponseEntity<String> cancelAppointmentPatient(@RequestHeader("Authorization") String token,
-                                                           @RequestBody AppointmentData appointmentData){
-        Object user = utility.getUserFromToken(token);
-        if(user instanceof Patient patient) {
-            if(patient.getAppointments().stream().noneMatch(appointment -> appointment.getId().equals(appointmentData.getId()))) throw new HospitalManagementException("You are not authorized to access this appointment.");
-            appointmentService.cancelAppointment(appointmentData.getId(), appointmentData.getCancellationReason(),
-                    patient.getFirstName() + " " + patient.getLastName());
-            return ResponseEntity.ok("Appointment Cancelled Successfully");
+    public ResponseEntity<Response> cancelAppointmentPatient(@RequestHeader("Authorization") String token,
+                                                             @RequestBody AppointmentData appointmentData){
+        Response response = new Response();
+        try {
+            Patient patient = (Patient) utility.getUserFromToken(token);
+            if(patient == null) throw new HospitalManagementException("Patient not found.");
+            if (patient.getAppointments().stream().noneMatch(appointment -> appointment.getId().equals(appointmentData.getId())))
+                throw new HospitalManagementException("You are not authorized to access this appointment.");
+            appointmentService.cancelAppointment(
+                    appointmentData.getId(),
+                    appointmentData.getCancellationReason(),
+                    patient.getFullName());
+            response.setMessage("Appointment cancelled Successfully");
+            response.setStatus(HttpStatus.OK);
+        } catch (HospitalManagementException e) {
+            response.setError(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setError("Error while cancelling appointment: "+ e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        throw new HospitalManagementException("Admin not found");
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @GetMapping("/doctor/appointment")
-    public ResponseEntity<List<Appointment>> getDoctorAppointments(@RequestHeader("Authorization") String token) {
-        Object user = utility.getUserFromToken(token);
-        if(user instanceof Doctor doctor) {
-            List<Appointment> appointments = appointmentRepo.findAllByDoctor(doctor);
-            if(appointments == null) appointments = List.of();
-            return ResponseEntity.ok(appointments);
+    @DeleteMapping("/patient/appointment/delete")
+    public ResponseEntity<Response> removeAppointment(@RequestHeader("Authorization") String token,
+                                                      @RequestBody AppointmentData appointmentData) {
+        Response response = new Response();
+        try{
+            Patient patient = (Patient) utility.getUserFromToken(token);
+            if(patient == null) throw new HospitalManagementException("Patient not found.");
+            Appointment appointment = appointmentRepo.findById(appointmentData.getId()).
+                    orElseThrow(() -> new HospitalManagementException("Appointment not found"));
+            appointmentService.removeOldCanceledAppointments(patient, appointment);
+            response.setMessage("Appointment removed successfully");
+            response.setStatus(HttpStatus.OK);
+        } catch (HospitalManagementException e) {
+            response.setError(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setError("Error while cancelling appointment: "+ e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        throw new HospitalManagementException("Doctor not found");
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @GetMapping("/patient/appointment")
@@ -120,18 +112,88 @@ public class AppointmentController {
         throw new HospitalManagementException("Patient not found");
     }
 
-    @DeleteMapping("/patient/appointment/delete")
-    public ResponseEntity<String> removeAppointment(@RequestHeader("Authorization") String token,
-                                                    @RequestBody AppointmentData appointmentData) {
-        Object user = utility.getUserFromToken(token);
-        if(user instanceof Patient patient) {
+    @PutMapping("/doctor/appointment")
+    public ResponseEntity<Response> updateAppointmentStatus(@RequestHeader("Authorization") String token,
+                                                            @RequestBody AppointmentData appointmentData) {
+        Response response = new Response();
+        try {
+            Doctor doctor = (Doctor) utility.getUserFromToken(token);
+            if(doctor == null) throw new HospitalManagementException("Doctor not found.");
             Appointment appointment = appointmentRepo.findById(appointmentData.getId()).orElseThrow(
                     () -> new HospitalManagementException("Appointment not found"));
-             if(appointmentService.removeOldCanceledAppointments(patient, appointment))
-                 return ResponseEntity.ok("Appointment Deleted Successfully");
-             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Appointment removal failed");
+            if (!appointment.getDoctor().getId().equals(doctor.getId()))
+                throw new HospitalManagementException("You are not authorized to access this appointment.");
+            appointmentService.UpdateAppointmentStatus(appointment, appointmentData.getStatus());
+            response.setMessage("Appointment updated Successfully");
+            response.setStatus(HttpStatus.OK);
+        } catch (HospitalManagementException e) {
+            response.setError(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setError("Error while updating appointment: "+ e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        throw new HospitalManagementException("Patient not found");
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @PutMapping("/doctor/appointment/cancel")
+    public ResponseEntity<Response> cancelAppointmentDoctor(@RequestHeader("Authorization") String token,
+                                                            @RequestBody AppointmentData appointmentData){
+        Response response = new Response();
+        try {
+            Doctor doctor = (Doctor) utility.getUserFromToken(token);
+            if(doctor == null) throw new HospitalManagementException("Doctor not found.");
+            if (doctor.getAppointments().stream().noneMatch(appointment -> appointment.getId().equals(appointmentData.getId())))
+                throw new HospitalManagementException("You are not authorized to access this appointment.");
+            appointmentService.cancelAppointment(
+                    appointmentData.getId(),
+                    appointmentData.getCancellationReason(),
+                    doctor.getFullName()
+            );
+            response.setMessage("Appointment cancelled Successfully");
+            response.setStatus(HttpStatus.OK);
+        } catch (HospitalManagementException e) {
+            response.setError(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setError("Error while cancelling appointment: "+ e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @GetMapping("/doctor/appointment")
+    public ResponseEntity<List<Appointment>> getDoctorAppointments(@RequestHeader("Authorization") String token) {
+        Object user = utility.getUserFromToken(token);
+        if(user instanceof Doctor doctor) {
+            List<Appointment> appointments = appointmentRepo.findAllByDoctor(doctor);
+            if(appointments == null) appointments = List.of();
+            return ResponseEntity.ok(appointments);
+        }
+        throw new HospitalManagementException("Doctor not found");
+    }
+
+    @PutMapping("/admin/appointment/cancel")
+    public ResponseEntity<Response> cancelAppointmentAdmin(@RequestHeader("Authorization") String token,
+                                                           @RequestBody AppointmentData appointmentData){
+        Response response = new Response();
+        try {
+            Admin admin = (Admin) utility.getUserFromToken(token);
+            if(admin == null) throw new HospitalManagementException("Admin not found.");
+            appointmentService.cancelAppointment(
+                    appointmentData.getId(),
+                    appointmentData.getCancellationReason(),
+                    admin.getFullName());
+            response.setMessage("Appointment cancelled Successfully");
+            response.setStatus(HttpStatus.OK);
+        } catch (HospitalManagementException e) {
+            response.setError(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setError("Error while cancelling appointment: "+ e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @GetMapping("/admin/appointments/filter")

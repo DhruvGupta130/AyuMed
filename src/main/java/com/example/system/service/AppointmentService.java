@@ -17,6 +17,6 @@ public interface AppointmentService {
     void scheduleAppointment(Patient patient, Doctor doctor, LocalDate appointmentDate, String createdBy, int slotIndex);
     void UpdateAppointmentStatus(Appointment appointment, AppointmentStatus status);
     void cancelAppointment(Long id, String cancellationReason, String modifiedBy);
-    boolean removeOldCanceledAppointments(Patient patient, Appointment appointment);
+    void removeOldCanceledAppointments(Patient patient, Appointment appointment);
     List<Appointment> filterAppointments(LocalDate startDate, LocalDate endDate, AppointmentStatus status, Long doctorId);
 }

@@ -1,6 +1,7 @@
 package com.example.system.service;
 
 import com.example.system.dto.Password;
+import com.example.system.dto.PharmacistDTO;
 import com.example.system.dto.PharmacyDTO;
 import com.example.system.entity.Address;
 import com.example.system.entity.Medication;
@@ -16,6 +17,8 @@ public interface PharmacyService {
 
     void createPharmacy(PharmacyDTO pharmacy, Pharmacist pharmacist);
     void updatePharmacy(PharmacyDTO pharmacy, Pharmacist pharmacist);
+    PharmacyDTO getPharmacyProfile(Pharmacy pharmacy);
+    PharmacistDTO getPharmacistProfile(Pharmacist pharmacist);
     void updatePharmacy(Medication medication, Pharmacist pharmacist);
     void saveFromExcel(MultipartFile file, Pharmacist pharmacist);
     void setStatus(Pharmacy pharmacy);

@@ -6,11 +6,10 @@ import java.time.LocalDate;
 
 public class AppointmentSpecifications {
 
-    // Filter by appointment date range
     public static Specification<Appointment> betweenDates(LocalDate startDate, LocalDate endDate) {
-        return (root, query, criteriaBuilder) -> {
+        return (root, _, criteriaBuilder) -> {
             if (startDate == null && endDate == null) {
-                return criteriaBuilder.conjunction(); // No filter if both are null
+                return criteriaBuilder.conjunction();
             } else if (startDate != null && endDate != null) {
                 return criteriaBuilder.between(root.get("appointmentDate"), startDate, endDate);
             } else if (startDate != null) {
@@ -21,21 +20,19 @@ public class AppointmentSpecifications {
         };
     }
 
-    // Filter by appointment status
     public static Specification<Appointment> hasStatus(AppointmentStatus status) {
-        return (root, query, criteriaBuilder) -> {
+        return (root, _, criteriaBuilder) -> {
             if (status == null) {
-                return criteriaBuilder.conjunction(); // No filter if status is null
+                return criteriaBuilder.conjunction();
             }
             return criteriaBuilder.equal(root.get("status"), status);
         };
     }
 
-    // Filter by doctor ID
     public static Specification<Appointment> byDoctorId(Long doctorId) {
-        return (root, query, criteriaBuilder) -> {
+        return (root, _, criteriaBuilder) -> {
             if (doctorId == null) {
-                return criteriaBuilder.conjunction(); // No filter if doctorId is null
+                return criteriaBuilder.conjunction();
             }
             return criteriaBuilder.equal(root.get("doctor").get("id"), doctorId);
         };

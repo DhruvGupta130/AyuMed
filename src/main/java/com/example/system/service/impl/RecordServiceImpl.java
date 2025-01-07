@@ -1,9 +1,10 @@
 package com.example.system.service.impl;
 
+import com.example.system.dto.RecordsDTO;
 import com.example.system.entity.Patient;
 import com.example.system.entity.PatientRecord;
 import com.example.system.repository.PatientRecordRepo;
-import com.example.system.service.PatientRecordService;
+import com.example.system.service.RecordService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -19,7 +20,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @Service
-public class RecordServiceImpl implements PatientRecordService {
+public class RecordServiceImpl implements RecordService {
 
     private final PatientRecordRepo patientRecordRepo;
 
@@ -51,6 +52,16 @@ public class RecordServiceImpl implements PatientRecordService {
     }
 
     @Override
+    public RecordsDTO getPatientRecords(PatientRecord patientRecord) {
+        return new RecordsDTO(
+                patientRecord.getId(), patientRecord.getPatient(),
+                patientRecord.getFileName(), patientRecord.getFilePath(),
+                patientRecord.getUploadDate(), patientRecord.getFileType(),
+                patientRecord.getDescription()
+        );
+    }
+
+    @Override
     public Resource downloadFile(Long fileId) throws IOException {
         PatientRecord record = patientRecordRepo.findById(fileId)
                 .orElseThrow(() -> new FileNotFoundException("File not found"));
@@ -70,7 +81,8 @@ public class RecordServiceImpl implements PatientRecordService {
     }
 
     @Override
-    public List<PatientRecord> getFilesByPatientId(Patient patient) {
-        return patientRecordRepo.findByPatient(patient);
+    public List<RecordsDTO> getFilesByPatientId(Patient patient) {
+        return patientRecordRepo.findByPatient(patient)
+                .stream().map(this::getPatientRecords).toList();
     }
 }
