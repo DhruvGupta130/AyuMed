@@ -4,7 +4,6 @@ import com.example.system.configuration.JwtUtils;
 import com.example.system.dto.LoginRequest;
 import com.example.system.dto.LoginResponse;
 import com.example.system.dto.RegistrationDTO;
-import com.example.system.dto.Response;
 import com.example.system.entity.*;
 import com.example.system.entity.Pharmacist;
 import com.example.system.entity.Doctor;
