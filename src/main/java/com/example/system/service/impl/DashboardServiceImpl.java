@@ -87,7 +87,7 @@ public class DashboardServiceImpl implements DashboardService {
         Map<String, Object> metrics = new HashMap<>();
         Map<String, Double> averageDurationByDoctor = appointmentRepo.findAll().stream()
                 .collect(Collectors.groupingBy(a -> a.getDoctor().getFullName(),
-                        Collectors.averagingDouble(a -> Duration.between(a.getCreatedAt(), a.getUpdatedAt()).toMinutes())));
+                        Collectors.averagingDouble(a -> Duration.between(a.getCreatedAt(), a.getLastUpdatedAt()).toMinutes())));
         metrics.put("averageDurationByDoctor", averageDurationByDoctor);
         Map<YearMonth, Long> patientGrowth = patientRepo.findAll().stream()
                 .collect(Collectors.groupingBy(p -> YearMonth.from(p.getCreatedAt().toLocalDate()), Collectors.counting()));

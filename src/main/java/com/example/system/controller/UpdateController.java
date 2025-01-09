@@ -32,12 +32,14 @@ public class UpdateController {
     private final PharmacyService pharmacyService;
 
     @Transactional
-    @PutMapping("/updateProfile")
+    @PutMapping("/doctor/updateProfile")
     public ResponseEntity<Response> updateProfile(@RequestHeader("Authorization") String token,
                                                   @ModelAttribute ProfileUpdateDTO profileUpdateDTO,
                                                   @RequestParam("image") MultipartFile image) {
         Response response = new Response();
-        Doctor doctor = (Doctor) utility.getUserFromToken(token);
+        Object user = utility.getUserFromToken(token);
+        if (!(user instanceof Doctor doctor))
+            throw new HospitalManagementException("Unauthorized access: User is not a doctor.");
         try {
             if (doctor.getSchedules().isEmpty()) {
                 doctorService.updateDoctor(doctor, profileUpdateDTO, image);
@@ -48,29 +50,31 @@ public class UpdateController {
                 response.setStatus(HttpStatus.BAD_REQUEST);
             }
         } catch (HospitalManagementException e) {
-            response.setError(e.getMessage());
+            response.setMessage(e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            response.setError("Error updating profile: " + e.getMessage());
+            response.setMessage("Error updating profile: " + e.getMessage());
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @PutMapping("/add-medical")
+    @PutMapping("/patient/add-medical")
     public ResponseEntity<Response> addMedicalHistory(@RequestHeader("Authorization") String token,
                                                       @RequestBody List<MedicalHistory> medicalHistories){
         Response response = new Response();
         try {
-            Patient patient = (Patient) utility.getUserFromToken(token);
+            Object user = utility.getUserFromToken(token);
+            if (!(user instanceof Patient patient))
+                throw new HospitalManagementException("Unauthorized: User is not a patient.");
             patientService.addMedicalHistory(patient, medicalHistories);
             response.setMessage("Medical history added successfully");
             response.setStatus(HttpStatus.OK);
         } catch (HospitalManagementException e) {
-            response.setError(e.getMessage());
+            response.setMessage(e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            response.setError("Error while adding Medical History: " + e.getMessage());
+            response.setMessage("Error while adding Medical History: " + e.getMessage());
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(response.getStatus()).body(response);
@@ -92,10 +96,10 @@ public class UpdateController {
             response.setMessage("Address updated successfully");
             response.setStatus(HttpStatus.OK);
         } catch (HospitalManagementException e) {
-            response.setError(e.getMessage());
+            response.setMessage(e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            response.setError("Error while updating address: " + e.getMessage());
+            response.setMessage("Error while updating address: " + e.getMessage());
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(response.getStatus()).body(response);
@@ -117,10 +121,10 @@ public class UpdateController {
             response.setMessage("Password updated successfully");
             response.setStatus(HttpStatus.OK);
         } catch (HospitalManagementException e) {
-            response.setError(e.getMessage());
+            response.setMessage(e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            response.setError("Error while updating password: " + e.getMessage());
+            response.setMessage("Error while updating password: " + e.getMessage());
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(response.getStatus()).body(response);

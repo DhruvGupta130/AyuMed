@@ -149,7 +149,7 @@ public class PatientServiceImpl implements PatientService {
                 patient.getLastName(), patient.getDateOfBirth(),
                 patient.getGender(), patient.getEmail(),
                 patient.getMobile(), patient.getAlternateMobile(),
-                patient.getAadhaarId(), patient.getNationality(),
+                hideAadhaarId(patient.getAadhaarId()), patient.getNationality(),
                 patient.getImage(), patient.getFullName(),
                 patient.getAddress()
         );
@@ -177,5 +177,13 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public List<TimeSlot> getAvailableSlots(LocalDate date, Doctor doctor){
         return scheduleRepo.findAllByDateAndAvailableAAndDoctor(date, doctor);
+    }
+
+    private String hideAadhaarId(long aadhaarId) {
+        String aadhaarStr = Long.toString(aadhaarId);
+        if (aadhaarStr.length() != 12) {
+            throw new IllegalArgumentException("Invalid Aadhaar ID length");
+        }
+        return "XXXX XXXX XXXX " + aadhaarStr.substring(8);
     }
 }

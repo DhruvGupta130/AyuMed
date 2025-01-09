@@ -7,7 +7,6 @@ import com.example.system.service.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,10 +37,10 @@ public class AuthController {
             response.setMessage("User registered successfully");
             response.setStatus(HttpStatus.CREATED);
         } catch (HospitalManagementException e) {
-            response.setError(e.getMessage());
+            response.setMessage(e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            response.setError("An unexpected error occurred during registration");
+            response.setMessage("An unexpected error occurred during registration: " + e.getMessage());
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(response.getStatus()).body(response);
@@ -49,11 +48,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-        try {
             LoginResponse responseDTO = authService.loginService(loginRequest);
             return new ResponseEntity<>(responseDTO, HttpStatus.OK);
-        } catch (AuthenticationException e) {
-            throw new HospitalManagementException("Invalid username or password", e);
-        }
     }
 }

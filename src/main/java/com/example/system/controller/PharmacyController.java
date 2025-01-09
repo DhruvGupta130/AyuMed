@@ -39,10 +39,10 @@ public class PharmacyController {
             response.setMessage("Pharmacy successfully registered.");
             response.setStatus(HttpStatus.OK);
         } catch (HospitalManagementException e) {
-            response.setError(e.getMessage());
+            response.setMessage(e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            response.setError(e.getMessage());
+            response.setMessage(e.getMessage());
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(response.getStatus()).body(response);
@@ -62,10 +62,10 @@ public class PharmacyController {
             response.setMessage("Pharmacy successfully updated.");
             response.setStatus(HttpStatus.OK);
         } catch (HospitalManagementException e) {
-            response.setError(e.getMessage());
+            response.setMessage(e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            response.setError(e.getMessage());
+            response.setMessage(e.getMessage());
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(response.getStatus()).body(response);
@@ -82,10 +82,10 @@ public class PharmacyController {
             response.setMessage("Medication successfully added.");
             response.setStatus(HttpStatus.OK);
         } catch (HospitalManagementException e) {
-            response.setError(e.getMessage());
+            response.setMessage(e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            response.setError(e.getMessage());
+            response.setMessage(e.getMessage());
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(response.getStatus()).body(response);
@@ -102,10 +102,10 @@ public class PharmacyController {
             response.setMessage("Pharmacy successfully uploaded.");
             response.setStatus(HttpStatus.OK);
         } catch (HospitalManagementException e) {
-            response.setError(e.getMessage());
+            response.setMessage(e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            response.setError(e.getMessage());
+            response.setMessage(e.getMessage());
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(response.getStatus()).body(response);
@@ -121,10 +121,10 @@ public class PharmacyController {
             response.setMessage("Pharmacy successfully updated to " + pharmacist.getPharmacy().isOpen());
             response.setStatus(HttpStatus.OK);
         } catch (HospitalManagementException e) {
-            response.setError(e.getMessage());
+            response.setMessage(e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            response.setError(e.getMessage());
+            response.setMessage(e.getMessage());
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(response.getStatus()).body(response);

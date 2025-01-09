@@ -33,7 +33,7 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     @Transactional
-    public PatientRecord uploadFile(Patient patient, MultipartFile file, String description) throws IOException {
+    public void uploadFile(Patient patient, MultipartFile file, String description) throws IOException {
         String patientDirPath = storagePath + "/" + patient.getId();
         String filePath = patientDirPath + "/" + file.getOriginalFilename();
         Path parentDir = Paths.get(patientDirPath);
@@ -48,7 +48,7 @@ public class RecordServiceImpl implements RecordService {
         record.setFilePath(filePath);
         record.setFileType(file.getContentType());
         record.setDescription(description);
-        return patientRecordRepo.save(record);
+        patientRecordRepo.save(record);
     }
 
     @Override

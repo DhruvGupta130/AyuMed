@@ -30,9 +30,7 @@ public class Hospital {
     @NotNull
     private String email;
 
-    @NotNull
-    @Pattern(regexp = "^[0-9]{10}$", message = "Invalid mobile number")
-    private String mobile;
+    private long mobile;
 
     @OneToMany(mappedBy = "hospital", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Doctor> doctors;

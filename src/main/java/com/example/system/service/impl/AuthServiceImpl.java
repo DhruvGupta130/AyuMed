@@ -4,6 +4,7 @@ import com.example.system.configuration.JwtUtils;
 import com.example.system.dto.LoginRequest;
 import com.example.system.dto.LoginResponse;
 import com.example.system.dto.RegistrationDTO;
+import com.example.system.dto.Response;
 import com.example.system.entity.*;
 import com.example.system.entity.Pharmacist;
 import com.example.system.entity.Doctor;
@@ -121,17 +122,28 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public LoginResponse loginService(LoginRequest request) {
-        LoginUser user = userRepo.findByUsername(request.getUsername())
-                .orElseThrow(() -> new HospitalManagementException("Invalid UserName or Password"));
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-        );
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getUsername());
-        String token = jwtUtils.generateToken(userDetails);
-        return new LoginResponse(
-                token, user.getUsername(), user.getRole(),
-                "Login Successful", HttpStatus.OK
-        );
+        LoginResponse response = new LoginResponse();
+        try {
+            LoginUser user = userRepo.findByUsername(request.getUsername())
+                    .orElseThrow(() -> new HospitalManagementException("Invalid UserName or Password"));
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+            );
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getUsername());
+            String token = jwtUtils.generateToken(userDetails);
+            response.setToken(token);
+            response.setRole(user.getRole());
+            response.setUsername(user.getUsername());
+            response.setMessage("Successfully logged in");
+            response.setStatus(HttpStatus.OK);
+        } catch (HospitalManagementException e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setMessage("An unexpected error occurred: " + e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return response;
     }
 
     private void setCommonAttributes(LoginUser loginUser, RegistrationDTO registrationDTO) {

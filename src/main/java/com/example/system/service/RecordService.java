@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public interface RecordService {
 
-    PatientRecord uploadFile(Patient patient, MultipartFile file, String description) throws IOException;
+    void uploadFile(Patient patient, MultipartFile file, String description) throws IOException;
     RecordsDTO getPatientRecords(PatientRecord patientRecord);
     Resource downloadFile(Long fileId) throws IOException;
     void deleteFile(Long fileId) throws IOException;

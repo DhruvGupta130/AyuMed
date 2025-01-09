@@ -1,6 +1,6 @@
 package com.example.system.controller;
 
-import com.example.system.dto.FeedbackDTO; // DTO for feedback data transfer
+import com.example.system.dto.FeedbackDTO;
 import com.example.system.entity.Feedback;
 import com.example.system.service.FeedbackService;
 import lombok.AllArgsConstructor;

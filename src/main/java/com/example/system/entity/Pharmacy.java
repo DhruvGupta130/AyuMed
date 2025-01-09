@@ -27,8 +27,8 @@ public class Pharmacy {
 
     @Email
     private String email;
-    @Pattern(regexp = "^[0-9]{10}$", message = "Invalid mobile number")
-    private String mobile;
+
+    private long mobile;
 
     @OneToMany(mappedBy = "pharmacy", cascade = CascadeType.ALL)
     private List<Medication> medications;

@@ -1,6 +1,5 @@
 package com.example.system.dto;
 
-import com.example.system.entity.Hospital;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

@@ -3,7 +3,6 @@ package com.example.system.dto;
 import com.example.system.entity.Address;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Set;
@@ -16,7 +15,7 @@ public class HospitalDTO {
     private String hospitalName;
     private Address address;
     private String email;
-    private String mobile;
+    private long mobile;
     private Set<String> departments;
     private String website;
     private int establishedYear;

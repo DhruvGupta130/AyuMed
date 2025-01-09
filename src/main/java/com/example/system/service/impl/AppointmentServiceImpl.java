@@ -1,12 +1,16 @@
 package com.example.system.service.impl;
 
-import com.example.system.dto.*;
+import com.example.system.dto.AppointmentDTO;
+import com.example.system.dto.AppointmentStatus;
+import com.example.system.dto.EmailStructures;
 import com.example.system.entity.*;
 import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
 import com.example.system.service.AppointmentService;
+import com.example.system.service.DoctorService;
+import com.example.system.service.PatientService;
 import com.example.system.service.utils.EmailService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -30,6 +34,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+    private final PatientService patientService;
+    private final DoctorService doctorService;
 
     @Override
     public List<Appointment> getAllAppointments() {
@@ -39,7 +45,20 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public Appointment getAppointmentById(Long id) {
         return appointmentRepo.findById(id)
-                .orElseThrow(() -> new HospitalManagementException("Appointment not found with id: " + id));
+                .orElseThrow(() -> new HospitalManagementException("Appointment not found"));
+    }
+
+    @Override
+    public AppointmentDTO getAppointment(Appointment appointment) {
+        return new AppointmentDTO(
+                appointment.getId(),
+                patientService.getPatientProfile(appointment.getPatient()),
+                doctorService.getDoctorProfile(appointment.getDoctor()),
+                appointment.getAppointmentDate(), appointment.getCreatedAt(),
+                appointment.getLastUpdatedAt(), appointment.getStatus(),
+                appointment.getCancellationReason(), appointment.getCreatedBy(),
+                appointment.getLastModifiedBy(), appointment.getSlotIndex()
+        );
     }
 
     @Override
@@ -179,7 +198,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (appointment.getStatus() == AppointmentStatus.CANCELED &&
                 ChronoUnit.MONTHS.between(appointment.getAppointmentDate(), LocalDateTime.now()) > 1){
             appointmentRepo.delete(appointment);
-            return true;
         }
         throw new HospitalManagementException("Only cancelled and older appointments can be removed.");
     }

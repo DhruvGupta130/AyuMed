@@ -1,7 +1,6 @@
 package com.example.system.controller;
 
 import com.example.system.dto.AdminDTO;
-import com.example.system.dto.AppointmentDTO;
 import com.example.system.dto.DoctorDTO;
 import com.example.system.dto.PatientDTO;
 import com.example.system.entity.*;
@@ -38,11 +37,6 @@ public class AdminController {
     @GetMapping("/patients")
     public ResponseEntity<List<PatientDTO>> getAllPatients() {
         return ResponseEntity.ok(adminService.getAllPatients());
-    }
-
-    @GetMapping("/appointments")
-    public ResponseEntity<List<AppointmentDTO>> getAllAppointments() {
-        return ResponseEntity.ok(adminService.getAllAppointments());
     }
 
     @Transactional

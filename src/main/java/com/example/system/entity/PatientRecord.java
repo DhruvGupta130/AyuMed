@@ -17,7 +17,7 @@ public class PatientRecord {
     private Long id;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Patient patient;
 
     private String fileName;

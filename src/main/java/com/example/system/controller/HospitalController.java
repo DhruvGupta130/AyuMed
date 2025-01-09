@@ -29,32 +29,39 @@ public class HospitalController {
 
     @Transactional
     @PostMapping("/register")
-    public ResponseEntity<String> registerHospital(
-            @RequestHeader("Authorization") String token,
-            @RequestBody Hospital hospital
-    ) {
-        Manager manager = (Manager) utility.getUserFromToken(token);
-        if(manager == null) throw new HospitalManagementException("Hospital manager not found");
-        hospitalService.registerHospital(hospital, manager);
-        return ResponseEntity.ok("Hospital registered successfully");
+    public ResponseEntity<Response> registerHospital(@RequestHeader("Authorization") String token,
+                                                     @RequestBody Hospital hospital) {
+        Response response = new Response();
+        try {
+            Manager manager = (Manager) utility.getUserFromToken(token);
+            hospitalService.registerHospital(hospital, manager);
+            response.setMessage("Hospital registered successfully");
+            response.setStatus(HttpStatus.CREATED);
+        } catch (HospitalManagementException e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setMessage("Error registering hospital: " + e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     @GetMapping("/manager")
     public ResponseEntity<ManagerDTO> getHospitalManager(@RequestHeader("Authorization") String token) {
         Manager manager = (Manager) utility.getUserFromToken(token);
-        if(manager == null) throw new HospitalManagementException("Hospital manager not found");
         return ResponseEntity.ok(hospitalService.getManagerProfile(manager));
     }
     @GetMapping
     public ResponseEntity<HospitalDTO> getHospital(@RequestHeader("Authorization") String token) {
         Manager manager = (Manager) utility.getUserFromToken(token);
-        if(manager == null) throw new HospitalManagementException("Hospital manager not found");
+        if(manager.getHospital() == null) throw new HospitalManagementException("Hospital not registered!");
         return ResponseEntity.ok(hospitalService.getHospitalProfile(manager.getHospital()));
     }
 
     @GetMapping("/doctors")
     public ResponseEntity<List<DoctorDTO>> getAllDoctors(@RequestHeader("Authorization") String token) {
         Manager manager = (Manager) utility.getUserFromToken(token);
-        if(manager == null) throw new HospitalManagementException("Hospital manager not found");
+        if (manager.getHospital() == null) throw new HospitalManagementException("Please register hospital first!");
         return ResponseEntity.ok(hospitalService.getAllDoctors(manager.getHospital()));
     }
 
@@ -66,17 +73,17 @@ public class HospitalController {
                 throw new HospitalManagementException("User already exists");
             });
             Manager manager = (Manager) utility.getUserFromToken(token);
-            if (manager == null) throw new HospitalManagementException("Hospital manager not found");
+            if (manager.getHospital() == null) throw new HospitalManagementException("Please register hospital first!");
             registrationDTO.setHospitalId(manager.getHospital().getId());
             registrationDTO.setRole(UserRole.ROLE_DOCTOR);
             doctorService.registerDoctor(registrationDTO);
             response.setMessage("Doctor registered successfully");
             response.setStatus(HttpStatus.CREATED);
         } catch (HospitalManagementException e) {
-            response.setError(e.getMessage());
+            response.setMessage(e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            response.setError("Error registering doctor" + e.getMessage());
+            response.setMessage("Error registering doctor" + e.getMessage());
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(response.getStatus()).body(response);
@@ -88,15 +95,15 @@ public class HospitalController {
         Response response = new Response();
         try {
             Manager manager = (Manager) utility.getUserFromToken(token);
-            if (manager == null) throw new HospitalManagementException("Hospital manager not found");
+            if (manager.getHospital() == null) throw new HospitalManagementException("Please register hospital first!");
             doctorService.saveFromExcel(file, manager.getHospital().getId());
             response.setMessage("Doctors added successfully");
             response.setStatus(HttpStatus.CREATED);
         } catch (HospitalManagementException e) {
-            response.setError(e.getMessage());
+            response.setMessage(e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            response.setError("Error adding doctor" + e.getMessage());
+            response.setMessage("Error adding doctor" + e.getMessage());
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(response.getStatus()).body(response);

@@ -9,6 +9,7 @@ import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
 import com.example.system.repository.*;
 import com.example.system.service.AdminService;
+import com.example.system.service.AppointmentService;
 import com.example.system.service.DoctorService;
 import com.example.system.service.PatientService;
 import lombok.AllArgsConstructor;
@@ -24,9 +25,9 @@ public class AdminServiceImpl implements AdminService {
     private final AdminRepo adminRepo;
     private final DoctorRepo doctorRepo;
     private final PatientRepo patientRepo;
-    private final AppointmentRepo appointmentRepo;
     private final DoctorService doctorService;
     private final PatientService patientService;
+    private final AppointmentService appointmentService;
 
     @Override
     @Transactional
@@ -65,12 +66,8 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public List<AppointmentDTO> getAllAppointments() {
-        List<Appointment> appointments = appointmentRepo.findAll();
+        List<Appointment> appointments = appointmentService.getAllAppointments();
         return appointments.stream()
-                .map(appointment -> new AppointmentDTO(
-                        patientService.getPatientProfile(appointment.getPatient()),
-                        doctorService.getDoctorProfile(appointment.getDoctor()),
-                        appointment.getAppointmentDate(), appointment.getStatus())
-                ).toList();
+                .map(appointmentService::getAppointment).toList();
     }
 }
