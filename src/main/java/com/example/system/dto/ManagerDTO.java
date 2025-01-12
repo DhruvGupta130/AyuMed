@@ -14,5 +14,6 @@ public class ManagerDTO {
     private Gender gender;
     private String email;
     private long mobile;
+    private String hospitalName;
     private String fullName;
 }

@@ -7,8 +7,8 @@ import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
 import com.example.system.service.AuthService;
 import com.example.system.service.DoctorService;
+import com.example.system.service.FileService;
 import com.example.system.service.SlotInitializationService;
-import com.example.system.service.utils.Utility;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -38,7 +38,7 @@ public class DoctorServiceImpl implements DoctorService {
     private final SlotInitializationService slotInitializationService;
     private final AuthService authService;
     private final PasswordEncoder passwordEncoder;
-    private final Utility utility;
+    private final FileService fileService;
 
     @Override
     public Doctor getDoctorById(long id) {
@@ -95,8 +95,9 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public List<Doctor> searchDoctors(String specialty, Boolean available, String department) {
-        return doctorRepo.searchDoctorsByKeyword(specialty, available, department);
+    public List<DoctorDTO> searchDoctors(String specialty, Boolean available, String department) {
+        List<Doctor> doctors = doctorRepo.searchDoctorsByKeyword(specialty, available, department);
+        return doctors.stream().map(this::getDoctorProfile).toList();
     }
 
     @Override
@@ -106,7 +107,7 @@ public class DoctorServiceImpl implements DoctorService {
         doctor.setDegree(updateDTO.getDegree());
         if (image != null && !image.isEmpty()) {
             try {
-                String imagePath = utility.saveImage(image);
+                String imagePath = fileService.saveFile(image).getFilePath();
                 doctor.setImage(imagePath);
             } catch (Exception e) {
                 throw new HospitalManagementException(e.getMessage());
@@ -125,9 +126,13 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public List<DoctorDTO> getDoctorBySearch(String keyword) {
-        List<Doctor> doctors = doctorRepo.searchDoctorsByKeyword(keyword);
-        return doctors.stream().map(this::getDoctorProfile).toList();
+    public List<DoctorDTO> getDoctorsBySearch(String keyword) {
+        return doctorRepo.searchDoctorsByKeyword(keyword).stream().map(this::getDoctorProfile).toList();
+    }
+
+    @Override
+    public List<DoctorDTO> getDoctorsByDepartment(String department) {
+        return doctorRepo.findAllByDepartment(department).stream().map(this::getDoctorProfile).toList();
     }
 
     @Override

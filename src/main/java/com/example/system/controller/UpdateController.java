@@ -59,27 +59,6 @@ public class UpdateController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @PutMapping("/patient/add-medical")
-    public ResponseEntity<Response> addMedicalHistory(@RequestHeader("Authorization") String token,
-                                                      @RequestBody List<MedicalHistory> medicalHistories){
-        Response response = new Response();
-        try {
-            Object user = utility.getUserFromToken(token);
-            if (!(user instanceof Patient patient))
-                throw new HospitalManagementException("Unauthorized: User is not a patient.");
-            patientService.addMedicalHistory(patient, medicalHistories);
-            response.setMessage("Medical history added successfully");
-            response.setStatus(HttpStatus.OK);
-        } catch (HospitalManagementException e) {
-            response.setMessage(e.getMessage());
-            response.setStatus(HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            response.setMessage("Error while adding Medical History: " + e.getMessage());
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return ResponseEntity.status(response.getStatus()).body(response);
-    }
-
     @PutMapping("/address")
     public ResponseEntity<Response> updateAddress(@RequestHeader("Authorization") String token,
                                                   @RequestBody Address address){

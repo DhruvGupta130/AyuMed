@@ -1,9 +1,6 @@
 package com.example.system.service.impl;
 
-import com.example.system.dto.DoctorDTO;
-import com.example.system.dto.HospitalDTO;
-import com.example.system.dto.ManagerDTO;
-import com.example.system.dto.Password;
+import com.example.system.dto.*;
 import com.example.system.entity.Address;
 import com.example.system.entity.Hospital;
 import com.example.system.entity.Manager;
@@ -13,8 +10,8 @@ import com.example.system.repository.HospitalRepo;
 import com.example.system.repository.ManagerRepo;
 import com.example.system.service.DoctorService;
 import com.example.system.service.HospitalService;
+import com.example.system.service.PatientService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +27,7 @@ public class HospitalServiceImpl implements HospitalService {
     private final AddressRepo addressRepo;
     private final PasswordEncoder passwordEncoder;
     private final DoctorService doctorService;
+    private final PatientService patientService;
 
     @Override
     @Transactional
@@ -61,11 +59,23 @@ public class HospitalServiceImpl implements HospitalService {
     }
 
     @Override
+    public List<String> getAllDepartments(Hospital hospital) {
+        return hospitalRepo.getAllDepartments(hospital);
+    }
+
+    @Override
+    public List<HospitalPatientDTO> getAllPatients(Hospital hospital) {
+        return patientService.getHospitalPatient(hospital);
+    }
+
+    @Override
     public ManagerDTO getManagerProfile(Manager manager) {
         return new ManagerDTO(
                 manager.getId(), manager.getFirstName(),
                 manager.getLastName(), manager.getGender(),
                 manager.getEmail(), manager.getMobile(),
+                manager.getHospital() ==null ?
+                        null : manager.getHospital().getHospitalName(),
                 manager.getFullName()
         );
     }

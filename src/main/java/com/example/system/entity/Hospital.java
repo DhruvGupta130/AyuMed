@@ -48,8 +48,11 @@ public class Hospital {
     private Integer establishedYear;
 
     @NotNull
-    @Column(length = 50000)
+    @Column(length = 500000)
     private String description;
+
+    @OneToMany(mappedBy = "hospital")
+    private List<Feedback> feedbacks;
 
     @NotNull
     @ElementCollection

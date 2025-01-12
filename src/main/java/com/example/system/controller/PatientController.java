@@ -1,8 +1,6 @@
 package com.example.system.controller;
 
-import com.example.system.dto.DoctorDTO;
-import com.example.system.dto.PatientDTO;
-import com.example.system.dto.Response;
+import com.example.system.dto.*;
 import com.example.system.entity.*;
 import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
@@ -136,10 +134,8 @@ public class PatientController {
     public ResponseEntity<List<DoctorDTO>> searchDoctors(@RequestParam(required = false) String specialty,
                                                          @RequestParam(required = false) Boolean available,
                                                          @RequestParam(required = false) String department) {
-        List<Doctor> doctors = doctorService.searchDoctors(specialty, available, department);
-        List<DoctorDTO> doctorDTOS = doctors.stream()
-                .map(doctorService::getDoctorProfile).toList();
-        return ResponseEntity.ok(doctorDTOS);
+        List<DoctorDTO> doctors = doctorService.searchDoctors(specialty, available, department);
+        return ResponseEntity.ok(doctors);
     }
 
     @Transactional
@@ -163,12 +159,12 @@ public class PatientController {
 
     @GetMapping("/doctor")
     public ResponseEntity<List<DoctorDTO>> getDoctorsByDepartment(@RequestParam String department) {
-        List<DoctorDTO> doctorDTOS = patientService.findDoctorsByDepartment(department);
+        List<DoctorDTO> doctorDTOS = doctorService.getDoctorsByDepartment(department);
         return ResponseEntity.ok(doctorDTOS);
     }
 
     @GetMapping("/lab")
-    public ResponseEntity<List<MedicalTest>> getMedicalTests(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<LabTestDTO>> getMedicalTests(@RequestHeader("Authorization") String token) {
         Patient patient = (Patient) utility.getUserFromToken(token);
         return ResponseEntity.ok().body(patientService.getMedicalTests(patient));
     }
@@ -180,8 +176,9 @@ public class PatientController {
     }
 
     @GetMapping("/medical-histories")
-    public ResponseEntity<List<MedicalHistory>> getMedicalHistories(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<MedicalHistoryDTO>> getMedicalHistories(@RequestHeader("Authorization") String token) {
         Patient patient = (Patient) utility.getUserFromToken(token);
-        return ResponseEntity.ok(patient.getMedicalHistories());
+        if(patient.getMedicalHistories() == null) throw new HospitalManagementException("No medical histories found");
+        return ResponseEntity.ok(patientService.getMedicalHistory(patient));
     }
 }

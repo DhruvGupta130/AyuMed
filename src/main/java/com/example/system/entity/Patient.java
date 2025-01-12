@@ -41,7 +41,6 @@ public class Patient {
 
     private Long aadhaarId;
 
-    private String nationality;
     private String image;
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -55,7 +54,7 @@ public class Patient {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private LoginUser loginUser = new LoginUser();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Appointment> appointments;
 
     @JsonIgnore

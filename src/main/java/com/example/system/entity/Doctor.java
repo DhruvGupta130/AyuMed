@@ -40,6 +40,9 @@ public class Doctor {
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Schedule> schedules;
 
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MedicalHistory> medicalHistories;
+
     @JsonIgnore
     @ManyToOne
     private Hospital hospital;

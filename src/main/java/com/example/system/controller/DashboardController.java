@@ -80,14 +80,4 @@ public class DashboardController {
         return ResponseEntity.ok(dashboardService.searchByKeyword(keyword));
     }
 
-    @GetMapping("/get/profile")
-    public ResponseEntity<Resource> downloadFile(@RequestParam("image") String filePath) {
-        Resource file = new FileSystemResource(Paths.get(filePath));
-        if (!file.exists() || !file.isReadable()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(file);
-    }
-
-
 }

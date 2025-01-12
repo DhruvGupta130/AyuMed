@@ -117,7 +117,7 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public Search searchByKeyword(String keyword) {
         List<HospitalDTO> hospitals = hospitalService.searchHospital(keyword);
-        List<DoctorDTO> doctors = doctorService.getDoctorBySearch(keyword);
+        List<DoctorDTO> doctors = doctorService.getDoctorsBySearch(keyword);
         List<Medication> medications = pharmacyService.getMedicationsByKeyword(keyword);
         return new Search(hospitals, doctors, medications);
     }

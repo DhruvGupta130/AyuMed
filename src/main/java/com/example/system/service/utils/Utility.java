@@ -4,14 +4,7 @@ import com.example.system.configuration.JwtUtils;
 import com.example.system.entity.LoginUser;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 @Service
 public class Utility {
@@ -24,8 +17,7 @@ public class Utility {
     private final ManagerRepo managerRepo;
     private final PharmacistRepo pharmacistRepo;
 
-    @Value("${file.storage.path}")
-    private String storagePath;
+
 
     public Utility(JwtUtils jwtUtils, UserRepo userRepo, DoctorRepo doctorRepo, PatientRepo patientRepo, AdminRepo adminRepo, ManagerRepo managerRepo, PharmacistRepo pharmacistRepo) {
         this.jwtUtils = jwtUtils;
@@ -53,34 +45,5 @@ public class Utility {
             case ROLE_MANAGEMENT -> managerRepo.findByUsername(userName)
                     .orElseThrow(() -> new HospitalManagementException("Manager Not Found"));
         };
-    }
-
-    public String saveImage(MultipartFile imageFile) throws IOException {
-        String patientDirPath = storagePath + "/";
-        String filePath = patientDirPath + "/" + imageFile.getOriginalFilename();
-        Path parentDir = Paths.get(patientDirPath);
-        Path dest = Paths.get(filePath);
-        if(Files.notExists(parentDir)) {
-            Files.createDirectories(parentDir);
-        }
-        imageFile.transferTo(dest);
-        return filePath;
-    }
-
-    public String deleteImage(String fileName) throws IOException {
-
-        if (fileName == null || fileName.isEmpty()) {
-            throw new IllegalArgumentException("Invalid file name provided.");
-        }
-
-        String filePath = storagePath + "/" + fileName;
-        Path fileToDelete = Paths.get(filePath);
-
-        if (Files.exists(fileToDelete)) {
-            Files.delete(fileToDelete);
-            return "File " + fileName + " deleted successfully.";
-        } else {
-            throw new IOException("File " + fileName + " does not exist.");
-        }
     }
 }

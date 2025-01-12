@@ -52,10 +52,24 @@ public class HospitalController {
         return ResponseEntity.ok(hospitalService.getManagerProfile(manager));
     }
     @GetMapping
-    public ResponseEntity<HospitalDTO> getHospital(@RequestHeader("Authorization") String token) {
-        Manager manager = (Manager) utility.getUserFromToken(token);
-        if(manager.getHospital() == null) throw new HospitalManagementException("Hospital not registered!");
-        return ResponseEntity.ok(hospitalService.getHospitalProfile(manager.getHospital()));
+    public ResponseEntity<?> getHospital(@RequestHeader("Authorization") String token) {
+        Response response = new Response();
+        try {
+            Manager manager = (Manager) utility.getUserFromToken(token);
+            if (manager.getHospital() == null) {
+                response.setMessage("Your Hospital is not registered.");
+                response.setStatus(HttpStatus.NO_CONTENT);
+                return ResponseEntity.status(response.getStatus()).body(response);
+            }
+            return ResponseEntity.ok(hospitalService.getHospitalProfile(manager.getHospital()));
+        } catch (HospitalManagementException e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setMessage("Error retrieving hospital: " + e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @GetMapping("/doctors")
@@ -107,5 +121,13 @@ public class HospitalController {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @GetMapping("/patients")
+    public ResponseEntity<List<HospitalPatientDTO>> getPatients(@RequestHeader("Authorization") String token) {
+        Manager manager = (Manager) utility.getUserFromToken(token);
+        if (manager.getHospital() == null) throw new HospitalManagementException("Please register hospital first!");
+        List<HospitalPatientDTO> allPatients = hospitalService.getAllPatients(manager.getHospital());
+        return ResponseEntity.ok(allPatients);
     }
 }

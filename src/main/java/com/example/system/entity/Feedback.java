@@ -19,4 +19,7 @@ public class Feedback {
     private Long patientId;
     private int rating;
     private String comments;
+
+    @ManyToOne
+    private Hospital hospital;
 }

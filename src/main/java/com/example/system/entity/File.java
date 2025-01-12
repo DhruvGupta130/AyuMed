@@ -1,35 +1,29 @@
 package com.example.system.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
 @Entity
 @Getter
 @Setter
-public class PatientRecord {
+public class File {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Patient patient;
-
+    private long id;
     private String fileName;
-
     private String filePath;
+    private long fileSize;
 
+    @CreationTimestamp
     private Date uploadDate;
 
     private String fileType;
-
-    @Column(length = 1000)
-    private String description;
-
 }
-

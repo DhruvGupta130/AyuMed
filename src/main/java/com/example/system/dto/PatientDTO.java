@@ -19,7 +19,6 @@ public class PatientDTO {
     private Long mobile;
     private Long alternateMobile;
     private String aadhaarId;
-    private String nationality;
     private String image;
     private String fullName;
     private Address address;

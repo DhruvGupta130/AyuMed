@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,10 +27,12 @@ public class MedicalHistory {
     private List<String> medications;
 
     @PastOrPresent
+    @CreationTimestamp
     private LocalDate treatmentStartDate;
 
     @PastOrPresent
-    private LocalDate treatmentEndDate;
+    @UpdateTimestamp
+    private LocalDate lastTreatmentDate;
 
     private String treatmentPlan;
     private String followUpInstructions;
@@ -39,6 +43,10 @@ public class MedicalHistory {
     @ManyToOne
     @JsonIgnore
     private Patient patient;
+
+    @ManyToOne
+    @JsonIgnore
+    private Doctor doctor;
 
     private String notes;
 }

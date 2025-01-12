@@ -21,4 +21,7 @@ public interface HospitalRepo extends JpaRepository<Hospital, Long> {
 
     @Query("SELECT h FROM Hospital h WHERE (h.HospitalName LIKE %:keyword%) OR :keyword IS null")
     List<Hospital> searchByKeyword(@Param("keyword") String keyword);
+
+    @Query("SELECT h.departments FROM Hospital h WHERE h = :hospital")
+    List<String> getAllDepartments(Hospital hospital);
 }

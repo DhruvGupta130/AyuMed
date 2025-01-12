@@ -1,16 +1,13 @@
 package com.example.system.service.impl;
 
-import com.example.system.dto.DoctorDTO;
-import com.example.system.dto.Password;
-import com.example.system.dto.PatientDTO;
+import com.example.system.dto.*;
 import com.example.system.entity.*;
 import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
-import com.example.system.service.DoctorService;
+import com.example.system.service.FileService;
 import com.example.system.service.PatientService;
-import com.example.system.service.utils.Utility;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -34,24 +32,21 @@ public class PatientServiceImpl implements PatientService {
     private final MedicalHistoryRepo medicalHistoryRepo;
     private final AppointmentRepo appointmentRepo;
     private final UserRepo userRepo;
-    private final DoctorRepo doctorRepo;
     private final ScheduleRepo scheduleRepo;
     private final MedicalTestRepo medicalTestRepo;
     private final PasswordEncoder passwordEncoder;
     private final PatientRecordRepo patientRecordRepo;
-    private final Utility utility;
-    private final DoctorService doctorService;
+    private final FileService fileService;
 
     @Override
     @Transactional
     public void updatePatient(Patient patient, long aadhaarId, long mobile, String nationality, MultipartFile image) {
         patient.setAadhaarId(aadhaarId);
-        patient.setNationality(nationality);
         patient.setAlternateMobile(mobile);
         if (image != null && !image.isEmpty()) {
             try {
-                String imagePath = utility.saveImage(image);
-                patient.setImage(imagePath);
+                File imageFile = fileService.saveFile(image);
+                patient.setImage(imageFile.getFilePath());
             } catch (Exception e) {
                 throw new HospitalManagementException(e.getMessage());
             }
@@ -67,6 +62,12 @@ public class PatientServiceImpl implements PatientService {
         patientRepo.save(patient);
     }
 
+    @Override
+    public Patient getPatientById(long id) {
+        return patientRepo.findById(id)
+                .orElseThrow(() -> new HospitalManagementException("Patient not found"));
+    }
+
 
     @Override
     public void addAddress(Patient patient, Address address) {
@@ -77,17 +78,53 @@ public class PatientServiceImpl implements PatientService {
         }
     }
 
+    private void addMedicalHistory(Patient patient, MedicalHistory medicalHistory) {
+        medicalHistory.setPatient(patient);
+        if (patient.getMedicalHistories() == null) {
+            patient.setMedicalHistories(new ArrayList<>());
+        }
+        patient.getMedicalHistories().add(medicalHistory);
+        patientRepo.save(patient);
+    }
+
     @Override
-    public void addMedicalHistory(Patient patient, List<MedicalHistory> medicalHistories) {
-        medicalHistories.forEach(medicalHistory -> {
-            medicalHistory.setPatient(patient);
-            medicalHistory.getTestsConducted().forEach(
-                    testConducted -> testConducted.setHistory(medicalHistory));
-        });
-        if(patient.getMedicalHistories() != null)
-            patient.getMedicalHistories().addAll(medicalHistories);
-        else
-            patient.setMedicalHistories(medicalHistories);
+    @Transactional
+    public void addMedicalHistory(Doctor doctor, HistoryRequest historyRequest) {
+        MedicalHistory medicalHistory = new MedicalHistory();
+        Patient patient = this.getPatientById(historyRequest.getPatientId());
+        medicalHistory.setProblems(historyRequest.getProblems());
+        medicalHistory.setDiagnosisDetails(historyRequest.getDiagnosisDetails());
+        medicalHistory.setMedications(historyRequest.getMedications());
+        medicalHistory.setTreatmentPlan(historyRequest.getTreatmentPlan());
+        medicalHistory.setFollowUpInstructions(historyRequest.getFollowUpInstructions());
+        medicalHistory.setNotes(historyRequest.getNotes());
+        medicalHistory.setDoctor(doctor);
+        this.addMedicalHistory(patient, medicalHistory);
+
+    }
+
+    private void addLabResults(MedicalTest medicalTest, MedicalHistory medicalHistory) {
+        medicalTest.setHistory(medicalHistory);
+        if (medicalHistory.getTestsConducted() == null) {
+            medicalHistory.setTestsConducted(new ArrayList<>());
+        }
+        medicalHistory.getTestsConducted().add(medicalTest);
+        medicalHistoryRepo.save(medicalHistory);
+    }
+
+    @Override
+    @Transactional
+    public void addLabResults(MultipartFile file, LabTestRequest request) throws IOException {
+        MedicalHistory history = medicalHistoryRepo.findById(request.getHistoryId())
+                .orElseThrow(() -> new HospitalManagementException("Medical History not found"));
+        String filePath = fileService.saveFile(file).getFilePath();
+        MedicalTest test = new MedicalTest();
+        test.setTestName(request.getTestName());
+        test.setTestDate(request.getTestDate());
+        test.setResult(request.getResult());
+        test.setNotes(request.getNotes());
+        test.setFilePath(filePath);
+        this.addLabResults(test, history);
     }
 
     @Override
@@ -149,21 +186,27 @@ public class PatientServiceImpl implements PatientService {
                 patient.getLastName(), patient.getDateOfBirth(),
                 patient.getGender(), patient.getEmail(),
                 patient.getMobile(), patient.getAlternateMobile(),
-                hideAadhaarId(patient.getAadhaarId()), patient.getNationality(),
+                hideAadhaarId(patient.getAadhaarId()),
                 patient.getImage(), patient.getFullName(),
                 patient.getAddress()
         );
     }
 
     @Override
-    public List<DoctorDTO> findDoctorsByDepartment(String department) {
-        List<Doctor> doctors = doctorRepo.findAllByDepartment(department);
-        return doctors.stream().map(doctorService::getDoctorProfile).toList();
+    public List<PatientDTO> getDoctorsPatient(Doctor doctor) {
+        List<Patient> patients = patientRepo.findPatientsByDoctor(doctor);
+        return patients.stream().map(this::getPatientProfile).toList();
     }
 
     @Override
-    public List<MedicalTest> getMedicalTests(Patient patient) {
-        return medicalTestRepo.findMedicalTestByPatient(patient);
+    public List<HospitalPatientDTO> getHospitalPatient(Hospital hospital) {
+        return patientRepo.findPatientsByHospital(hospital);
+    }
+
+    @Override
+    public List<LabTestDTO> getMedicalTests(Patient patient) {
+        List<MedicalTest> medicalTest = medicalTestRepo.findMedicalTestByPatient(patient);
+        return medicalTest.stream().map(this::getLabTest).toList();
     }
 
     @Override
@@ -179,11 +222,36 @@ public class PatientServiceImpl implements PatientService {
         return scheduleRepo.findAllByDateAndAvailableAAndDoctor(date, doctor);
     }
 
+    @Override
+    public List<MedicalHistoryDTO> getMedicalHistory(Patient patient) {
+        return patient.getMedicalHistories().stream().map(this::getMedicalHistory).toList();
+    }
+
     private String hideAadhaarId(long aadhaarId) {
         String aadhaarStr = Long.toString(aadhaarId);
         if (aadhaarStr.length() != 12) {
             throw new IllegalArgumentException("Invalid Aadhaar ID length");
         }
         return "XXXX XXXX XXXX " + aadhaarStr.substring(8);
+    }
+
+    private LabTestDTO getLabTest(MedicalTest medicalTest) {
+        return new LabTestDTO(
+                medicalTest.getId(), medicalTest.getTestName(),
+                medicalTest.getTestDate(), medicalTest.getResult(),
+                medicalTest.getNotes(), medicalTest.getFilePath()
+        );
+    }
+
+    private MedicalHistoryDTO getMedicalHistory(MedicalHistory medicalHistory) {
+        return new MedicalHistoryDTO(
+                medicalHistory.getId(), medicalHistory.getProblems(),
+                medicalHistory.getDiagnosisDetails(), medicalHistory.getMedications(),
+                medicalHistory.getTreatmentStartDate(), medicalHistory.getLastTreatmentDate(),
+                medicalHistory.getTreatmentPlan(), medicalHistory.getFollowUpInstructions(),
+                medicalHistory.getPatient().getFullName(),
+                medicalHistory.getDoctor().getFullName(),
+                medicalHistory.getNotes()
+        );
     }
 }
