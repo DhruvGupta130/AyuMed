@@ -21,4 +21,5 @@ public class DoctorDTO {
     private Integer experience;
     private String image;
     private String degree;
+    private String fullName;
 }
