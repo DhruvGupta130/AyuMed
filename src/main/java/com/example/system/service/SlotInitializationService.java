@@ -10,4 +10,6 @@ import java.util.List;
 public interface SlotInitializationService {
 
     void initializeAvailableSlots(Doctor doctor, List<Schedule> schedules);
+    void clearAllAvailableSlots(Doctor doctor);
+    void clearSelectedSlots(Doctor doctor, List<Schedule> schedules);
 }

@@ -1,9 +1,6 @@
 package com.example.system.service.impl;
 
-import com.example.system.dto.AppointmentStatus;
-import com.example.system.dto.DoctorDTO;
-import com.example.system.dto.HospitalDTO;
-import com.example.system.dto.Search;
+import com.example.system.dto.*;
 import com.example.system.entity.Appointment;
 import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
@@ -117,9 +114,10 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public Search searchByKeyword(String keyword) {
         List<HospitalDTO> hospitals = hospitalService.searchHospital(keyword);
+        List<PharmacyDTO> pharmacies = pharmacyService.getPharmaciesByKeyword(keyword);
         List<DoctorDTO> doctors = doctorService.getDoctorsBySearch(keyword);
-        List<Medication> medications = pharmacyService.getMedicationsByKeyword(keyword);
-        return new Search(hospitals, doctors, medications);
+        List<MedicationDTO> medications = pharmacyService.getMedicationsByKeyword(keyword);
+        return new Search(hospitals, pharmacies, doctors, medications);
     }
 
 }

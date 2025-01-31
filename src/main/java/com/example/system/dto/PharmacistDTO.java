@@ -15,4 +15,5 @@ public class PharmacistDTO {
     private Gender gender;
     private String email;
     private long mobile;
+    private String fullName;
 }

@@ -4,8 +4,10 @@ import com.example.system.exception.HospitalManagementException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -17,6 +19,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@ToString
 public class Schedule {
 
     @Id
@@ -31,7 +34,7 @@ public class Schedule {
     private LocalDate date;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TimeSlot> timeSlots = new ArrayList<>();
 
     @JsonIgnore
@@ -43,14 +46,14 @@ public class Schedule {
 
 
     public void initializeAvailableSlots() {
-        LocalTime slotStartTime = startTime;
+        LocalTime startTime = this.startTime;
         long slotIndex = 0L;
-        while (slotStartTime.isBefore(endTime)) {
-            LocalTime slotEndTime = slotStartTime.plus(averageConsultationTime);
+        while (startTime.isBefore(endTime)) {
+            LocalTime slotEndTime = startTime.plus(averageConsultationTime);
             if (slotEndTime.isAfter(endTime)) break;
             slotIndex++;
-            timeSlots.add(new TimeSlot(slotStartTime, slotEndTime, this, slotIndex));
-            slotStartTime = slotEndTime;
+            timeSlots.add(new TimeSlot(startTime, slotEndTime, this, slotIndex));
+            startTime = slotEndTime;
         }
     }
 
@@ -66,9 +69,10 @@ public class Schedule {
     public void restoreSlot(int slotIndex) {
         TimeSlot slot = findTimeSlotByStartTimeAndSlot(slotIndex);
         if (slot != null) {
-            slot.restoreAvailability(); // Restore availability
+            slot.restoreAvailability();
         }
     }
+
     public LocalTime getAppointmentTime(int slotIndex) {
         if (slotIndex < 0 || slotIndex >= timeSlots.size()) {
             throw new HospitalManagementException("Slot index is out of bounds.");

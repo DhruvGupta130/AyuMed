@@ -1,6 +1,5 @@
 package com.example.system.dto;
 
-import com.example.system.entity.Medication;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +12,7 @@ import java.util.List;
 public class Search {
 
     List<HospitalDTO> hospitals;
+    List<PharmacyDTO> pharmacies;
     List<DoctorDTO> doctors;
-    List<Medication> medications;
+    List<MedicationDTO> medications;
 }

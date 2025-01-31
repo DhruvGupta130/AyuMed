@@ -9,17 +9,18 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Data
-public class ProfileUpdateDTO {
+public class DoctorUpdateDTO {
 
-    //Patient
-    private long AadhaarId;
-    private String nationality;
-    private List<MedicalHistory> medicalHistories;
-    private Address address;
-
-    //Doctor
     private LocalDate startDate;
     private String degree;
-    private List<Schedule> schedule;
+    private String firstName;
+    private String lastName;
+    private Gender gender;
+    private String email;
+    private long mobile;
+    private String specialty;
+    private String licenseNumber;
+    private String department;
+    private String image;
 
 }

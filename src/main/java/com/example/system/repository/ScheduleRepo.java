@@ -15,7 +15,14 @@ public interface ScheduleRepo extends JpaRepository<Schedule, Long> {
 
     Optional<Schedule> findByDoctorAndDate(@Param("doctor") Doctor doctor, @Param("date") LocalDate date);
 
-    @Query("SELECT t from TimeSlot t JOIN t.schedule s WHERE s.date = :date AND s.doctor = :doctor AND t.available = TRUE")
-    List<TimeSlot> findAllByDateAndAvailableAAndDoctor(@Param("date") LocalDate date, @Param("doctor") Doctor doctor);
+    List<Schedule> findScheduleByDoctor(Doctor doctor);
 
+    @Query("SELECT t FROM TimeSlot t JOIN t.schedule s " +
+            "WHERE s.date = :date AND s.doctor = :doctor " +
+            "AND (s.date > CURRENT_DATE OR (s.date = CURRENT_DATE AND t.startTime > CURRENT_TIME))")
+    List<TimeSlot> findAllByDateAndAvailableAndDoctor(@Param("date") LocalDate date, @Param("doctor") Doctor doctor);
+
+
+
+    boolean existsByDoctorAndDate(Doctor doctor, LocalDate date);
 }

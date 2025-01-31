@@ -1,5 +1,6 @@
 package com.example.system.service;
 
+import com.example.system.dto.MedicationDTO;
 import com.example.system.dto.Password;
 import com.example.system.dto.PharmacistDTO;
 import com.example.system.dto.PharmacyDTO;
@@ -15,7 +16,7 @@ import java.util.List;
 @Service
 public interface PharmacyService {
 
-    void createPharmacy(PharmacyDTO pharmacy, Pharmacist pharmacist);
+    void createPharmacy(Pharmacy pharmacy, Pharmacist pharmacist);
     void updatePharmacy(PharmacyDTO pharmacy, Pharmacist pharmacist);
     PharmacyDTO getPharmacyProfile(Pharmacy pharmacy);
     PharmacistDTO getPharmacistProfile(Pharmacist pharmacist);
@@ -24,8 +25,9 @@ public interface PharmacyService {
     void setStatus(Pharmacy pharmacy);
     void updatePassword(Pharmacist pharmacist, Password password);
     void updateAddress(Pharmacist pharmacist, Address address);
-    List<Medication> getMedications();
-    List<Medication> getMedicationsByKeyword(String keyword);
+    List<MedicationDTO> getMedications();
+    List<MedicationDTO> getMedicationsByKeyword(String keyword);
     PharmacyDTO getPharmacy(Pharmacist pharmacist);
+    List<PharmacyDTO> getPharmaciesByKeyword(String keyword);
     List<PharmacyDTO> getPharmaciesWithinRadius(double latitude, double longitude, double radius);
 }

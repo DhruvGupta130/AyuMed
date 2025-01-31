@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface HospitalRepo extends JpaRepository<Hospital, Long> {
@@ -19,9 +20,17 @@ public interface HospitalRepo extends JpaRepository<Hospital, Long> {
                                              @Param("lng") double longitude,
                                              @Param("radius") double radius);
 
-    @Query("SELECT h FROM Hospital h WHERE (h.HospitalName LIKE %:keyword%) OR :keyword IS null")
+    @Query("SELECT h FROM Hospital h WHERE (h.hospitalName LIKE %:keyword%) OR :keyword IS null")
     List<Hospital> searchByKeyword(@Param("keyword") String keyword);
+
+    @Query("SELECT h FROM Hospital h WHERE :department MEMBER OF h.departments")
+    List<Hospital> findHospitalByDepartment(String department);
 
     @Query("SELECT h.departments FROM Hospital h WHERE h = :hospital")
     List<String> getAllDepartments(Hospital hospital);
+
+    @Query("SELECT DISTINCT h.departments FROM Hospital h")
+    List<String> getAllDepartments();
+
+    Optional<Hospital> findHospitalById(long id);
 }

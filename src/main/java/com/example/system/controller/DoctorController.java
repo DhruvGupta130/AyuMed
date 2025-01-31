@@ -2,14 +2,16 @@ package com.example.system.controller;
 
 import com.example.system.dto.*;
 import com.example.system.entity.Doctor;
+import com.example.system.entity.Schedule;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.service.DoctorService;
+import com.example.system.service.HospitalService;
 import com.example.system.service.PatientService;
 import com.example.system.service.utils.Utility;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,11 +25,85 @@ public class DoctorController {
     private final Utility utility;
     private final DoctorService doctorService;
     private final PatientService patientService;
+    private final HospitalService hospitalService;
 
-    @GetMapping("/profile")
+    @GetMapping
     public ResponseEntity<DoctorDTO> getDoctorProfile(@RequestHeader("Authorization") String token) {
         Doctor doctor = (Doctor) utility.getUserFromToken(token);
         return ResponseEntity.ok(doctorService.getDoctorProfile(doctor));
+    }
+
+    @Transactional
+    @PutMapping("/updateProfile")
+    public ResponseEntity<Response> updateProfile(@RequestHeader("Authorization") String token,
+                                                  @RequestBody DoctorUpdateDTO doctorDTO) {
+        Response response = new Response();
+        Object user = utility.getUserFromToken(token);
+        if (!(user instanceof Doctor doctor))
+            throw new HospitalManagementException("Unauthorized access: User is not a doctor.");
+        try {
+            doctorService.updateDoctor(doctor, doctorDTO);
+            response.setMessage("Profile updated successfully");
+            response.setStatus(HttpStatus.OK);
+        } catch (HospitalManagementException e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setMessage("Error updating profile: " + e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @GetMapping("/schedules")
+    public ResponseEntity<List<ScheduleDTO>> getDoctorSchedules(@RequestHeader("Authorization") String token) {
+        Doctor doctor = (Doctor) utility.getUserFromToken(token);
+        return ResponseEntity.ok(doctorService.getSchedules(doctor));
+    }
+
+    @PostMapping("/schedules")
+    public ResponseEntity<Response> addSchedule(@RequestHeader("Authorization") String token,
+                                                @RequestBody List<Schedule> schedules) {
+        Response response = new Response();
+        try {
+            Doctor doctor = (Doctor) utility.getUserFromToken(token);
+            List<Schedule> existingSchedules = schedules.stream().filter(s -> s.getId() != 0).toList();
+            List<Schedule> newSchedules = schedules.stream().filter(s -> s.getId() == 0).toList();
+            doctorService.addSchedule(doctor, newSchedules);
+            doctorService.updateSchedule(doctor, existingSchedules);
+            response.setMessage("Schedule updated successfully");
+            response.setStatus(HttpStatus.OK);
+        } catch (HospitalManagementException e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setMessage("Error updating schedule: " + e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @DeleteMapping("/schedules")
+    public ResponseEntity<Response> deleteSchedules(@RequestHeader("Authorization") String token, @RequestBody List<Schedule> schedules) {
+        Response response = new Response();
+        try{
+            Doctor doctor = (Doctor) utility.getUserFromToken(token);
+            if(schedules.isEmpty())
+                doctorService.deleteAllSchedules(doctor);
+            else {
+                List<Long> scheduleIds = schedules.stream().map(Schedule::getId).toList();
+                doctorService.deleteSelectedSchedules(doctor, scheduleIds);
+            }
+            response.setMessage("Schedules deleted successfully");
+            response.setStatus(HttpStatus.OK);
+        } catch (HospitalManagementException e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setMessage("Error deleting schedules: " + e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @Transactional
@@ -79,6 +155,13 @@ public class DoctorController {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @GetMapping("/hospital")
+    public ResponseEntity<HospitalDTO> getHospital(@RequestHeader("Authorization") String token) {
+        Doctor doctor = (Doctor) utility.getUserFromToken(token);
+        HospitalDTO hospitalDTO = hospitalService.getHospitalProfile(doctor.getHospital());
+        return ResponseEntity.ok(hospitalDTO);
     }
 
 }

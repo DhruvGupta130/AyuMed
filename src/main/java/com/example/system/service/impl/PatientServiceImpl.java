@@ -40,7 +40,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     @Transactional
-    public void updatePatient(Patient patient, long aadhaarId, long mobile, String nationality, MultipartFile image) {
+    public void updatePatient(Patient patient, long aadhaarId, long mobile, MultipartFile image) {
         patient.setAadhaarId(aadhaarId);
         patient.setAlternateMobile(mobile);
         if (image != null && !image.isEmpty()) {
@@ -219,7 +219,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public List<TimeSlot> getAvailableSlots(LocalDate date, Doctor doctor){
-        return scheduleRepo.findAllByDateAndAvailableAAndDoctor(date, doctor);
+        return scheduleRepo.findAllByDateAndAvailableAndDoctor(date, doctor);
     }
 
     @Override
@@ -227,7 +227,8 @@ public class PatientServiceImpl implements PatientService {
         return patient.getMedicalHistories().stream().map(this::getMedicalHistory).toList();
     }
 
-    private String hideAadhaarId(long aadhaarId) {
+    private String hideAadhaarId(Long aadhaarId) {
+        if(aadhaarId == null) return null;
         String aadhaarStr = Long.toString(aadhaarId);
         if (aadhaarStr.length() != 12) {
             throw new IllegalArgumentException("Invalid Aadhaar ID length");

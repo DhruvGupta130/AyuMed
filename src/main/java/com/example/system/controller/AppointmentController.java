@@ -35,6 +35,7 @@ public class AppointmentController {
     @PostMapping("/patient/appointment")
     public ResponseEntity<Response> scheduleAppointment(@RequestHeader("Authorization") String token,
                                                         @RequestBody AppointmentData appointmentData) {
+        System.out.println(appointmentData);
         Response response = new Response();
         try {
             Object user = utility.getUserFromToken(token);

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,7 +25,6 @@ public class SlotInitializationServiceImpl implements SlotInitializationService 
     public void initializeAvailableSlots(Doctor doctor, List<Schedule> schedules) {
         LocalDate today = LocalDate.now();
         LocalDate endDate = today.plusMonths(1);
-
         for (Schedule scheduleTemplate : schedules) {
             DayOfWeek scheduledDay = scheduleTemplate.getDayOfWeek();
             LocalTime startTime = scheduleTemplate.getStartTime();
@@ -32,16 +32,34 @@ public class SlotInitializationServiceImpl implements SlotInitializationService 
 
             for (LocalDate date = today; !date.isAfter(endDate); date = date.plusDays(1)) {
                 if (scheduledDay.equals(date.getDayOfWeek())) {
-                    Schedule newSchedule = new Schedule();
-                    newSchedule.setDoctor(doctor);
-                    newSchedule.setDate(date);
-                    newSchedule.setDayOfWeek(scheduledDay);
-                    newSchedule.setStartTime(startTime);
-                    newSchedule.setEndTime(endTime);
-                    newSchedule.initializeAvailableSlots();
-                    scheduleRepo.save(newSchedule);
+                    if (!scheduleRepo.existsByDoctorAndDate(doctor, date)) {
+                        Schedule newSchedule = new Schedule();
+                        newSchedule.setDoctor(doctor);
+                        newSchedule.setDate(date);
+                        newSchedule.setDayOfWeek(scheduledDay);
+                        newSchedule.setStartTime(startTime);
+                        newSchedule.setEndTime(endTime);
+                        newSchedule.initializeAvailableSlots();
+
+                        scheduleRepo.save(newSchedule);
+                    }
                 }
             }
         }
+    }
+
+    @Override
+    @Transactional
+    public void clearAllAvailableSlots(Doctor doctor) {
+        List<Schedule> schedules = new ArrayList<>(doctor.getSchedules());
+        doctor.getSchedules().clear();
+        scheduleRepo.deleteAll(schedules);
+    }
+
+    @Override
+    @Transactional
+    public void clearSelectedSlots(Doctor doctor, List<Schedule> schedules) {
+        doctor.getSchedules().removeAll(schedules);
+        scheduleRepo.deleteAll(schedules);
     }
 }

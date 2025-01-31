@@ -44,24 +44,42 @@ public class HospitalController {
             response.setMessage("Error registering hospital: " + e.getMessage());
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
     @GetMapping("/manager")
     public ResponseEntity<ManagerDTO> getHospitalManager(@RequestHeader("Authorization") String token) {
         Manager manager = (Manager) utility.getUserFromToken(token);
         return ResponseEntity.ok(hospitalService.getManagerProfile(manager));
     }
+
+    @PutMapping("/manager")
+    public ResponseEntity<Response> updateHospitalManager(@RequestHeader("Authorization") String token,
+                                                            @RequestBody ManagerDTO managerDTO) {
+        Manager manager = (Manager) utility.getUserFromToken(token);
+        Response response = new Response();
+        try{
+            hospitalService.updateManagerProfile(manager,managerDTO);
+            response.setMessage("Hospital manager updated successfully");
+            response.setStatus(HttpStatus.OK);
+        } catch (HospitalManagementException e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
     @GetMapping
     public ResponseEntity<?> getHospital(@RequestHeader("Authorization") String token) {
         Response response = new Response();
+        response.setStatus(HttpStatus.OK);
         try {
             Manager manager = (Manager) utility.getUserFromToken(token);
             if (manager.getHospital() == null) {
                 response.setMessage("Your Hospital is not registered.");
                 response.setStatus(HttpStatus.NO_CONTENT);
-                return ResponseEntity.status(response.getStatus()).body(response);
+            } else {
+                return ResponseEntity.ok(hospitalService.getHospitalProfile(manager.getHospital()));
             }
-            return ResponseEntity.ok(hospitalService.getHospitalProfile(manager.getHospital()));
         } catch (HospitalManagementException e) {
             response.setMessage(e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST);
@@ -97,7 +115,7 @@ public class HospitalController {
             response.setMessage(e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            response.setMessage("Error registering doctor" + e.getMessage());
+            response.setMessage("Error registering doctor: " + e.getMessage());
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(response.getStatus()).body(response);
@@ -117,7 +135,7 @@ public class HospitalController {
             response.setMessage(e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            response.setMessage("Error adding doctor" + e.getMessage());
+            response.setMessage("Error adding doctor: " + e.getMessage());
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(response.getStatus()).body(response);

@@ -21,6 +21,10 @@ public class Pharmacy {
     @NotNull
     private String pharmacyName;
 
+    @NotNull
+    @Column(length = 500000)
+    private String description;
+
     @ManyToOne
     private Address address;
 
@@ -28,6 +32,8 @@ public class Pharmacy {
     private String email;
 
     private long mobile;
+
+    private String website;
 
     @OneToMany(mappedBy = "pharmacy", cascade = CascadeType.ALL)
     private List<Medication> medications;

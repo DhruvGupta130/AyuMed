@@ -7,6 +7,7 @@ import com.example.system.entity.Patient;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
 import com.example.system.service.DoctorService;
+import com.example.system.service.HospitalService;
 import com.example.system.service.PatientService;
 import com.example.system.service.utils.Utility;
 import jakarta.transaction.Transactional;
@@ -30,6 +31,7 @@ public class PatientController {
     private final DoctorService doctorService;
     private final ScheduleRepo scheduleRepo;
     private final PatientService patientService;
+    private final HospitalService hospitalService;
 
     @GetMapping("/profile")
     public ResponseEntity<PatientDTO> getPatientProfile(@RequestHeader("Authorization") String token) {
@@ -41,7 +43,6 @@ public class PatientController {
     @PutMapping("/updateProfile")
     public ResponseEntity<Response> updateProfile(@RequestHeader("Authorization") String token,
                                                   @RequestParam("aadhaarId") long aadhaarId,
-                                                  @RequestParam("nationality") String nationality,
                                                   @RequestParam("image") MultipartFile image,
                                                   @RequestParam("mobile") long mobile) {
         Response response = new Response();
@@ -49,7 +50,7 @@ public class PatientController {
             Patient patient = (Patient) utility.getUserFromToken(token);
             if (patient.getAadhaarId() != null)
                 throw new HospitalManagementException("Profile is already up-to-date");
-            patientService.updatePatient(patient, aadhaarId, mobile, nationality, image);
+            patientService.updatePatient(patient, aadhaarId, mobile, image);
             response.setMessage("Profile successfully updated");
             response.setStatus(HttpStatus.OK);
         } catch (HospitalManagementException e) {
@@ -163,16 +164,45 @@ public class PatientController {
         return ResponseEntity.ok(doctorDTOS);
     }
 
+    @GetMapping("/departments")
+    public ResponseEntity<List<String>> getDepartments() {
+        return ResponseEntity.ok(hospitalService.getAllDepartments());
+    }
+
+    @GetMapping("/{department}/hospitals")
+    public ResponseEntity<List<HospitalDTO>> getHospitalsByDepartment(@PathVariable String department) {
+        return ResponseEntity.ok(hospitalService.getHospitalsByDepartment(department));
+    }
+
+    @GetMapping("/{department}/{hospitalId}/doctors")
+    public ResponseEntity<List<DoctorDTO>> getDoctorsByDepartmentAndHospital(@PathVariable String department,
+                                                                             @PathVariable long hospitalId) {
+        Hospital hospital = hospitalService.getHospitalById(hospitalId);
+        return ResponseEntity.ok(doctorService.getDoctorsByHospitalAndDepartment(hospital, department));
+    }
+
+    @GetMapping("/hospitals")
+    public ResponseEntity<List<HospitalDTO>> getHospitals(@RequestHeader("Authorization") String token,
+                                                          @RequestParam long radius) {
+        Patient patient = (Patient) utility.getUserFromToken(token);
+        if(patient.getAddress() == null) throw new HospitalManagementException("Please update the address first");
+        List<HospitalDTO> hospitalDTOS = hospitalService.getHospitalsWithinRadius(
+                patient.getAddress().getLatitude(), patient.getAddress().getLongitude(),radius
+        );
+        return ResponseEntity.ok(hospitalDTOS);
+    }
+
     @GetMapping("/lab")
     public ResponseEntity<List<LabTestDTO>> getMedicalTests(@RequestHeader("Authorization") String token) {
         Patient patient = (Patient) utility.getUserFromToken(token);
         return ResponseEntity.ok().body(patientService.getMedicalTests(patient));
     }
 
-    @GetMapping("/slots/{id}")
-    public ResponseEntity<List<TimeSlot>> getAvailableSlots(@RequestParam LocalDate date, @PathVariable long id) {
+    @GetMapping("/{doctorId}/slots")
+    public ResponseEntity<List<TimeSlot>> getAvailableSlots(@RequestParam LocalDate date,
+                                                            @PathVariable long doctorId) {
         return ResponseEntity.ok().body(patientService.getAvailableSlots(date,
-                doctorService.getDoctorById(id)));
+                doctorService.getDoctorById(doctorId)));
     }
 
     @GetMapping("/medical-histories")

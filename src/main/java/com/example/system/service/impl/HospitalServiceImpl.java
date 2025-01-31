@@ -64,6 +64,11 @@ public class HospitalServiceImpl implements HospitalService {
     }
 
     @Override
+    public List<String> getAllDepartments(){
+        return hospitalRepo.getAllDepartments();
+    }
+
+    @Override
     public List<HospitalPatientDTO> getAllPatients(Hospital hospital) {
         return patientService.getHospitalPatient(hospital);
     }
@@ -81,6 +86,20 @@ public class HospitalServiceImpl implements HospitalService {
     }
 
     @Override
+    public void updateManagerProfile(Manager manager, ManagerDTO managerDTO) {
+        try {
+            manager.setFirstName(managerDTO.getFirstName());
+            manager.setLastName(managerDTO.getLastName());
+            manager.setGender(managerDTO.getGender());
+            manager.setEmail(managerDTO.getEmail());
+            manager.setMobile(managerDTO.getMobile());
+            managerRepo.save(manager);
+        } catch (NullPointerException e) {
+            throw new HospitalManagementException("Error in updating manager profile: " + e.getMessage());
+        }
+    }
+
+    @Override
     public List<HospitalDTO> getHospitalsWithinRadius(double latitude, double longitude, double radius) {
         List<Hospital> hospitals = hospitalRepo.findHospitalsWithinRadius(latitude, longitude, radius);
         return hospitals.stream().map(this::getHospitalProfile).toList();
@@ -90,6 +109,18 @@ public class HospitalServiceImpl implements HospitalService {
     public List<HospitalDTO> searchHospital(String keyword) {
         List<Hospital> hospitals = hospitalRepo.searchByKeyword(keyword);
         return hospitals.stream().map(this::getHospitalProfile).toList();
+    }
+
+    @Override
+    public List<HospitalDTO> getHospitalsByDepartment(String department) {
+       return hospitalRepo.findHospitalByDepartment(department)
+               .stream().map(this::getHospitalProfile).toList();
+    }
+
+    @Override
+    public Hospital getHospitalById(long id) {
+        return hospitalRepo.findHospitalById(id)
+                .orElseThrow(() -> new HospitalManagementException("Hospital not found"));
     }
 
     @Override

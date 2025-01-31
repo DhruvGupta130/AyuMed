@@ -5,10 +5,7 @@ import com.example.system.entity.*;
 import com.example.system.entity.Doctor;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
-import com.example.system.service.AuthService;
-import com.example.system.service.DoctorService;
-import com.example.system.service.FileService;
-import com.example.system.service.SlotInitializationService;
+import com.example.system.service.*;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -38,7 +35,6 @@ public class DoctorServiceImpl implements DoctorService {
     private final SlotInitializationService slotInitializationService;
     private final AuthService authService;
     private final PasswordEncoder passwordEncoder;
-    private final FileService fileService;
 
     @Override
     public Doctor getDoctorById(long id) {
@@ -103,20 +99,40 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     @Transactional
-    public void updateDoctor(Doctor doctor, ProfileUpdateDTO updateDTO, MultipartFile image) {
+    public void updateDoctor(Doctor doctor, DoctorUpdateDTO updateDTO) {
+        doctor.setFirstName(updateDTO.getFirstName());
+        doctor.setLastName(updateDTO.getLastName());
+        doctor.setGender(updateDTO.getGender());
+        doctor.setEmail(updateDTO.getEmail());
+        doctor.setMobile(updateDTO.getMobile());
+        doctor.setSpecialty(updateDTO.getSpecialty());
+        doctor.setLicenseNumber(updateDTO.getLicenseNumber());
+        doctor.setDepartment(updateDTO.getDepartment());
         doctor.setStartDate(updateDTO.getStartDate());
         doctor.setDegree(updateDTO.getDegree());
-        if (image != null && !image.isEmpty()) {
-            try {
-                String imagePath = fileService.saveFile(image).getFilePath();
-                doctor.setImage(imagePath);
-            } catch (Exception e) {
-                throw new HospitalManagementException(e.getMessage());
-            }
-        }
-        slotInitializationService.initializeAvailableSlots(doctor, updateDTO.getSchedule());
+        doctor.setImage(updateDTO.getImage());
         doctorRepo.save(doctor);
     }
+
+    @Override
+    @Transactional
+    public void addSchedule(Doctor doctor, List<Schedule> schedules) {
+        slotInitializationService.initializeAvailableSlots(doctor, schedules);
+        doctorRepo.save(doctor);
+    }
+
+    @Override
+    @Transactional
+    public void updateSchedule(Doctor doctor, List<Schedule> schedules) {
+        try {
+            List<Long> scheduleIds = schedules.stream().map(Schedule::getId).toList();
+            deleteSelectedSchedules(doctor, scheduleIds);
+            addSchedule(doctor, schedules);
+        } catch (Exception e) {
+            throw new HospitalManagementException("Error while updating schedule", e);
+        }
+    }
+
 
     @Override
     public void updatePassword(Doctor doctor, Password password) {
@@ -137,9 +153,34 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    public List<DoctorDTO> getDoctorsByHospitalAndDepartment(Hospital hospital, String department) {
+        return doctorRepo.getDoctorsByDepartmentAndHospital(department, hospital)
+                .stream().map(this::getDoctorProfile).toList();
+    }
+
+    @Override
     public List<DoctorDTO> getHospitalDoctors(Hospital hospital) {
         List<Doctor> doctors = doctorRepo.getDoctorByHospital(hospital);
         return doctors.stream().map(this::getDoctorProfile).toList();
+    }
+
+    @Override
+    public List<ScheduleDTO> getSchedules(Doctor doctor) {
+        return scheduleRepo.findScheduleByDoctor(doctor)
+                .stream().map(this::getScheduleDTO).toList();
+    }
+
+    @Override
+    @Transactional
+    public void deleteAllSchedules(Doctor doctor) {
+        slotInitializationService.clearAllAvailableSlots(doctor);
+    }
+
+    @Override
+    @Transactional
+    public void deleteSelectedSchedules(Doctor doctor, List<Long> scheduleIds) {
+        List<Schedule> schedules = scheduleRepo.findAllById(scheduleIds);
+        slotInitializationService.clearSelectedSlots(doctor, schedules);
     }
 
     @Override
@@ -160,13 +201,18 @@ public class DoctorServiceImpl implements DoctorService {
             }
             while (rows.hasNext()) {
                 Row row = rows.next();
-                if(userRepo.findByUsername(row.getCell(0).getStringCellValue()).isPresent()) continue;
+                if(userRepo.findByUsername(row.getCell(0).getStringCellValue().trim()).isPresent()) continue;
                 RegistrationDTO registrationDTO = createRegistrationDTO(row, hospitalId);
                 authService.createDoctor(registrationDTO);
             }
         } catch (IOException e) {
             throw new HospitalManagementException("Error reading the Excel file: " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public List<Doctor> getAllDoctors() {
+        return doctorRepo.findAll();
     }
 
     private RegistrationDTO createRegistrationDTO(Row row, long hospitalId) {
@@ -224,6 +270,14 @@ public class DoctorServiceImpl implements DoctorService {
                 throw new HospitalManagementException("Invalid Excel file structure. Expected header: " + expectedHeaders[i]);
             }
         }
+    }
+
+    private ScheduleDTO getScheduleDTO(Schedule schedule) {
+        return new ScheduleDTO(
+                schedule.getId(), schedule.getStartTime(),
+                schedule.getEndTime(), schedule.getDayOfWeek(),
+                schedule.getDate()
+        );
     }
 
 }

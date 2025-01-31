@@ -2,6 +2,7 @@ package com.example.system.repository;
 
 import com.example.system.entity.Doctor;
 import com.example.system.entity.Hospital;
+import com.example.system.entity.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -39,5 +40,5 @@ public interface DoctorRepo extends JpaRepository<Doctor, Long> {
 
     List<Doctor> getDoctorByHospital(Hospital hospital);
 
-
+    List<Doctor> getDoctorsByDepartmentAndHospital(String department, Hospital hospital);
 }

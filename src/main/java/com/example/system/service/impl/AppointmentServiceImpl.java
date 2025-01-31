@@ -99,6 +99,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointment.setAppointmentDate(getAppointmentDate(date, slotIndex, schedule));
         appointment.setStatus(AppointmentStatus.BOOKED);
         appointment.setCreatedBy(createdBy);
+        appointment.setLastModifiedBy(createdBy);
         appointment.setSlotIndex(slotIndex);
         appointmentRepo.save(appointment);
         schedule.bookSlot(slotIndex);
@@ -154,13 +155,16 @@ public class AppointmentServiceImpl implements AppointmentService {
                 EmailStructures.appointmentStatusUpdatedDoctor(appointment.getDoctor().getFullName(), appointment.getPatient().getFullName(), date, time, status.toString()));
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void cancelAppointment(Long id, String cancellationReason, String modifiedBy) {
         Appointment appointment = getAppointmentById(id);
         if (isAlreadyCancelled(appointment)) return;
+        if (appointment.getAppointmentDate().isBefore(LocalDateTime.now()))
+            throw new HospitalManagementException("Only Future Appointments can be cancelled.");
         restoreScheduleSlot(appointment);
         appointment.setStatus(AppointmentStatus.CANCELED);
+        appointment.setLastModifiedBy(modifiedBy);
         appointment.setCancellationReason(cancellationReason);
         appointmentRepo.save(appointment);
         sendCancellationEmails(appointment, cancellationReason);

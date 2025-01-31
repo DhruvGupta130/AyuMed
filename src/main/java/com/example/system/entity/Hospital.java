@@ -19,7 +19,7 @@ public class Hospital {
     private long id;
 
     @NotNull
-    private String HospitalName;
+    private String hospitalName;
 
     @NotNull
     @ManyToOne

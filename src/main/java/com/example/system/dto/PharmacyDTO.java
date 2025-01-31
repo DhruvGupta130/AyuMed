@@ -16,6 +16,7 @@ public class PharmacyDTO {
     private Address address;
     private String email;
     private Long mobile;
+    private String website;
     private boolean open;
     private LocalTime openingTime;
     private LocalTime closingTime;

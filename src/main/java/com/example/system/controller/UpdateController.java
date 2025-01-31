@@ -1,7 +1,8 @@
 package com.example.system.controller;
 
+import com.example.system.dto.DoctorDTO;
+import com.example.system.dto.DoctorUpdateDTO;
 import com.example.system.dto.Password;
-import com.example.system.dto.ProfileUpdateDTO;
 import com.example.system.dto.Response;
 import com.example.system.entity.*;
 import com.example.system.entity.Pharmacist;
@@ -16,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @AllArgsConstructor
@@ -28,34 +28,6 @@ public class UpdateController {
     private final DoctorService doctorService;
     private final HospitalService hospitalService;
     private final PharmacyService pharmacyService;
-
-    @Transactional
-    @PutMapping("/doctor/updateProfile")
-    public ResponseEntity<Response> updateProfile(@RequestHeader("Authorization") String token,
-                                                  @ModelAttribute ProfileUpdateDTO profileUpdateDTO,
-                                                  @RequestParam("image") MultipartFile image) {
-        Response response = new Response();
-        Object user = utility.getUserFromToken(token);
-        if (!(user instanceof Doctor doctor))
-            throw new HospitalManagementException("Unauthorized access: User is not a doctor.");
-        try {
-            if (doctor.getSchedules().isEmpty()) {
-                doctorService.updateDoctor(doctor, profileUpdateDTO, image);
-                response.setMessage("Profile updated successfully");
-                response.setStatus(HttpStatus.OK);
-            } else {
-                response.setMessage("Profile is already up-to-date");
-                response.setStatus(HttpStatus.BAD_REQUEST);
-            }
-        } catch (HospitalManagementException e) {
-            response.setMessage(e.getMessage());
-            response.setStatus(HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            response.setMessage("Error updating profile: " + e.getMessage());
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return ResponseEntity.status(response.getStatus()).body(response);
-    }
 
     @PutMapping("/address")
     public ResponseEntity<Response> updateAddress(@RequestHeader("Authorization") String token,

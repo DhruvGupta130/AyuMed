@@ -1,10 +1,12 @@
 package com.example.system.controller;
 
+import com.example.system.dto.MedicationDTO;
 import com.example.system.dto.PharmacistDTO;
 import com.example.system.dto.PharmacyDTO;
 import com.example.system.dto.Response;
 import com.example.system.entity.Medication;
 import com.example.system.entity.Pharmacist;
+import com.example.system.entity.Pharmacy;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.service.PharmacyService;
 import com.example.system.service.utils.Utility;
@@ -28,7 +30,7 @@ public class PharmacyController {
     @Transactional
     @PostMapping("/register")
     public ResponseEntity<Response> registerPharmacy(@RequestHeader("Authorization") String token,
-                                                     @RequestBody PharmacyDTO pharmacy) {
+                                                     @RequestBody Pharmacy pharmacy) {
         Response response = new Response();
         try {
             Pharmacist pharmacist = (Pharmacist) utility.getUserFromToken(token);
@@ -91,7 +93,7 @@ public class PharmacyController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @PostMapping("/upload")
+    @PostMapping("/medications/upload")
     public ResponseEntity<Response> uploadPharmacy(@RequestHeader("Authorization") String token,
                                                    @RequestParam("file") MultipartFile file) {
         Response response = new Response();
@@ -131,15 +133,30 @@ public class PharmacyController {
     }
 
     @GetMapping("/medications")
-    public ResponseEntity<List<Medication>> getMedications() {
+    public ResponseEntity<List<MedicationDTO>> getMedications() {
         return ResponseEntity.ok().body(pharmacyService.getMedications());
     }
 
     @GetMapping
-    public ResponseEntity<PharmacyDTO> getPharmacy(@RequestHeader("Authorization") String token) {
-        Pharmacist pharmacist = (Pharmacist) utility.getUserFromToken(token);
-        if(pharmacist == null) throw new HospitalManagementException("Pharmacist not found.");
-        return ResponseEntity.ok().body(pharmacyService.getPharmacy(pharmacist));
+    public ResponseEntity<?> getPharmacy(@RequestHeader("Authorization") String token) {
+        Response response = new Response();
+        response.setStatus(HttpStatus.OK);
+        try {
+            Pharmacist pharmacist = (Pharmacist) utility.getUserFromToken(token);
+            if (pharmacist.getPharmacy() == null) {
+                response.setMessage("Your Pharmacy is not registered.");
+                response.setStatus(HttpStatus.NO_CONTENT);
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(pharmacyService.getPharmacyProfile(pharmacist.getPharmacy()));
+            }
+        } catch (HospitalManagementException e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setMessage("Error retrieving hospital: " + e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @GetMapping("/pharmacist")

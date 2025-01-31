@@ -13,12 +13,17 @@ public interface HospitalService {
 
     void registerHospital(Hospital hospital, Manager manager);
     HospitalDTO getHospitalProfile(Hospital hospital);
+
     void updatePassword(Manager manager, Password password);
     List<String> getAllDepartments(Hospital hospital);
+    List<String> getAllDepartments();
     List<HospitalPatientDTO> getAllPatients(Hospital hospital);
     ManagerDTO getManagerProfile(Manager manager);
+    void updateManagerProfile(Manager manager, ManagerDTO managerDTO);
     List<HospitalDTO> getHospitalsWithinRadius(double latitude, double longitude, double radius);
     List<HospitalDTO> searchHospital(String keyword);
+    List<HospitalDTO> getHospitalsByDepartment(String department);
+    Hospital getHospitalById(long id);
     List<DoctorDTO> getAllDoctors(Hospital hospital);
     void updateAddress(Manager manager, Address address);
 }

@@ -12,6 +12,6 @@ public class AppointmentData {
     private Long doctorId;
     private int slot;
     private LocalDate appointmentDate;
-    private String cancellationReason;
     private AppointmentStatus status;
+    private String cancellationReason;
 }

@@ -1,5 +1,6 @@
 package com.example.system.service.impl;
 
+import com.example.system.dto.MedicationDTO;
 import com.example.system.dto.Password;
 import com.example.system.dto.PharmacistDTO;
 import com.example.system.dto.PharmacyDTO;
@@ -18,7 +19,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.BeanUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Iterator;
 import java.util.List;
@@ -44,9 +45,7 @@ public class PharmacyServiceImpl implements PharmacyService {
 
     @Override
     @Transactional
-    public void createPharmacy(PharmacyDTO pharmacyDTO, Pharmacist pharmacist) {
-        Pharmacy pharmacy = new Pharmacy();
-        BeanUtils.copyProperties(pharmacyDTO, pharmacy);
+    public void createPharmacy(Pharmacy pharmacy, Pharmacist pharmacist) {
         addressRepo.save(pharmacy.getAddress());
         pharmacy.setPharmacist(pharmacist);
         pharmacyRepo.save(pharmacy);
@@ -71,12 +70,13 @@ public class PharmacyServiceImpl implements PharmacyService {
 
     @Override
     public PharmacyDTO getPharmacyProfile(Pharmacy pharmacy) {
+        if(pharmacy == null) throw new HospitalManagementException("Pharmacy not found");
         return new PharmacyDTO(
                 pharmacy.getId(), pharmacy.getPharmacyName(),
                 pharmacy.getAddress(), pharmacy.getEmail(),
-                pharmacy.getMobile(), pharmacy.isOpen(),
-                pharmacy.getOpeningTime(), pharmacy.getClosingTime(),
-                pharmacy.getImages()
+                pharmacy.getMobile(), pharmacy.getWebsite(),
+                pharmacy.isOpen(), pharmacy.getOpeningTime(),
+                pharmacy.getClosingTime(), pharmacy.getImages()
         );
     }
 
@@ -85,7 +85,8 @@ public class PharmacyServiceImpl implements PharmacyService {
         return new PharmacistDTO(
                 pharmacist.getId(), pharmacist.getFirstName(),
                 pharmacist.getLastName(), pharmacist.getGender(),
-                pharmacist.getEmail(), pharmacist.getMobile()
+                pharmacist.getEmail(), pharmacist.getMobile(),
+                pharmacist.getFirstName() + " " + pharmacist.getLastName()
         );
     }
 
@@ -105,9 +106,10 @@ public class PharmacyServiceImpl implements PharmacyService {
             if (rows.hasNext()) rows.next();
             while (rows.hasNext()) {
                 Row row = rows.next();
-                String batchNumber = row.getCell(8).getStringCellValue();
+                LocalDate expiryDate = row.getCell(5).getLocalDateTimeCellValue().toLocalDate();
+                if(expiryDate.isBefore(LocalDate.now())) continue;
+                String batchNumber = row.getCell(8).getStringCellValue().trim();
                 Optional<Medication> existingMedication = medicationRepo.findByBatchNumber(batchNumber);
-
                 if (existingMedication.isPresent()) {
                     updateMedication(existingMedication.get(), (int) row.getCell(4).getNumericCellValue());
                 } else {
@@ -138,7 +140,7 @@ public class PharmacyServiceImpl implements PharmacyService {
     }
     private void updateMedication(Medication medication, int quantity) {
         try {
-            medication.setQuantity(medication.getQuantity() + quantity);
+            medication.setQuantity(quantity);
             medicationRepo.save(medication);
         } catch (Exception e) {
             throw new HospitalManagementException("Error updating medication: " + e.getMessage(), e);
@@ -187,13 +189,19 @@ public class PharmacyServiceImpl implements PharmacyService {
     }
 
     @Override
-    public List<Medication> getMedications() {
-        return medicationRepo.findAll();
+    public List<MedicationDTO> getMedications() {
+        return medicationRepo.findAll().stream().map(this::getMedicationDTO).toList();
     }
 
     @Override
     public PharmacyDTO getPharmacy(Pharmacist pharmacist) {
         return this.getPharmacyProfile(pharmacist.getPharmacy());
+    }
+
+    @Override
+    public List<PharmacyDTO> getPharmaciesByKeyword(String keyword) {
+        return pharmacyRepo.findPharmaciesByKeyword(keyword).stream()
+                .map(this::getPharmacyProfile).toList();
     }
 
     @Override
@@ -203,7 +211,18 @@ public class PharmacyServiceImpl implements PharmacyService {
     }
 
     @Override
-    public List<Medication> getMedicationsByKeyword(String keyword) {
-        return medicationRepo.findByKeyword(keyword);
+    public List<MedicationDTO> getMedicationsByKeyword(String keyword) {
+        return medicationRepo.findByKeyword(keyword).stream().map(this::getMedicationDTO).toList();
+    }
+
+    private MedicationDTO getMedicationDTO(Medication medication) {
+        return new MedicationDTO(
+                medication.getId(), medication.getMedicationName(),
+                medication.getCompositionName(), medication.getDosageForm(),
+                medication.getStrength(), medication.getQuantity(),
+                medication.getExpiry(), medication.getExpiry().isBefore(LocalDate.now()),
+                medication.getManufacturer(), medication.getPrice(),
+                medication.getBatchNumber()
+        );
     }
 }
