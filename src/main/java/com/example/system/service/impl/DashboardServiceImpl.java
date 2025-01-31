@@ -4,7 +4,6 @@ import com.example.system.dto.*;
 import com.example.system.entity.Appointment;
 import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
-import com.example.system.entity.Medication;
 import com.example.system.repository.AppointmentRepo;
 import com.example.system.repository.DoctorRepo;
 import com.example.system.repository.PatientRepo;

@@ -1,7 +1,5 @@
 package com.example.system.controller;
 
-import com.example.system.dto.DoctorDTO;
-import com.example.system.dto.DoctorUpdateDTO;
 import com.example.system.dto.Password;
 import com.example.system.dto.Response;
 import com.example.system.entity.*;
@@ -15,7 +13,6 @@ import com.example.system.service.utils.Utility;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
