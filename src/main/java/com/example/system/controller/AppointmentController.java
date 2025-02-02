@@ -8,9 +8,8 @@ import com.example.system.entity.*;
 import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
 import com.example.system.exception.HospitalManagementException;
-import com.example.system.repository.AppointmentRepo;
-import com.example.system.repository.DoctorRepo;
 import com.example.system.service.AppointmentService;
+import com.example.system.service.DoctorService;
 import com.example.system.service.utils.Utility;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -27,9 +26,8 @@ import java.util.List;
 public class AppointmentController {
 
     private final Utility utility;
-    private final AppointmentRepo appointmentRepo;
-    private final DoctorRepo doctorRepo;
     private final AppointmentService appointmentService;
+    private final DoctorService doctorService;
 
     @Transactional
     @PostMapping("/patient/appointment")
@@ -41,8 +39,7 @@ public class AppointmentController {
             Object user = utility.getUserFromToken(token);
             if(!(user instanceof Patient patient))
                 throw new HospitalManagementException("Unauthorized: User is not a patient.");
-            Doctor doctor = doctorRepo.getDoctorById(appointmentData.getDoctorId()).orElseThrow(
-                    () -> new HospitalManagementException("Doctor not found"));
+            Doctor doctor = doctorService.getDoctorById(appointmentData.getDoctorId());
             appointmentService.scheduleAppointment(patient, doctor, appointmentData.getAppointmentDate(),
                     patient.getFirstName() + " " + patient.getLastName(), appointmentData.getSlot());
             response.setMessage("Appointment scheduled Successfully");
@@ -91,8 +88,7 @@ public class AppointmentController {
             Object user = utility.getUserFromToken(token);
             if(!(user instanceof Patient patient))
                 throw new HospitalManagementException("Unauthorized: User is not a patient.");
-            Appointment appointment = appointmentRepo.findById(appointmentData.getId()).
-                    orElseThrow(() -> new HospitalManagementException("Appointment not found"));
+            Appointment appointment = appointmentService.getAppointmentById(appointmentData.getId());
             appointmentService.removeOldCanceledAppointments(patient, appointment);
             response.setMessage("Appointment removed successfully");
             response.setStatus(HttpStatus.OK);
@@ -111,11 +107,8 @@ public class AppointmentController {
         Object user = utility.getUserFromToken(token);
         if (!(user instanceof Patient patient))
             throw new HospitalManagementException("Unauthorized access: User is not a patient.");
-        List<Appointment> appointments = appointmentRepo.findAllByPatient(patient);
-        List<AppointmentDTO> appointmentDTOs = appointments.stream()
-                .map(appointmentService::getAppointment)
-                .toList();
-        return ResponseEntity.ok(appointmentDTOs);
+        List<AppointmentDTO> appointments = appointmentService.getAllAppointmentsByPatient(patient);
+        return ResponseEntity.ok(appointments);
     }
 
     @PutMapping("/doctor/appointment")
@@ -126,8 +119,7 @@ public class AppointmentController {
             Object user = utility.getUserFromToken(token);
             if (!(user instanceof Doctor doctor))
                 throw new HospitalManagementException("Unauthorized access: User is not a doctor.");
-            Appointment appointment = appointmentRepo.findById(appointmentData.getId()).orElseThrow(
-                    () -> new HospitalManagementException("Appointment not found"));
+            Appointment appointment = appointmentService.getAppointmentById(appointmentData.getId());
             if (!appointment.getDoctor().getId().equals(doctor.getId()))
                 throw new HospitalManagementException("You are not authorized to access this appointment.");
             appointmentService.UpdateAppointmentStatus(appointment, appointmentData.getStatus());
@@ -147,6 +139,7 @@ public class AppointmentController {
     public ResponseEntity<Response> cancelAppointmentDoctor(@RequestHeader("Authorization") String token,
                                                             @RequestBody AppointmentData appointmentData){
         Response response = new Response();
+        System.out.println(appointmentData);
         try {
             Object user = utility.getUserFromToken(token);
             if (!(user instanceof Doctor doctor))
@@ -175,11 +168,8 @@ public class AppointmentController {
         Object user = utility.getUserFromToken(token);
         if (!(user instanceof Doctor doctor))
             throw new HospitalManagementException("Unauthorized access: User is not a doctor.");
-        List<Appointment> appointments = appointmentRepo.findAllByDoctor(doctor);
-        List<AppointmentDTO> appointmentDTOs = appointments.stream()
-                .map(appointmentService::getAppointment)
-                .toList();
-        return ResponseEntity.ok(appointmentDTOs);
+        List<AppointmentDTO> appointments = appointmentService.getAllAppointmentsByDoctor(doctor);
+        return ResponseEntity.ok(appointments);
     }
 
     @PutMapping("/admin/appointment/cancel")

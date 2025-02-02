@@ -46,11 +46,13 @@ public class PharmacyServiceImpl implements PharmacyService {
     @Override
     @Transactional
     public void createPharmacy(Pharmacy pharmacy, Pharmacist pharmacist) {
-        addressRepo.save(pharmacy.getAddress());
-        pharmacy.setPharmacist(pharmacist);
-        pharmacyRepo.save(pharmacy);
-        pharmacist.setPharmacy(pharmacy);
-        pharmacistRepo.save(pharmacist);
+        try {
+            pharmacy.setPharmacist(pharmacist);
+            pharmacist.setPharmacy(pharmacy);
+            pharmacyRepo.save(pharmacy);
+        } catch (Exception e) {
+            throw new HospitalManagementException(e.getMessage());
+        }
     }
 
     @Override
@@ -73,6 +75,9 @@ public class PharmacyServiceImpl implements PharmacyService {
         if(pharmacy == null) throw new HospitalManagementException("Pharmacy not found");
         return new PharmacyDTO(
                 pharmacy.getId(), pharmacy.getPharmacyName(),
+                pharmacy.getOverview(), pharmacy.getServices(),
+                pharmacy.getPharmacyTechnology(), pharmacy.getAccreditations(),
+                pharmacy.getInsurancePartners(),
                 pharmacy.getAddress(), pharmacy.getEmail(),
                 pharmacy.getMobile(), pharmacy.getWebsite(),
                 pharmacy.isOpen(), pharmacy.getOpeningTime(),
@@ -191,11 +196,6 @@ public class PharmacyServiceImpl implements PharmacyService {
     @Override
     public List<MedicationDTO> getMedications() {
         return medicationRepo.findAll().stream().map(this::getMedicationDTO).toList();
-    }
-
-    @Override
-    public PharmacyDTO getPharmacy(Pharmacist pharmacist) {
-        return this.getPharmacyProfile(pharmacist.getPharmacy());
     }
 
     @Override

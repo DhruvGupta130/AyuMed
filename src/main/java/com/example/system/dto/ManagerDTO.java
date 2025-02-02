@@ -13,7 +13,7 @@ public class ManagerDTO {
     private String lastName;
     private Gender gender;
     private String email;
-    private long mobile;
+    private String mobile;
     private String hospitalName;
     private String fullName;
 }

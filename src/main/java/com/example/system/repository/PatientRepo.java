@@ -21,13 +21,14 @@ public interface PatientRepo extends JpaRepository<Patient, Long> {
     List<Patient> findPatientsByDoctor(Doctor doctor);
 
     @Query("SELECT new com.example.system.dto.HospitalPatientDTO(p.id, " +
-            "p.firstName || ' ' || p.lastName, p.email, p.mobile, p.dateOfBirth, " +
-            "p.gender, d.id, d.firstName || ' ' || d.lastName, d.department) " +
+            "CONCAT(p.firstName, ' ', p.lastName), p.email, p.mobile, p.dateOfBirth, " +
+            "p.gender, d.id, CONCAT(d.firstName, ' ', d.lastName), d.department) " +
             "FROM Patient p " +
             "JOIN p.medicalHistories m " +
             "JOIN m.doctor d " +
             "WHERE d.hospital = :hospital")
     List<HospitalPatientDTO> findPatientsByHospital(Hospital hospital);
+
 
 
 }

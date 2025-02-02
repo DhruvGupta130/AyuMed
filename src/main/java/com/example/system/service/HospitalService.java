@@ -1,11 +1,10 @@
 package com.example.system.service;
 
 import com.example.system.dto.*;
-import com.example.system.entity.Address;
-import com.example.system.entity.Hospital;
-import com.example.system.entity.Manager;
+import com.example.system.entity.*;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -18,6 +17,9 @@ public interface HospitalService {
     List<String> getAllDepartments(Hospital hospital);
     List<String> getAllDepartments();
     List<HospitalPatientDTO> getAllPatients(Hospital hospital);
+    void addPatientLabResult(MedicalTest medicalTest, long historyId) throws IOException;
+    List<LabTestDTO> getPatientLabResults(long medicalId);
+    List<MedicalHistoryDTO> getPatientsMedicalHistory(long patientId);
     ManagerDTO getManagerProfile(Manager manager);
     void updateManagerProfile(Manager manager, ManagerDTO managerDTO);
     List<HospitalDTO> getHospitalsWithinRadius(double latitude, double longitude, double radius);

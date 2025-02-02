@@ -2,6 +2,8 @@ package com.example.system.controller;
 
 import com.example.system.dto.*;
 import com.example.system.entity.Doctor;
+import com.example.system.entity.MedicalHistory;
+import com.example.system.entity.Patient;
 import com.example.system.entity.Schedule;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.service.DoctorService;
@@ -13,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -120,13 +121,21 @@ public class DoctorController {
         return ResponseEntity.ok(patientService.getDoctorsPatient(doctor));
     }
 
-    @PostMapping("/add-medical-history")
+    @GetMapping("/medical-histories/{patientId}")
+    public ResponseEntity<List<MedicalHistoryDTO>> getMedicalHistories(@PathVariable long patientId) {
+        return ResponseEntity.ok(hospitalService.getPatientsMedicalHistory(patientId));
+    }
+
+    @PostMapping("/add-medical-history/{patientId}")
     public ResponseEntity<Response> addMedicalHistory(@RequestHeader("Authorization") String token,
-                                                      @RequestBody HistoryRequest history) {
+                                                      @PathVariable long patientId,
+                                                      @RequestBody MedicalHistory history) {
+        System.out.println(history);
         Response response = new Response();
         try {
             Doctor doctor = (Doctor) utility.getUserFromToken(token);
-            patientService.addMedicalHistory(doctor, history);
+            Patient patient = patientService.getPatientById(patientId);
+            patientService.addMedicalHistory(doctor, patient, history);
             response.setMessage("Medical History added successfully.");
             response.setStatus(HttpStatus.CREATED);
         } catch (HospitalManagementException e) {
@@ -139,22 +148,9 @@ public class DoctorController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @PutMapping("/add-lab-results")
-    public ResponseEntity<Response> addLabResults(@ModelAttribute LabTestRequest labTest,
-                                                  @RequestParam MultipartFile file) {
-        Response response = new Response();
-        try {
-            patientService.addLabResults(file, labTest);
-            response.setMessage("Medical History added successfully.");
-            response.setStatus(HttpStatus.CREATED);
-        } catch (HospitalManagementException e) {
-            response.setMessage(e.getMessage());
-            response.setStatus(HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            response.setMessage("Error in adding Lab Results: " + e.getMessage());
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return ResponseEntity.status(response.getStatus()).body(response);
+    @GetMapping("/lab-tests/{medicalId}")
+    public ResponseEntity<List<LabTestDTO>> getMedicalTests(@PathVariable long medicalId) {
+        return ResponseEntity.ok().body(hospitalService.getPatientLabResults(medicalId));
     }
 
     @GetMapping("/hospital")

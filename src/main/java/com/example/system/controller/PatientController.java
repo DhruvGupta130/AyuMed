@@ -42,9 +42,9 @@ public class PatientController {
     @Transactional
     @PutMapping("/updateProfile")
     public ResponseEntity<Response> updateProfile(@RequestHeader("Authorization") String token,
-                                                  @RequestParam("aadhaarId") long aadhaarId,
+                                                  @RequestParam("aadhaarId") String aadhaarId,
                                                   @RequestParam("image") MultipartFile image,
-                                                  @RequestParam("mobile") long mobile) {
+                                                  @RequestParam("mobile") String mobile) {
         Response response = new Response();
         try {
             Patient patient = (Patient) utility.getUserFromToken(token);

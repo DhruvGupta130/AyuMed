@@ -5,12 +5,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -19,22 +21,30 @@ public class Doctor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String firstName;
     private String lastName;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Email
+    @Email(message = "Invalid email format")
     private String email;
-    private long mobile;
+
+    @Pattern(regexp = "^[+]?[0-9\\- ]{7,20}$", message = "Invalid phone number")
+    private String mobile;
 
     private String specialty;
+
+    @Pattern(regexp = "^[A-Z0-9]{5,15}$", message = "Invalid license number format")
     private String licenseNumber;
+
     private String department;
 
     private LocalDate startDate;
     private String image;
+
+    @Pattern(regexp = "^[a-zA-Z.\\s]+$", message = "Degree should contain only letters, spaces, and periods")
     private String degree;
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -60,13 +70,19 @@ public class Doctor {
     }
 
     public int getExperience() {
-        if (startDate == null) {
-            return 0;
-        }
-        return (int) ChronoUnit.YEARS.between(startDate, LocalDate.now());
+        return (startDate == null) ? 0 : (int) ChronoUnit.YEARS.between(startDate, LocalDate.now());
     }
 
     public String getLocation() {
-        return "%s, %s, %s, %s, %s, %s".formatted(hospital.getHospitalName(), hospital.getAddress().getStreet(), hospital.getAddress().getCity(), hospital.getAddress().getState(), hospital.getAddress().getZip(), hospital.getAddress().getCountry());
+        return Optional.ofNullable(hospital)
+                .map(h -> "%s, %s, %s, %s, %s, %s".formatted(
+                        h.getHospitalName(),
+                        Optional.ofNullable(h.getAddress()).map(Address::getStreet).orElse(""),
+                        Optional.ofNullable(h.getAddress()).map(Address::getCity).orElse(""),
+                        Optional.ofNullable(h.getAddress()).map(Address::getState).orElse(""),
+                        Optional.ofNullable(h.getAddress()).map(Address::getZip).orElse(""),
+                        Optional.ofNullable(h.getAddress()).map(Address::getCountry).orElse("")
+                ))
+                .orElse("Hospital details unavailable");
     }
 }

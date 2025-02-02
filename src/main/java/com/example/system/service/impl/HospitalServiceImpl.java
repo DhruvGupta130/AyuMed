@@ -1,9 +1,7 @@
 package com.example.system.service.impl;
 
 import com.example.system.dto.*;
-import com.example.system.entity.Address;
-import com.example.system.entity.Hospital;
-import com.example.system.entity.Manager;
+import com.example.system.entity.*;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.AddressRepo;
 import com.example.system.repository.HospitalRepo;
@@ -16,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -32,11 +31,13 @@ public class HospitalServiceImpl implements HospitalService {
     @Override
     @Transactional
     public void registerHospital(Hospital hospital, Manager manager) {
-        addressRepo.save(hospital.getAddress());
-        hospital.setManager(manager);
-        hospitalRepo.save(hospital);
-        manager.setHospital(hospital);
-        managerRepo.save(manager);
+        try {
+            hospital.setManager(manager);
+            manager.setHospital(hospital);
+            hospitalRepo.save(hospital);
+        } catch (Exception e) {
+            throw new HospitalManagementException(e.getMessage());
+        }
     }
 
     @Override
@@ -46,7 +47,12 @@ public class HospitalServiceImpl implements HospitalService {
                 hospital.getAddress(), hospital.getEmail(),
                 hospital.getMobile(), hospital.getDepartments(),
                 hospital.getWebsite(), hospital.getEstablishedYear(),
-                hospital.getDescription(), hospital.getImages()
+                hospital.getOverview(), hospital.getSpecialities(),
+                hospital.isEmergencyServices(), hospital.getBedCapacity(),
+                hospital.getIcuCapacity(), hospital.getOperationTheaters(),
+                hospital.getTechnology(), hospital.getAccreditations(),
+                hospital.getInsurancePartners(),
+                hospital.getFeedbacks(), hospital.getImages()
         );
     }
 
@@ -71,6 +77,24 @@ public class HospitalServiceImpl implements HospitalService {
     @Override
     public List<HospitalPatientDTO> getAllPatients(Hospital hospital) {
         return patientService.getHospitalPatient(hospital);
+    }
+
+    @Override
+    public void addPatientLabResult(MedicalTest medicalTest, long historyId) throws IOException {
+        patientService.addLabResults(medicalTest, historyId);
+    }
+
+    @Override
+    public List<LabTestDTO> getPatientLabResults(long medicalId) {
+        MedicalHistory medicalHistory = patientService.getMedicalHistoryById(medicalId);
+        return patientService.getMedicalTests(medicalHistory);
+    }
+
+    @Override
+    public List<MedicalHistoryDTO> getPatientsMedicalHistory(long patientId) {
+        Patient patient = patientService.getPatientById(patientId);
+        if(patient.getMedicalHistories() == null) throw new HospitalManagementException("No medical histories found");
+        return patientService.getMedicalHistory(patient);
     }
 
     @Override

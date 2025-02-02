@@ -3,6 +3,7 @@ package com.example.system.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,37 +19,54 @@ public class Pharmacy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @NotNull
     private String pharmacyName;
 
     @NotNull
-    @Column(length = 500000)
-    private String description;
+    @Column(columnDefinition = "TEXT")
+    private String overview;
 
-    @ManyToOne
+    @Column(columnDefinition = "TEXT")
+    private String services;
+
+    @Column(columnDefinition = "TEXT")
+    private String pharmacyTechnology;
+
+    @Column(columnDefinition = "TEXT")
+    private String accreditations;
+
+    @Column(columnDefinition = "TEXT")
+    private String insurancePartners;
+
+    @ManyToOne(cascade = CascadeType.ALL)
     private Address address;
 
     @Email
     private String email;
 
-    private long mobile;
+    @Pattern(regexp = "^[+]?[0-9\\- ]{7,20}$", message = "Invalid phone number")
+    private String mobile;
 
+    @Pattern(regexp = "^(https?://)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,10}(/.*)?$", message = "Invalid website URL")
     private String website;
 
-    @OneToMany(mappedBy = "pharmacy", cascade = CascadeType.ALL)
-    private List<Medication> medications;
+    @NotNull
+    private LocalTime openingTime;
+
+    @NotNull
+    private LocalTime closingTime;
+
+    private boolean open;
+
+    @OneToMany(mappedBy = "pharmacy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Medication> medications = new ArrayList<>();
 
     @NotNull
     @OneToOne(cascade = CascadeType.ALL)
     private Pharmacist pharmacist;
 
-    private boolean open;
-
-    @NotNull
-    private LocalTime openingTime;
-    @NotNull
-    private LocalTime closingTime;
-
     @ElementCollection
+    @CollectionTable(name = "pharmacy_images", joinColumns = @JoinColumn(name = "pharmacy_id"))
     private List<String> images = new ArrayList<>();
 }

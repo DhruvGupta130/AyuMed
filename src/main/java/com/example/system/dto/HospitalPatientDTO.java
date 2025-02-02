@@ -13,7 +13,7 @@ public class HospitalPatientDTO {
     private long id;
     private String fullName;
     private String email;
-    private long mobile;
+    private String mobile;
     private LocalDate dateOfBirth;
     private Gender gender;
 

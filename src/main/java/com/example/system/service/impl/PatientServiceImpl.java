@@ -40,7 +40,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     @Transactional
-    public void updatePatient(Patient patient, long aadhaarId, long mobile, MultipartFile image) {
+    public void updatePatient(Patient patient, String aadhaarId, String mobile, MultipartFile image) {
         patient.setAadhaarId(aadhaarId);
         patient.setAlternateMobile(mobile);
         if (image != null && !image.isEmpty()) {
@@ -78,53 +78,29 @@ public class PatientServiceImpl implements PatientService {
         }
     }
 
-    private void addMedicalHistory(Patient patient, MedicalHistory medicalHistory) {
-        medicalHistory.setPatient(patient);
+    @Override
+    @Transactional
+    public void addMedicalHistory(Doctor doctor, Patient patient, MedicalHistory history) {
+        history.setPatient(patient);
+        history.setDoctor(doctor);
         if (patient.getMedicalHistories() == null) {
             patient.setMedicalHistories(new ArrayList<>());
         }
-        patient.getMedicalHistories().add(medicalHistory);
+        patient.getMedicalHistories().add(history);
         patientRepo.save(patient);
     }
 
     @Override
     @Transactional
-    public void addMedicalHistory(Doctor doctor, HistoryRequest historyRequest) {
-        MedicalHistory medicalHistory = new MedicalHistory();
-        Patient patient = this.getPatientById(historyRequest.getPatientId());
-        medicalHistory.setProblems(historyRequest.getProblems());
-        medicalHistory.setDiagnosisDetails(historyRequest.getDiagnosisDetails());
-        medicalHistory.setMedications(historyRequest.getMedications());
-        medicalHistory.setTreatmentPlan(historyRequest.getTreatmentPlan());
-        medicalHistory.setFollowUpInstructions(historyRequest.getFollowUpInstructions());
-        medicalHistory.setNotes(historyRequest.getNotes());
-        medicalHistory.setDoctor(doctor);
-        this.addMedicalHistory(patient, medicalHistory);
-
-    }
-
-    private void addLabResults(MedicalTest medicalTest, MedicalHistory medicalHistory) {
-        medicalTest.setHistory(medicalHistory);
-        if (medicalHistory.getTestsConducted() == null) {
-            medicalHistory.setTestsConducted(new ArrayList<>());
-        }
-        medicalHistory.getTestsConducted().add(medicalTest);
-        medicalHistoryRepo.save(medicalHistory);
-    }
-
-    @Override
-    @Transactional
-    public void addLabResults(MultipartFile file, LabTestRequest request) throws IOException {
-        MedicalHistory history = medicalHistoryRepo.findById(request.getHistoryId())
+    public void addLabResults(MedicalTest test, long historyId) {
+        MedicalHistory history = medicalHistoryRepo.findById(historyId)
                 .orElseThrow(() -> new HospitalManagementException("Medical History not found"));
-        String filePath = fileService.saveFile(file).getFilePath();
-        MedicalTest test = new MedicalTest();
-        test.setTestName(request.getTestName());
-        test.setTestDate(request.getTestDate());
-        test.setResult(request.getResult());
-        test.setNotes(request.getNotes());
-        test.setFilePath(filePath);
-        this.addLabResults(test, history);
+        test.setHistory(history);
+        if (history.getTestsConducted() == null) {
+            history.setTestsConducted(new ArrayList<>());
+        }
+        history.getTestsConducted().add(test);
+        medicalHistoryRepo.save(history);
     }
 
     @Override
@@ -180,6 +156,11 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
+    public MedicalHistory getMedicalHistoryById(long id) {
+        return medicalHistoryRepo.getReferenceById(id);
+    }
+
+    @Override
     public PatientDTO getPatientProfile(Patient patient) {
         return new PatientDTO(
                 patient.getId(), patient.getFirstName(),
@@ -210,6 +191,11 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
+    public List<LabTestDTO> getMedicalTests(MedicalHistory history) {
+        return medicalTestRepo.findMedicalTestByHistory(history);
+    }
+
+    @Override
     public void updateAddress(Patient patient, Address addresses) {
         Address address = addressRepo.findById(patient.getAddress().getId())
                 .orElseThrow(() -> new RuntimeException("Address not found"));
@@ -227,13 +213,12 @@ public class PatientServiceImpl implements PatientService {
         return patient.getMedicalHistories().stream().map(this::getMedicalHistory).toList();
     }
 
-    private String hideAadhaarId(Long aadhaarId) {
+    private String hideAadhaarId(String aadhaarId) {
         if(aadhaarId == null) return null;
-        String aadhaarStr = Long.toString(aadhaarId);
-        if (aadhaarStr.length() != 12) {
+        if (aadhaarId.length() != 12) {
             throw new IllegalArgumentException("Invalid Aadhaar ID length");
         }
-        return "XXXX XXXX XXXX " + aadhaarStr.substring(8);
+        return "XXXX XXXX XXXX " + aadhaarId.substring(8);
     }
 
     private LabTestDTO getLabTest(MedicalTest medicalTest) {
@@ -248,7 +233,8 @@ public class PatientServiceImpl implements PatientService {
         return new MedicalHistoryDTO(
                 medicalHistory.getId(), medicalHistory.getProblems(),
                 medicalHistory.getDiagnosisDetails(), medicalHistory.getMedications(),
-                medicalHistory.getTreatmentStartDate(), medicalHistory.getLastTreatmentDate(),
+                medicalHistory.getTreatmentStartDate().toLocalDate(),
+                medicalHistory.getLastTreatmentDate().toLocalDate(),
                 medicalHistory.getTreatmentPlan(), medicalHistory.getFollowUpInstructions(),
                 medicalHistory.getPatient().getFullName(),
                 medicalHistory.getDoctor().getFullName(),

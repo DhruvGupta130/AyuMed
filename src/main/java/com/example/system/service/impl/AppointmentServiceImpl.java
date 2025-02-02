@@ -9,8 +9,6 @@ import com.example.system.entity.Patient;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
 import com.example.system.service.AppointmentService;
-import com.example.system.service.DoctorService;
-import com.example.system.service.PatientService;
 import com.example.system.service.utils.EmailService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -34,8 +32,6 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
-    private final PatientService patientService;
-    private final DoctorService doctorService;
 
     @Override
     public List<Appointment> getAllAppointments() {
@@ -52,13 +48,29 @@ public class AppointmentServiceImpl implements AppointmentService {
     public AppointmentDTO getAppointment(Appointment appointment) {
         return new AppointmentDTO(
                 appointment.getId(),
-                patientService.getPatientProfile(appointment.getPatient()),
-                doctorService.getDoctorProfile(appointment.getDoctor()),
-                appointment.getAppointmentDate(), appointment.getCreatedAt(),
-                appointment.getLastUpdatedAt(), appointment.getStatus(),
-                appointment.getCancellationReason(), appointment.getCreatedBy(),
-                appointment.getLastModifiedBy(), appointment.getSlotIndex()
+                appointment.getDoctor().getFullName(),
+                appointment.getDoctor().getDepartment(),
+                appointment.getDoctor().getImage(),
+                appointment.getPatient().getFullName(),
+                appointment.getPatient().getImage(),
+                appointment.getPatient().getGender(),
+                appointment.getPatient().getMobile(),
+                appointment.getPatient().getEmail(),
+                appointment.getDoctor().getHospital().getHospitalName(),
+                appointment.getDoctor().getHospital().getAddress().toString(),
+                appointment.getAppointmentDate(), appointment.getStatus(),
+                appointment.getCancellationReason(), appointment.getSlotIndex()
         );
+    }
+
+    @Override
+    public List<AppointmentDTO> getAllAppointmentsByDoctor(Doctor doctor) {
+        return appointmentRepo.findAllByDoctor(doctor).stream().map(this::getAppointment).toList();
+    }
+
+    @Override
+    public List<AppointmentDTO> getAllAppointmentsByPatient(Patient patient) {
+        return appointmentRepo.findAllByPatient(patient).stream().map(this::getAppointment).toList();
     }
 
     @Override
@@ -159,9 +171,9 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional
     public void cancelAppointment(Long id, String cancellationReason, String modifiedBy) {
         Appointment appointment = getAppointmentById(id);
-        if (isAlreadyCancelled(appointment)) return;
+        if (isAlreadyCancelled(appointment) || isCompleted(appointment)) throw new HospitalManagementException("This appointment cannot be canceled.");
         if (appointment.getAppointmentDate().isBefore(LocalDateTime.now()))
-            throw new HospitalManagementException("Only Future Appointments can be cancelled.");
+            throw new HospitalManagementException("This appointment is expired.");
         restoreScheduleSlot(appointment);
         appointment.setStatus(AppointmentStatus.CANCELED);
         appointment.setLastModifiedBy(modifiedBy);
@@ -191,6 +203,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private boolean isAlreadyCancelled(Appointment appointment) {
         return appointment.getStatus() == AppointmentStatus.CANCELED;
+    }
+    private boolean isCompleted(Appointment appointment) {
+        return appointment.getStatus() == AppointmentStatus.COMPLETED;
     }
 
     @Override

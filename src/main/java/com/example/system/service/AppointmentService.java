@@ -17,6 +17,8 @@ public interface AppointmentService {
     List<Appointment> getAllAppointments();
     Appointment getAppointmentById(Long id);
     AppointmentDTO getAppointment(Appointment appointment);
+    List<AppointmentDTO> getAllAppointmentsByDoctor(Doctor doctor);
+    List<AppointmentDTO> getAllAppointmentsByPatient(Patient patient);
     void scheduleAppointment(Patient patient, Doctor doctor, LocalDate appointmentDate, String createdBy, int slotIndex);
     void UpdateAppointmentStatus(Appointment appointment, AppointmentStatus status);
     void cancelAppointment(Long id, String cancellationReason, String modifiedBy);

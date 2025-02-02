@@ -120,7 +120,7 @@ public class PharmacyController {
             Pharmacist pharmacist = (Pharmacist) utility.getUserFromToken(token);
             if(pharmacist == null) throw new HospitalManagementException("Pharmacist not found.");
             pharmacyService.setStatus(pharmacist.getPharmacy());
-            response.setMessage("Pharmacy successfully updated to " + pharmacist.getPharmacy().isOpen());
+            response.setMessage("Pharmacy status successfully updated to " + (pharmacist.getPharmacy().isOpen() ? "opened" : "closed"));
             response.setStatus(HttpStatus.OK);
         } catch (HospitalManagementException e) {
             response.setMessage(e.getMessage());

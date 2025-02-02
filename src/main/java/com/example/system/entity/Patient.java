@@ -4,8 +4,7 @@ import com.example.system.dto.Gender;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -21,39 +20,50 @@ public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull
     private String firstName;
+    @NotNull
     private String lastName;
 
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    @Past
+    @Past(message = "Date of birth must be in the past")
     private LocalDate dateOfBirth;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Email
+    @Email(message = "Invalid email format")
     private String email;
-    private Long mobile;
-    private Long alternateMobile;
 
-    private Long aadhaarId;
+    @Pattern(regexp = "^[+]?[0-9\\- ]{7,20}$", message = "Invalid phone number")
+    private String mobile;
+
+    @Pattern(regexp = "^[+]?[0-9\\- ]{7,20}$", message = "Invalid phone number")
+    private String alternateMobile;
+
+    @JsonIgnore
+    @Pattern(regexp = "^\\d{12}$", message = "Aadhaar ID must be a 12-digit number")
+    private String aadhaarId;
 
     private String image;
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    @OneToMany(mappedBy = "patient", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private List<MedicalHistory> medicalHistories;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Address address;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private LoginUser loginUser = new LoginUser();
+    private LoginUser loginUser;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Appointment> appointments;
 
@@ -64,5 +74,4 @@ public class Patient {
     public String getFullName() {
         return firstName + " " + lastName;
     }
-
 }

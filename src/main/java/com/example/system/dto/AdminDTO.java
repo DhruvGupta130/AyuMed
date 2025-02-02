@@ -13,6 +13,6 @@ public class AdminDTO {
     private String lastName;
     private Gender gender;
     private String email;
-    private long mobile;
+    private String mobile;
     private String fullName;
 }

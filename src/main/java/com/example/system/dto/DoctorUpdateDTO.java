@@ -13,7 +13,7 @@ public class DoctorUpdateDTO {
     private String lastName;
     private Gender gender;
     private String email;
-    private long mobile;
+    private String mobile;
     private String specialty;
     private String licenseNumber;
     private String department;

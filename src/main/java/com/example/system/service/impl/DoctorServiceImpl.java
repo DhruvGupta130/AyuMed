@@ -225,7 +225,7 @@ public class DoctorServiceImpl implements DoctorService {
             registrationDTO.setLastName(getCellValue(row, 3));
             registrationDTO.setGender(parseGender(getCellValue(row, 4)));
             registrationDTO.setEmail(getCellValue(row, 5));
-            registrationDTO.setMobile(Long.parseLong(getCellValue(row, 6)));
+            registrationDTO.setMobile((getCellValue(row, 6)));
             registrationDTO.setDepartment(getCellValue(row, 7));
             registrationDTO.setSpecialty(getCellValue(row, 8));
             registrationDTO.setLicenseNumber(getCellValue(row, 9));

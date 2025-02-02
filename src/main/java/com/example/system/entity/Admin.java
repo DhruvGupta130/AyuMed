@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,13 +17,24 @@ public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull(message = "First name cannot be null")
     private String firstName;
+
+    @NotNull(message = "Last name cannot be null")
     private String lastName;
+
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "Gender cannot be null")
     private Gender gender;
 
-    @Email
+    @Email(message = "Invalid email format")
+    @NotNull(message = "Email cannot be null")
     private String email;
-    private long mobile;
+
+    @Pattern(regexp = "^[+]?[0-9\\- ]{7,20}$", message = "Invalid phone number")
+    @NotNull(message = "Mobile number cannot be null")
+    private String mobile;
 
     @NotNull
     @ManyToOne

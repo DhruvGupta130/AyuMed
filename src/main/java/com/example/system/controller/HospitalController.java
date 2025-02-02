@@ -3,6 +3,8 @@ package com.example.system.controller;
 import com.example.system.dto.*;
 import com.example.system.entity.Hospital;
 import com.example.system.entity.Manager;
+import com.example.system.entity.MedicalTest;
+import com.example.system.entity.Patient;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.UserRepo;
 import com.example.system.service.DoctorService;
@@ -139,6 +141,34 @@ public class HospitalController {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @GetMapping("/medical-histories/{patientId}")
+    public ResponseEntity<List<MedicalHistoryDTO>> getMedicalHistories(@PathVariable long patientId) {
+        return ResponseEntity.ok(hospitalService.getPatientsMedicalHistory(patientId));
+    }
+
+    @PutMapping("/add-lab-results/{historyId}")
+    public ResponseEntity<Response> addLabResults(@RequestBody MedicalTest test,
+                                                  @PathVariable long historyId) {
+        Response response = new Response();
+        try {
+            hospitalService.addPatientLabResult(test, historyId);
+            response.setMessage("Lab Results added successfully");
+            response.setStatus(HttpStatus.CREATED);
+        } catch (HospitalManagementException e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setMessage("Error in adding Lab Results: " + e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @GetMapping("/lab-tests/{medicalId}")
+    public ResponseEntity<List<LabTestDTO>> getMedicalTests(@PathVariable long medicalId) {
+        return ResponseEntity.ok().body(hospitalService.getPatientLabResults(medicalId));
     }
 
     @GetMapping("/patients")

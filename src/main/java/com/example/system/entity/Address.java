@@ -30,4 +30,14 @@ public class Address {
     private double latitude;
     @NotNull
     private double longitude;
+
+    @Override
+    public String toString() {
+        return
+                street + ", " +
+                city + ", " +
+                state + ", " +
+                zip + ", " +
+                country;
+    }
 }

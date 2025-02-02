@@ -27,7 +27,6 @@ public interface PharmacyService {
     void updateAddress(Pharmacist pharmacist, Address address);
     List<MedicationDTO> getMedications();
     List<MedicationDTO> getMedicationsByKeyword(String keyword);
-    PharmacyDTO getPharmacy(Pharmacist pharmacist);
     List<PharmacyDTO> getPharmaciesByKeyword(String keyword);
     List<PharmacyDTO> getPharmaciesWithinRadius(double latitude, double longitude, double radius);
 }

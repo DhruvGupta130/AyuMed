@@ -12,15 +12,19 @@ import java.time.LocalDateTime;
 public class AppointmentDTO {
 
     private Long id;
-    private PatientDTO patient;
-    private DoctorDTO doctor;
+    private String doctorName;
+    private String doctorDepartment;
+    private String doctorImage;
+    private String patientName;
+    private String patientImage;
+    private Gender patientGender;
+    private String patientMobile;
+    private String patientEmail;
+    private String hospitalName;
+    private String hospitalAddress;
     private LocalDateTime appointmentDate;
-    private LocalDateTime createdAt;
-    private LocalDateTime lastUpdatedAt;
     private AppointmentStatus status;
     private String cancellationReason;
-    private String createdBy;
-    private String lastModifiedBy;
     private int slotIndex;
 
 }

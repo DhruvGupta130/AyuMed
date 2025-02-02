@@ -3,9 +3,11 @@ package com.example.system.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -21,40 +23,61 @@ public class Hospital {
     @NotNull
     private String hospitalName;
 
-    @NotNull
-    @ManyToOne
-    private Address address;
-
     @Email
     @NotNull
     private String email;
 
-    private long mobile;
-
-    @OneToMany(mappedBy = "hospital", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Doctor> doctors;
-
-    @ElementCollection
-    private Set<String> departments;
+    @Pattern(regexp = "^[+]?[0-9\\- ]{7,20}$", message = "Invalid phone number")
+    private String mobile;
 
     @NotNull
-    @OneToOne(mappedBy = "hospital", cascade = CascadeType.ALL)
-    private Manager manager;
-
-    @NotNull
+    @Pattern(regexp = "^(https?://)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,10}(/.*)?$", message = "Invalid website URL")
     private String website;
 
     @NotNull
     private Integer establishedYear;
 
     @NotNull
-    @Column(length = 500000)
-    private String description;
+    @Column(columnDefinition = "TEXT")
+    private String overview;
 
-    @OneToMany(mappedBy = "hospital")
-    private List<Feedback> feedbacks;
+    @Column(columnDefinition = "TEXT")
+    private String specialities;
+
+    private boolean emergencyServices = false;
+
+    @Column(columnDefinition = "TEXT")
+    private String technology;
+
+    private int bedCapacity;
+    private int icuCapacity;
+    private int operationTheaters;
+
+    @Column(columnDefinition = "TEXT")
+    private String accreditations;
+
+    @Column(columnDefinition = "TEXT")
+    private String insurancePartners;
+
+    @ElementCollection
+    @CollectionTable(name = "hospital_departments", joinColumns = @JoinColumn(name = "hospital_id"))
+    private Set<String> departments;
 
     @NotNull
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Address address;
+
+    @OneToMany(mappedBy = "hospital", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Doctor> doctors;
+
+    @NotNull
+    @OneToOne(mappedBy = "hospital", cascade = CascadeType.ALL)
+    private Manager manager;
+
+    @OneToMany(mappedBy = "hospital", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Feedback> feedbacks;
+
     @ElementCollection
-    private List<String> images;
+    @CollectionTable(name = "hospital_images", joinColumns = @JoinColumn(name = "hospital_id"))
+    private List<String> images = new ArrayList<>();
 }
