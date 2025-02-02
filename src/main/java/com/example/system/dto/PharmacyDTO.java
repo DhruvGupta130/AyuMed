@@ -1,7 +1,6 @@
 package com.example.system.dto;
 
 import com.example.system.entity.Address;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

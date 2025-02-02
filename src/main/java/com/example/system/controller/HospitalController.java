@@ -4,7 +4,6 @@ import com.example.system.dto.*;
 import com.example.system.entity.Hospital;
 import com.example.system.entity.Manager;
 import com.example.system.entity.MedicalTest;
-import com.example.system.entity.Patient;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.UserRepo;
 import com.example.system.service.DoctorService;
