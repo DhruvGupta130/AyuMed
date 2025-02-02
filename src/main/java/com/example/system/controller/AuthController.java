@@ -48,7 +48,10 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-            LoginResponse responseDTO = authService.loginService(loginRequest);
-            return new ResponseEntity<>(responseDTO, responseDTO.getStatus());
+        if(userRepo.findByUsername(loginRequest.getUsername()).isEmpty()) {
+            throw new HospitalManagementException("User is not registered.");
+        }
+        LoginResponse responseDTO = authService.loginService(loginRequest);
+        return new ResponseEntity<>(responseDTO, responseDTO.getStatus());
     }
 }

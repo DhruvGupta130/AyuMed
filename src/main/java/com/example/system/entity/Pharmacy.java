@@ -36,8 +36,8 @@ public class Pharmacy {
     @Column(columnDefinition = "TEXT")
     private String accreditations;
 
-    @Column(columnDefinition = "TEXT")
-    private String insurancePartners;
+    @ElementCollection
+    private List<String> insurancePartners;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Address address;

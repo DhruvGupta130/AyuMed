@@ -21,14 +21,14 @@ public class HospitalDTO {
     private String website;
     private int establishedYear;
     private String overview;
-    private String specialities;
+    private List<String> specialities;
     private boolean emergencyServices;
     private int bedCapacity;
     private int icuCapacity;
     private int operationTheaters;
     private String technology;
     private String accreditations;
-    private String insurancePartners;
+    private List<String> insurancePartners;
     private List<Feedback> feedbacks;
     private List<String> images;
 

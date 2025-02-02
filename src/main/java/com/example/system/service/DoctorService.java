@@ -24,7 +24,7 @@ public interface DoctorService {
     List<DoctorDTO> getDoctorsByDepartment(String department);
     List<DoctorDTO> getDoctorsByHospitalAndDepartment(Hospital hospital, String department);
     List<DoctorDTO> getHospitalDoctors(Hospital hospital);
-    List<ScheduleDTO> getSchedules(Doctor doctor);
+    List<ScheduleDTO> getSchedules(Doctor doctor, String sortBy, String sortDirection);
     void deleteAllSchedules(Doctor doctor);
     void deleteSelectedSchedules(Doctor doctor, List<Long> scheduleIds);
     void registerDoctor(RegistrationDTO doctor);

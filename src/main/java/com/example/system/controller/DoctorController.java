@@ -57,9 +57,11 @@ public class DoctorController {
     }
 
     @GetMapping("/schedules")
-    public ResponseEntity<List<ScheduleDTO>> getDoctorSchedules(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<ScheduleDTO>> getDoctorSchedules(@RequestHeader("Authorization") String token,
+                                                                @RequestParam(required = false) String sortBy,
+                                                                @RequestParam(required = false) String sortDirection) {
         Doctor doctor = (Doctor) utility.getUserFromToken(token);
-        return ResponseEntity.ok(doctorService.getSchedules(doctor));
+        return ResponseEntity.ok(doctorService.getSchedules(doctor, sortBy, sortDirection));
     }
 
     @PostMapping("/schedules")

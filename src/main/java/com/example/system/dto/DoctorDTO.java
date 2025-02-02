@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -19,6 +21,7 @@ public class DoctorDTO {
     private String licenseNumber;
     private String department;
     private Integer experience;
+    private LocalDate startDate;
     private String image;
     private String degree;
     private String fullName;

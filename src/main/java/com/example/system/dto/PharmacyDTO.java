@@ -17,7 +17,7 @@ public class PharmacyDTO {
     private String services;
     private String pharmacyTechnology;
     private String accreditations;
-    private String insurancePartners;
+    private List<String> insurancePartners;
     private Address address;
     private String email;
     private String mobile;

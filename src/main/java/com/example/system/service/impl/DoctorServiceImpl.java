@@ -12,6 +12,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,8 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -86,7 +86,7 @@ public class DoctorServiceImpl implements DoctorService {
                 doctor.getEmail(), doctor.getMobile(),
                 doctor.getSpecialty(), doctor.getLicenseNumber(),
                 doctor.getDepartment(), doctor.getExperience(),
-                doctor.getImage(), doctor.getDegree(),
+                doctor.getStartDate(), doctor.getImage(), doctor.getDegree(),
                 doctor.getFullName()
         );
     }
@@ -165,9 +165,19 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public List<ScheduleDTO> getSchedules(Doctor doctor) {
-        return scheduleRepo.findScheduleByDoctor(doctor)
+    public List<ScheduleDTO> getSchedules(Doctor doctor, String sortBy, String sortDirection) {
+        sortBy = (sortBy == null || !isValidSortField(sortBy)) ? "date" : sortBy;
+        Sort.Order order = "desc".equalsIgnoreCase(sortDirection)
+                ? Sort.Order.desc(sortBy)
+                : Sort.Order.asc(sortBy);
+        Sort sortOrder = Sort.by(order);
+        return scheduleRepo.findScheduleByDoctor(doctor, sortOrder)
                 .stream().map(this::getScheduleDTO).toList();
+    }
+
+    private boolean isValidSortField(String sortBy) {
+        List<String> validFields = Arrays.asList("date", "startTime", "endTime", "dayOfWeek");
+        return validFields.contains(sortBy);
     }
 
     @Override

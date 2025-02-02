@@ -41,8 +41,8 @@ public class Hospital {
     @Column(columnDefinition = "TEXT")
     private String overview;
 
-    @Column(columnDefinition = "TEXT")
-    private String specialities;
+    @ElementCollection
+    private List<String> specialities;
 
     private boolean emergencyServices = false;
 
@@ -56,8 +56,8 @@ public class Hospital {
     @Column(columnDefinition = "TEXT")
     private String accreditations;
 
-    @Column(columnDefinition = "TEXT")
-    private String insurancePartners;
+    @ElementCollection
+    private List<String> insurancePartners;
 
     @ElementCollection
     @CollectionTable(name = "hospital_departments", joinColumns = @JoinColumn(name = "hospital_id"))

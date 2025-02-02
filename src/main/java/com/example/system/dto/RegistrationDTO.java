@@ -17,10 +17,10 @@ public class RegistrationDTO {
     private String lastName;
     private Gender gender;
     private String email;
-    private String Mobile;
-    private String department;
+    private String mobile;
 
     // For doctors
+    private String department;
     private String specialty;
     private String licenseNumber;
     private long hospitalId;
