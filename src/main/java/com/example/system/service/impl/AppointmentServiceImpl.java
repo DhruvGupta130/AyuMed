@@ -151,9 +151,13 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public void UpdateAppointmentStatus(Appointment appointment, AppointmentStatus status) {
-        appointment.setStatus(status);
-        appointmentRepo.save(appointment);
-        sendStatusUpdateEmails(appointment, status);
+        if (appointment.getStatus().canTransitionTo(status)) {
+            appointment.setStatus(status);
+            appointmentRepo.save(appointment);
+            sendStatusUpdateEmails(appointment, status);
+        } else {
+            throw new HospitalManagementException("Cannot transition from " + appointment.getStatus() + " to " + status);
+        }
     }
 
     private void sendStatusUpdateEmails(Appointment appointment, AppointmentStatus status) {
