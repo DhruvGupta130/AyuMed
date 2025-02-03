@@ -33,7 +33,6 @@ public class AppointmentController {
     @PostMapping("/patient/appointment")
     public ResponseEntity<Response> scheduleAppointment(@RequestHeader("Authorization") String token,
                                                         @RequestBody AppointmentData appointmentData) {
-        System.out.println(appointmentData);
         Response response = new Response();
         try {
             Object user = utility.getUserFromToken(token);
@@ -139,7 +138,6 @@ public class AppointmentController {
     public ResponseEntity<Response> cancelAppointmentDoctor(@RequestHeader("Authorization") String token,
                                                             @RequestBody AppointmentData appointmentData){
         Response response = new Response();
-        System.out.println(appointmentData);
         try {
             Object user = utility.getUserFromToken(token);
             if (!(user instanceof Doctor doctor))

@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,10 +22,10 @@ public interface ScheduleRepo extends JpaRepository<Schedule, Long> {
 
     @Query("SELECT t FROM TimeSlot t JOIN t.schedule s " +
             "WHERE s.date = :date AND s.doctor = :doctor " +
-            "AND (s.date > CURRENT_DATE OR (s.date = CURRENT_DATE AND t.startTime > CURRENT_TIME))")
-    List<TimeSlot> findAllByDateAndAvailableAndDoctor(@Param("date") LocalDate date, @Param("doctor") Doctor doctor);
-
-
+            "AND (s.date > CURRENT_DATE OR (s.date = CURRENT_DATE AND t.startTime > :extendedTime))")
+    List<TimeSlot> findAllTimeSlotsDoctor(@Param("date") LocalDate date,
+                                          @Param("doctor") Doctor doctor,
+                                          @Param("extendedTime") LocalTime extendedTime);
 
     boolean existsByDoctorAndDate(Doctor doctor, LocalDate date);
 }

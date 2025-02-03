@@ -50,8 +50,8 @@ public class Schedule {
         while (startTime.isBefore(endTime)) {
             LocalTime slotEndTime = startTime.plus(averageConsultationTime);
             if (slotEndTime.isAfter(endTime)) break;
-            slotIndex++;
             timeSlots.add(new TimeSlot(startTime, slotEndTime, this, slotIndex));
+            slotIndex++;
             startTime = slotEndTime;
         }
     }

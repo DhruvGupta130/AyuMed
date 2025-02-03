@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -146,7 +147,8 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public List<TimeSlot> getAvailableSlots(LocalDate date, Doctor doctor){
-        return scheduleRepo.findAllByDateAndAvailableAndDoctor(date, doctor);
+        LocalTime currentTimePlus30Minutes = LocalTime.now().plusMinutes(30);
+        return scheduleRepo.findAllTimeSlotsDoctor(date, doctor, currentTimePlus30Minutes);
     }
 
     @Override

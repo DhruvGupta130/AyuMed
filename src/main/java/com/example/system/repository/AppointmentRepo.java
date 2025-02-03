@@ -1,5 +1,6 @@
 package com.example.system.repository;
 
+import com.example.system.dto.AppointmentStatus;
 import com.example.system.entity.Appointment;
 import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
@@ -24,11 +25,8 @@ public interface AppointmentRepo extends JpaRepository<Appointment, Long>, JpaSp
     @Query("select count(a) from Appointment a where a.doctor = :doctor and date(a.appointmentDate) = :date")
     long countByDoctorAndAppointmentDate(Doctor doctor, LocalDate date);
 
-    List<Appointment> findByAppointmentDateBetween(
-            @FutureOrPresent(message = "Appointment date must not be in the past") LocalDateTime start,
-            @FutureOrPresent(message = "Appointment date must not be in the past") LocalDateTime end
-    );
-
+    List<Appointment> findAppointmentsByAppointmentDateBetweenAndStatus(@FutureOrPresent(message = "Appointment date must not be in the past") LocalDateTime appointmentDateAfter, @FutureOrPresent(message = "Appointment date must not be in the past") LocalDateTime appointmentDateBefore, AppointmentStatus status);
+    
     @Query("select a from Appointment a where a.appointmentDate between :start and :end")
     List<Appointment> findAppointmentsByDate(LocalDateTime start, LocalDateTime end);
 

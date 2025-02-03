@@ -1,5 +1,6 @@
 package com.example.system.service.utils;
 
+import com.example.system.dto.AppointmentStatus;
 import com.example.system.dto.EmailStructures;
 import com.example.system.entity.Appointment;
 import com.example.system.repository.AppointmentRepo;
@@ -25,7 +26,7 @@ public class ReminderService {
     public void sendReminders() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime thirtyMinutesLater = now.plusMinutes(30);
-        List<Appointment> appointments = appointmentRepo.findByAppointmentDateBetween(now, thirtyMinutesLater);
+        List<Appointment> appointments = appointmentRepo.findAppointmentsByAppointmentDateBetweenAndStatus(now, thirtyMinutesLater, AppointmentStatus.APPROVED);
 
         for (Appointment appointment : appointments) {
             String patientEmail = appointment.getPatient().getEmail();

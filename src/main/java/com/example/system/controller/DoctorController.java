@@ -124,7 +124,6 @@ public class DoctorController {
     public ResponseEntity<Response> addMedicalHistory(@RequestHeader("Authorization") String token,
                                                       @PathVariable long patientId,
                                                       @RequestBody MedicalHistory history) {
-        System.out.println(history);
         Response response = new Response();
         try {
             Doctor doctor = (Doctor) utility.getUserFromToken(token);
