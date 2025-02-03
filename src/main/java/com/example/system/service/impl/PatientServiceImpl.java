@@ -14,10 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +26,9 @@ public class PatientServiceImpl implements PatientService {
     private final PatientRepo patientRepo;
     private final AddressRepo addressRepo;
     private final MedicalHistoryRepo medicalHistoryRepo;
-    private final AppointmentRepo appointmentRepo;
-    private final UserRepo userRepo;
     private final ScheduleRepo scheduleRepo;
     private final MedicalTestRepo medicalTestRepo;
     private final PasswordEncoder passwordEncoder;
-    private final PatientRecordRepo patientRecordRepo;
     private final FileService fileService;
 
     @Override

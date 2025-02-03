@@ -30,8 +30,6 @@ public class DoctorServiceImpl implements DoctorService {
     private final DoctorRepo doctorRepo;
     private final UserRepo userRepo;
     private final ScheduleRepo scheduleRepo;
-    private final AppointmentRepo appointmentRepo;
-    private final TimeSlotRepo timeSlotRepo;
     private final SlotInitializationService slotInitializationService;
     private final AuthService authService;
     private final PasswordEncoder passwordEncoder;

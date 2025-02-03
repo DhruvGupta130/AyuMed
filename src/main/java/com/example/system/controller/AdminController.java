@@ -7,7 +7,6 @@ import com.example.system.entity.*;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.service.AdminService;
 import com.example.system.service.utils.Utility;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
