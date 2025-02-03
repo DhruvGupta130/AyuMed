@@ -16,10 +16,8 @@ public interface DoctorRepo extends JpaRepository<Doctor, Long> {
     @Query("SELECT d FROM Doctor d JOIN d.loginUser u WHERE u.username = :username")
     Optional<Doctor> findByUsername(String username);
 
-    Optional<Doctor> getDoctorById(Long id);
-
     @Query("SELECT d FROM Doctor d LEFT JOIN d.schedules s WHERE " +
-            "(:specialty IS NULL OR d.specialty = :specialty) AND " +
+            "(:specialty IS NULL OR d.speciality = :specialty) AND " +
             "(:department IS NULL OR d.department = :department) AND " +
             "(:available IS NULL OR EXISTS (SELECT s2 FROM Schedule s2 WHERE s2.doctor = d AND EXISTS (SELECT t from TimeSlot t where t.available = true)))")
     List<Doctor> searchDoctorsByKeyword(String specialty, Boolean available, String department);
@@ -33,7 +31,7 @@ public interface DoctorRepo extends JpaRepository<Doctor, Long> {
     int countByDepartment(String department);
 
     @Query("SELECT d FROM Doctor d WHERE " +
-            "(d.firstName LIKE %:keyword% OR d.lastName LIKE %:keyword% OR d.department LIKE %:keyword% OR d.specialty LIKE %:keyword%) " +
+            "(d.firstName LIKE %:keyword% OR d.lastName LIKE %:keyword% OR d.department LIKE %:keyword% OR d.speciality LIKE %:keyword%) " +
             "OR :keyword IS null")
     List<Doctor> searchDoctorsByKeyword(@Param("keyword") String keyword);
 

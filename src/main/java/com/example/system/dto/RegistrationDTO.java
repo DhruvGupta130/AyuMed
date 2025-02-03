@@ -21,7 +21,7 @@ public class RegistrationDTO {
 
     // For doctors
     private String department;
-    private String specialty;
+    private String speciality;
     private String licenseNumber;
     private long hospitalId;
 

@@ -69,7 +69,7 @@ public class AuthServiceImpl implements AuthService {
         doctor.setLastName(registrationDTO.getLastName());
         doctor.setEmail(registrationDTO.getEmail());
         doctor.setMobile(registrationDTO.getMobile());
-        doctor.setSpecialty(registrationDTO.getSpecialty());
+        doctor.setSpeciality(registrationDTO.getSpeciality());
         doctor.setLicenseNumber(registrationDTO.getLicenseNumber());
         doctor.setHospital(hospital);
         hospital.getDoctors().add(doctor);

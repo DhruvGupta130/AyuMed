@@ -34,7 +34,7 @@ public class Doctor {
     @Pattern(regexp = "^[+]?[0-9\\- ]{7,20}$", message = "Invalid phone number")
     private String mobile;
 
-    private String specialty;
+    private String speciality;
 
     @Pattern(regexp = "^[A-Z0-9]{5,15}$", message = "Invalid license number format")
     private String licenseNumber;

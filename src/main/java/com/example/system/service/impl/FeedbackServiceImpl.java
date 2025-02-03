@@ -54,6 +54,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     private FeedbackDTO getFeedback(Feedback feedback) {
+        if(feedback == null) throw new HospitalManagementException("Feedback not found");
         return new FeedbackDTO(
                 feedback.getId(), feedback.getRating(),
                 feedback.getComments(), feedback.getCreatedAt(),

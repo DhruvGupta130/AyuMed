@@ -13,6 +13,7 @@ import com.example.system.service.utils.EmailService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -147,9 +148,21 @@ public class AppointmentServiceImpl implements AppointmentService {
         String location = doctor.getLocation();
 
         emailService.sendEmail(patient.getEmail(), "Appointment Confirmation - AyuMed",
-                EmailStructures.scheduleAppointmentPatientBody(patient.getFullName(), doctor.getFullName(), doctor.getSpecialty(), date, time, location));
+                EmailStructures.scheduleAppointmentPatientBody(
+                        patient.getFullName(),
+                        doctor.getFullName(),
+                        doctor.getSpeciality(),
+                        date, time, location
+                )
+        );
         emailService.sendEmail(doctor.getEmail(), "New Appointment Scheduled - AyuMed",
-                EmailStructures.scheduleAppointmentDoctorBody(doctor.getFullName(), patient.getFullName(), doctor.getDepartment(), date, time, location));
+                EmailStructures.scheduleAppointmentDoctorBody(
+                        doctor.getFullName(),
+                        patient.getFullName(),
+                        doctor.getDepartment(),
+                        date, time, location
+                )
+        );
     }
 
     @Override
@@ -169,9 +182,21 @@ public class AppointmentServiceImpl implements AppointmentService {
         String location = appointment.getDoctor().getLocation();
 
         emailService.sendEmail(appointment.getPatient().getEmail(), "Appointment Status Updated - AyuMed",
-                EmailStructures.appointmentStatusUpdatedPatient(appointment.getPatient().getFullName(), appointment.getDoctor().getFullName(), status.toString(), appointment.getDoctor().getSpecialty(), date, time, location));
+                EmailStructures.appointmentStatusUpdatedPatient(
+                        appointment.getPatient().getFullName(),
+                        appointment.getDoctor().getFullName(),
+                        appointment.getDoctor().getSpeciality(),
+                        date, time, location, status.name()
+                )
+        );
+
         emailService.sendEmail(appointment.getDoctor().getEmail(), "Appointment Status Updated Successfully - AyuMed",
-                EmailStructures.appointmentStatusUpdatedDoctor(appointment.getDoctor().getFullName(), appointment.getPatient().getFullName(), date, time, status.toString()));
+                EmailStructures.appointmentStatusUpdatedDoctor(
+                        appointment.getDoctor().getFullName(),
+                        appointment.getPatient().getFullName(),
+                        date, time, status.name()
+                )
+        );
     }
 
     @Override
@@ -203,9 +228,22 @@ public class AppointmentServiceImpl implements AppointmentService {
         String location = appointment.getDoctor().getLocation();
 
         emailService.sendEmail(appointment.getPatient().getEmail(), "Appointment Cancelled - AyuMed",
-                EmailStructures.cancelAppointmentPatient(appointment.getPatient().getFullName(), appointment.getDoctor().getFullName(), appointment.getDoctor().getSpecialty(), date, time, location, reason));
+                EmailStructures.cancelAppointmentPatient(
+                        appointment.getPatient().getFullName(),
+                        appointment.getDoctor().getFullName(),
+                        appointment.getDoctor().getSpeciality(),
+                        date, time, location, reason
+                )
+        );
+
         emailService.sendEmail(appointment.getDoctor().getEmail(), "Appointment Successfully Cancelled - AyuMed",
-                EmailStructures.cancelAppointmentDoctor(appointment.getPatient().getFullName(), appointment.getDoctor().getFullName(), appointment.getDoctor().getDepartment(), date, time, location, reason));
+                EmailStructures.cancelAppointmentDoctor(
+                        appointment.getPatient().getFullName(),
+                        appointment.getDoctor().getFullName(),
+                        appointment.getDoctor().getDepartment(),
+                        date, time, location, reason
+                )
+        );
     }
 
     private boolean isAlreadyCancelled(Appointment appointment) {
@@ -240,5 +278,11 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (status != null) spec = spec.and(AppointmentSpecifications.hasStatus(status));
         if (doctorId != null) spec = spec.and(AppointmentSpecifications.byDoctorId(doctorId));
         return spec;
+    }
+
+    @Scheduled(fixedRate = 300000)   //runs every 5 minutes
+    @Transactional
+    public void updateExpiredAppointments() {
+        appointmentRepo.markExpiredAppointments(LocalDateTime.now());
     }
 }

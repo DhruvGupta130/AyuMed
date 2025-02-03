@@ -46,7 +46,7 @@ public class DoctorServiceImpl implements DoctorService {
                 doctor.getId(), doctor.getFirstName(),
                 doctor.getLastName(), doctor.getGender(),
                 doctor.getEmail(), doctor.getMobile(),
-                doctor.getSpecialty(), doctor.getLicenseNumber(),
+                doctor.getSpeciality(), doctor.getLicenseNumber(),
                 doctor.getDepartment(), doctor.getExperience(),
                 doctor.getStartDate(), doctor.getImage(), doctor.getDegree(),
                 doctor.getFullName()
@@ -54,8 +54,8 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public List<DoctorDTO> searchDoctors(String specialty, Boolean available, String department) {
-        List<Doctor> doctors = doctorRepo.searchDoctorsByKeyword(specialty, available, department);
+    public List<DoctorDTO> searchDoctors(String speciality, Boolean available, String department) {
+        List<Doctor> doctors = doctorRepo.searchDoctorsByKeyword(speciality, available, department);
         return doctors.stream().map(this::getDoctorProfile).toList();
     }
 
@@ -67,7 +67,7 @@ public class DoctorServiceImpl implements DoctorService {
         doctor.setGender(updateDTO.getGender());
         doctor.setEmail(updateDTO.getEmail());
         doctor.setMobile(updateDTO.getMobile());
-        doctor.setSpecialty(updateDTO.getSpecialty());
+        doctor.setSpeciality(updateDTO.getSpeciality());
         doctor.setLicenseNumber(updateDTO.getLicenseNumber());
         doctor.setDepartment(updateDTO.getDepartment());
         doctor.setStartDate(updateDTO.getStartDate());
@@ -199,7 +199,7 @@ public class DoctorServiceImpl implements DoctorService {
             registrationDTO.setEmail(getCellValue(row, 5));
             registrationDTO.setMobile((getCellValue(row, 6)));
             registrationDTO.setDepartment(getCellValue(row, 7));
-            registrationDTO.setSpecialty(getCellValue(row, 8));
+            registrationDTO.setSpeciality(getCellValue(row, 8));
             registrationDTO.setLicenseNumber(getCellValue(row, 9));
             registrationDTO.setHospitalId(hospitalId);
             return registrationDTO;

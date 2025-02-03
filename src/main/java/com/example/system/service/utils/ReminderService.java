@@ -34,7 +34,7 @@ public class ReminderService {
             String appointmentTime = appointment.getAppointmentDate().format(timeFormatter);
 
             String doctorName = appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName();
-            String specialty = appointment.getDoctor().getSpecialty();
+            String specialty = appointment.getDoctor().getSpeciality();
             String location = appointment.getDoctor().getLocation();
 
             // Create email

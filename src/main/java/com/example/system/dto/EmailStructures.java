@@ -135,8 +135,8 @@ public class EmailStructures {
     }
 
     public static String appointmentStatusUpdatedPatient(String patientName, String doctorName,
-                                            String status, String specialty, String appointmentDate,
-                                            String appointmentTime, String location){
+                                            String specialty, String appointmentDate,
+                                            String appointmentTime, String location, String status){
         return """
                 Dear %s,
                 
