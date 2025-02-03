@@ -12,7 +12,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,13 +21,7 @@ public interface AppointmentRepo extends JpaRepository<Appointment, Long>, JpaSp
     List<Appointment> findAllByDoctor(Doctor doctor, Sort sort);
     List<Appointment> findAllByPatient(Patient patient, Sort sort);
 
-    @Query("select count(a) from Appointment a where a.doctor = :doctor and date(a.appointmentDate) = :date")
-    long countByDoctorAndAppointmentDate(Doctor doctor, LocalDate date);
-
     List<Appointment> findAppointmentsByAppointmentDateBetweenAndStatus(@FutureOrPresent(message = "Appointment date must not be in the past") LocalDateTime appointmentDateAfter, @FutureOrPresent(message = "Appointment date must not be in the past") LocalDateTime appointmentDateBefore, AppointmentStatus status);
-    
-    @Query("select a from Appointment a where a.appointmentDate between :start and :end")
-    List<Appointment> findAppointmentsByDate(LocalDateTime start, LocalDateTime end);
 
     long countByAppointmentDateBetween(LocalDateTime start, LocalDateTime end);
 
