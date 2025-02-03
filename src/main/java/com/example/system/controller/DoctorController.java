@@ -109,14 +109,6 @@ public class DoctorController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @Transactional
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteDoctor(@RequestHeader("Authorization") String token) {
-        Doctor doctor = (Doctor) utility.getUserFromToken(token);
-        doctorService.deleteProfile(doctor);
-        return ResponseEntity.ok("Doctor deleted successfully.");
-    }
-
     @GetMapping("/patients")
     public ResponseEntity<List<PatientDTO>> getDoctorPatients(@RequestHeader("Authorization") String token) {
         Doctor doctor = (Doctor) utility.getUserFromToken(token);

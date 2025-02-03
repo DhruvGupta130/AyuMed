@@ -1,7 +1,6 @@
 package com.example.system.dto;
 
 import com.example.system.entity.Address;
-import com.example.system.entity.Feedback;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -29,7 +28,6 @@ public class HospitalDTO {
     private String technology;
     private String accreditations;
     private List<String> insurancePartners;
-    private List<Feedback> feedbacks;
     private List<String> images;
 
 }

@@ -21,11 +21,11 @@ public class Appointment {
     private Long id;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Patient patient;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Doctor doctor;
 
     @FutureOrPresent(message = "Appointment date must not be in the past")

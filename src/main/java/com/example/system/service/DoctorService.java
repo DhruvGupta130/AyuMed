@@ -13,7 +13,6 @@ import java.util.List;
 public interface DoctorService {
 
     Doctor getDoctorById(long id);
-    void deleteProfile(Doctor doctor);
     DoctorDTO getDoctorProfile(Doctor doctor);
     List<DoctorDTO> searchDoctors(String specialty, Boolean available, String department);
     void updateDoctor(Doctor doctor, DoctorUpdateDTO updateDTO);

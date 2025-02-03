@@ -74,9 +74,6 @@ public class Hospital {
     @OneToOne(mappedBy = "hospital", cascade = CascadeType.ALL)
     private Manager manager;
 
-    @OneToMany(mappedBy = "hospital", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Feedback> feedbacks;
-
     @ElementCollection
     @CollectionTable(name = "hospital_images", joinColumns = @JoinColumn(name = "hospital_id"))
     private List<String> images = new ArrayList<>();

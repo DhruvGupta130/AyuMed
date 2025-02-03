@@ -11,6 +11,7 @@ import com.example.system.repository.*;
 import com.example.system.service.AppointmentService;
 import com.example.system.service.utils.EmailService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,12 +66,14 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public List<AppointmentDTO> getAllAppointmentsByDoctor(Doctor doctor) {
-        return appointmentRepo.findAllByDoctor(doctor).stream().map(this::getAppointment).toList();
+        Sort sort = Sort.by(Sort.Direction.DESC, "appointmentDate");
+        return appointmentRepo.findAllByDoctor(doctor, sort).stream().map(this::getAppointment).toList();
     }
 
     @Override
     public List<AppointmentDTO> getAllAppointmentsByPatient(Patient patient) {
-        return appointmentRepo.findAllByPatient(patient).stream().map(this::getAppointment).toList();
+        Sort sort = Sort.by(Sort.Direction.DESC, "appointmentDate");
+        return appointmentRepo.findAllByPatient(patient, sort).stream().map(this::getAppointment).toList();
     }
 
     @Override

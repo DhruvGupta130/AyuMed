@@ -43,42 +43,6 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    @Transactional
-    public void deleteProfile(Doctor doctor) {
-        LoginUser user = doctor.getLoginUser();
-        Hospital hospital = doctor.getHospital();
-        List<Schedule> schedules = doctor.getSchedules();
-        List<Appointment> appointments = doctor.getAppointments();
-        if (user != null) {
-            doctor.setLoginUser(null);
-            userRepo.delete(user);
-        }if(hospital != null) {
-            hospital.getDoctors().remove(doctor);
-            doctor.setHospital(null);
-        }if (schedules != null) {
-            schedules.forEach(s -> {
-                s.getTimeSlots().forEach(t -> t.setSchedule(null));
-                timeSlotRepo.deleteAll(s.getTimeSlots());
-                s.getTimeSlots().clear();
-                s.setDoctor(null);
-                scheduleRepo.save(s);
-            });
-            scheduleRepo.deleteAll(schedules);
-            doctor.getSchedules().clear();
-        }if(appointments != null) {
-            appointments.forEach(appointment -> {
-                appointment.setDoctor(null);
-                if(appointment.getPatient() != null)
-                    appointment.getPatient().getAppointments().remove(appointment);
-                appointment.setPatient(null);
-                appointmentRepo.save(appointment);
-            });
-            appointmentRepo.deleteAll(appointments);
-        }
-        doctorRepo.delete(doctor);
-    }
-
-    @Override
     public DoctorDTO getDoctorProfile(Doctor doctor) {
         return new DoctorDTO(
                 doctor.getId(), doctor.getFirstName(),

@@ -51,8 +51,7 @@ public class HospitalServiceImpl implements HospitalService {
                 hospital.isEmergencyServices(), hospital.getBedCapacity(),
                 hospital.getIcuCapacity(), hospital.getOperationTheaters(),
                 hospital.getTechnology(), hospital.getAccreditations(),
-                hospital.getInsurancePartners(),
-                hospital.getFeedbacks(), hospital.getImages()
+                hospital.getInsurancePartners(), hospital.getImages()
         );
     }
 

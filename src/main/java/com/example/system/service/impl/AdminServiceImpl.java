@@ -21,24 +21,11 @@ import java.util.List;
 @AllArgsConstructor
 public class AdminServiceImpl implements AdminService {
 
-    private final UserRepo userRepo;
-    private final AdminRepo adminRepo;
     private final DoctorRepo doctorRepo;
     private final PatientRepo patientRepo;
     private final DoctorService doctorService;
     private final PatientService patientService;
     private final AppointmentService appointmentService;
-
-    @Override
-    @Transactional
-    public void deleteProfile(Admin admin) {
-        LoginUser user = admin.getLoginUser();
-        if(user != null) {
-            admin.setLoginUser(null);
-            userRepo.delete(user);
-        }
-        adminRepo.delete(admin);
-    }
 
     @Override
     public AdminDTO getProfile(Admin admin) {

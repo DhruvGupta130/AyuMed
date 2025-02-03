@@ -1,8 +1,16 @@
 package com.example.system.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -14,12 +22,20 @@ public class Feedback {
     private Long id;
 
     @ManyToOne
+    @JsonIgnore
     private Appointment appointment;
 
-    private Long patientId;
+    @Min(1)
+    @Max(5)
     private int rating;
+
+    @NotNull
+    @Column(length = 500)
     private String comments;
 
-    @ManyToOne
-    private Hospital hospital;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }

@@ -12,7 +12,6 @@ import java.util.List;
 @Service
 public interface AdminService {
 
-    void deleteProfile(Admin admin);
     AdminDTO getProfile(Admin admin);
     List<DoctorDTO> getAllDoctors();
     List<PatientDTO> getAllPatients();

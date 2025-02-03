@@ -104,58 +104,6 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    @Transactional
-    public void deletePatient(Patient patient) {
-        LoginUser user = patient.getLoginUser();
-        Address address = patient.getAddress();
-        List <PatientRecord> records = patient.getPatientRecords();
-        List<Appointment> appointments = patient.getAppointments();
-        List<MedicalHistory> medicalHistories = patient.getMedicalHistories();
-        if (medicalHistories != null) {
-            medicalHistories.forEach(medicalHistory -> medicalHistory.setPatient(null));
-            medicalHistoryRepo.deleteAll(medicalHistories);
-        }if(appointments != null) {
-            appointments.forEach(appointment -> {
-                appointment.setPatient(null);
-                if(appointment.getDoctor() != null)
-                    appointment.getDoctor().getAppointments().remove(appointment);
-                appointment.setDoctor(null);
-                appointmentRepo.save(appointment);
-            });
-            appointmentRepo.deleteAll(appointments);
-        }if (address != null) {
-            patient.setAddress(null);
-            addressRepo.delete(address);
-        }if (records != null) {
-            records.forEach(record -> {
-                record.setPatient(null);
-                Path filePath = Paths.get(record.getFilePath());
-                if (Files.exists(filePath)) {
-                    try {
-                        Files.delete(filePath);
-                    } catch (IOException e) {
-                        throw new HospitalManagementException(e.getMessage());
-                    }
-                }
-            });
-            patientRecordRepo.deleteAll(records);
-        } if(patient.getImage() != null) {
-            Path filePath = Paths.get(patient.getImage());
-            if (Files.exists(filePath)) {
-                try {
-                    Files.delete(filePath);
-                } catch (IOException e) {
-                    throw new HospitalManagementException(e.getMessage());
-                }
-            }
-        } if (user != null) {
-            patient.setLoginUser(null);
-            userRepo.delete(user);
-        }
-        patientRepo.delete(patient);
-    }
-
-    @Override
     public MedicalHistory getMedicalHistoryById(long id) {
         return medicalHistoryRepo.getReferenceById(id);
     }

@@ -39,13 +39,4 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getAllPatients());
     }
 
-    @Transactional
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> delete(@RequestHeader("Authorization") String token) {
-        Admin admin = (Admin) utility.getUserFromToken(token);
-        if(admin == null) throw new HospitalManagementException("Admin not found");
-        adminService.deleteProfile(admin);
-        return ResponseEntity.ok("Admin deleted successfully");
-    }
-
 }

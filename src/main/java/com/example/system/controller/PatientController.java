@@ -139,25 +139,6 @@ public class PatientController {
         return ResponseEntity.ok(doctors);
     }
 
-    @Transactional
-    @DeleteMapping("/delete")
-    public ResponseEntity<Response> deletePatient(@RequestHeader("Authorization") String token) {
-        Response response = new Response();
-        try {
-            Patient patient = (Patient) utility.getUserFromToken(token);
-            patientService.deletePatient(patient);
-            response.setMessage("Patient successfully deleted");
-            response.setStatus(HttpStatus.OK);
-        } catch (HospitalManagementException e) {
-            response.setMessage(e.getMessage());
-            response.setStatus(HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            response.setMessage("Error while deleting patient " + e.getMessage());
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return ResponseEntity.status(response.getStatus()).body(response);
-    }
-
     @GetMapping("/doctor")
     public ResponseEntity<List<DoctorDTO>> getDoctorsByDepartment(@RequestParam String department) {
         List<DoctorDTO> doctorDTOS = doctorService.getDoctorsByDepartment(department);

@@ -16,7 +16,6 @@ public interface PatientService {
     Patient getPatientById(long id);
     void addMedicalHistory(Doctor doctor, Patient patient, MedicalHistory historyRequest);
     void addLabResults(MedicalTest medicalTest, long historyId) throws IOException;
-    void deletePatient(Patient patient);
     MedicalHistory getMedicalHistoryById(long id);
     PatientDTO getPatientProfile(Patient patient);
     List<PatientDTO> getDoctorsPatient(Doctor doctor);
