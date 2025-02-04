@@ -54,7 +54,7 @@ public class Patient {
     private String image;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "patient", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "patient", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     private List<MedicalHistory> medicalHistories;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -66,7 +66,7 @@ public class Patient {
     private LoginUser loginUser = new LoginUser();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Appointment> appointments;
 
     @JsonIgnore

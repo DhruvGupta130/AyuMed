@@ -47,11 +47,8 @@ public class Doctor {
     @Pattern(regexp = "^[a-zA-Z.\\s]+$", message = "Degree should contain only letters, spaces, and periods")
     private String degree;
 
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<Schedule> schedules;
-
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<MedicalHistory> medicalHistories;
 
     @JsonIgnore
     @ManyToOne

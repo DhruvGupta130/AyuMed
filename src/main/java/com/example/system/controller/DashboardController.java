@@ -48,7 +48,7 @@ public class DashboardController {
         return ResponseEntity.ok(dashboardService.getTrendData());
     }
 
-    @GetMapping("/departments")
+    @GetMapping("/stats/departments")
     public ResponseEntity<Map<String, Integer>> getDepartments() {
         return ResponseEntity.ok(dashboardService.getAllDepartments());
     }
@@ -60,6 +60,11 @@ public class DashboardController {
             @RequestParam double radius) {
         List<HospitalDTO> hospitals = hospitalService.getHospitalsWithinRadius(latitude, longitude, radius);
         return ResponseEntity.ok(hospitals);
+    }
+
+    @GetMapping("/departments")
+    public ResponseEntity<List<String>> getAllDepartmentNames() {
+        return ResponseEntity.ok(hospitalService.getAllDepartments());
     }
 
     @GetMapping("/nearby/pharmacy")
