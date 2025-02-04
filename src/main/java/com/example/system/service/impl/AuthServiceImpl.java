@@ -1,6 +1,7 @@
 package com.example.system.service.impl;
 
 import com.example.system.configuration.JwtUtils;
+import com.example.system.dto.EmailStructures;
 import com.example.system.dto.LoginRequest;
 import com.example.system.dto.LoginResponse;
 import com.example.system.dto.RegistrationDTO;
@@ -12,6 +13,7 @@ import com.example.system.entity.Patient;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
 import com.example.system.service.AuthService;
+import com.example.system.service.utils.EmailService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,6 +42,8 @@ public class AuthServiceImpl implements AuthService {
     private final ManagerRepo managerRepo;
     private final HospitalRepo hospitalRepo;
     private final PharmacistRepo pharmacistRepo;
+    private final EmailStructures emailStructures;
+    private final EmailService emailService;
 
     @Override
     @Transactional
@@ -50,9 +54,10 @@ public class AuthServiceImpl implements AuthService {
         patient.setLastName(registrationDTO.getLastName());
         patient.setDateOfBirth(registrationDTO.getDateOfBirth());
         patient.setGender(registrationDTO.getGender());
-        patient.setEmail(registrationDTO.getEmail());
         patient.setMobile(registrationDTO.getMobile());
         patientRepo.save(patient);
+        String registration = emailStructures.generateRegistrationEmail(patient.getFullName());
+        emailService.sendEmail(patient.getLoginUser().getEmail(), "Thank you for your registration in AyuMed", registration);
     }
 
     @Override
@@ -67,7 +72,6 @@ public class AuthServiceImpl implements AuthService {
         setCommonAttributes(doctor.getLoginUser(), registrationDTO);
         doctor.setFirstName(registrationDTO.getFirstName());
         doctor.setLastName(registrationDTO.getLastName());
-        doctor.setEmail(registrationDTO.getEmail());
         doctor.setMobile(registrationDTO.getMobile());
         doctor.setSpeciality(registrationDTO.getSpeciality());
         doctor.setLicenseNumber(registrationDTO.getLicenseNumber());
@@ -86,7 +90,7 @@ public class AuthServiceImpl implements AuthService {
         setCommonAttributes(admin.getLoginUser(), registrationDTO);
         admin.setFirstName(registrationDTO.getFirstName());
         admin.setLastName(registrationDTO.getLastName());
-        admin.setEmail(registrationDTO.getEmail());
+        admin.getLoginUser().setEmail(registrationDTO.getEmail());
         admin.setMobile(registrationDTO.getMobile());
         admin.setGender(registrationDTO.getGender());
         adminRepo.save(admin);
@@ -100,7 +104,6 @@ public class AuthServiceImpl implements AuthService {
         manager.setFirstName(registrationDTO.getFirstName());
         manager.setLastName(registrationDTO.getLastName());
         manager.setGender(registrationDTO.getGender());
-        manager.setEmail(registrationDTO.getEmail());
         manager.setMobile(registrationDTO.getMobile());
         managerRepo.save(manager);
     }
@@ -112,7 +115,6 @@ public class AuthServiceImpl implements AuthService {
         setCommonAttributes(pharmacist.getLoginUser(), registrationDTO);
         pharmacist.setFirstName(registrationDTO.getFirstName());
         pharmacist.setLastName(registrationDTO.getLastName());
-        pharmacist.setEmail(registrationDTO.getEmail());
         pharmacist.setGender(registrationDTO.getGender());
         pharmacist.setMobile(registrationDTO.getMobile());
         pharmacistRepo.save(pharmacist);
@@ -148,6 +150,7 @@ public class AuthServiceImpl implements AuthService {
     private void setCommonAttributes(LoginUser loginUser, RegistrationDTO registrationDTO) {
         loginUser.setUsername(registrationDTO.getUsername());
         loginUser.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
+        loginUser.setEmail(registrationDTO.getEmail());
         loginUser.setRole(registrationDTO.getRole());
         userRepo.save(loginUser);
     }

@@ -41,11 +41,16 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    public DoctorDTO getDoctorDTOById(long id) {
+        return this.getDoctorProfile(getDoctorById(id));
+    }
+
+    @Override
     public DoctorDTO getDoctorProfile(Doctor doctor) {
         return new DoctorDTO(
                 doctor.getId(), doctor.getFirstName(),
                 doctor.getLastName(), doctor.getGender(),
-                doctor.getEmail(), doctor.getMobile(),
+                doctor.getLoginUser().getEmail(), doctor.getMobile(),
                 doctor.getSpeciality(), doctor.getLicenseNumber(),
                 doctor.getDepartment(), doctor.getExperience(),
                 doctor.getStartDate(), doctor.getImage(), doctor.getDegree(),
@@ -65,7 +70,7 @@ public class DoctorServiceImpl implements DoctorService {
         doctor.setFirstName(updateDTO.getFirstName());
         doctor.setLastName(updateDTO.getLastName());
         doctor.setGender(updateDTO.getGender());
-        doctor.setEmail(updateDTO.getEmail());
+        doctor.getLoginUser().setEmail(updateDTO.getEmail());
         doctor.setMobile(updateDTO.getMobile());
         doctor.setSpeciality(updateDTO.getSpeciality());
         doctor.setLicenseNumber(updateDTO.getLicenseNumber());
@@ -100,7 +105,12 @@ public class DoctorServiceImpl implements DoctorService {
     public void updatePassword(Doctor doctor, Password password) {
         if(!passwordEncoder.matches(password.getOldPassword(), doctor.getLoginUser().getPassword()))
             throw new HospitalManagementException("Provided password is incorrect");
-        doctor.getLoginUser().setPassword(passwordEncoder.encode(password.getNewPassword()));
+        this.updatePassword(doctor, password.getNewPassword());
+    }
+
+    @Override
+    public void updatePassword(Doctor doctor, String password) {
+        doctor.getLoginUser().setPassword(passwordEncoder.encode(password));
         doctorRepo.save(doctor);
     }
 
@@ -118,6 +128,11 @@ public class DoctorServiceImpl implements DoctorService {
     public List<DoctorDTO> getDoctorsByHospitalAndDepartment(Hospital hospital, String department) {
         return doctorRepo.getDoctorsByDepartmentAndHospital(department, hospital)
                 .stream().map(this::getDoctorProfile).toList();
+    }
+
+    @Override
+    public List<DoctorDTO> getDoctorsByHospital(Hospital hospital) {
+        return doctorRepo.findDoctorsByHospital(hospital).stream().map(this::getDoctorProfile).toList();
     }
 
     @Override
@@ -185,6 +200,11 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public List<Doctor> getAllDoctors() {
         return doctorRepo.findAll();
+    }
+
+    @Override
+    public List<DoctorDTO> getAllTheDoctors() {
+        return this.getAllDoctors().stream().map(this::getDoctorProfile).toList();
     }
 
     private RegistrationDTO createRegistrationDTO(Row row, long hospitalId) {

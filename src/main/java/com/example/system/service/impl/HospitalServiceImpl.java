@@ -59,13 +59,13 @@ public class HospitalServiceImpl implements HospitalService {
     public void updatePassword(Manager manager, Password password) {
         if(!passwordEncoder.matches(password.getOldPassword(), manager.getLoginUser().getPassword()))
             throw new HospitalManagementException("Provided password is incorrect");
-        manager.getLoginUser().setPassword(passwordEncoder.encode(password.getNewPassword()));
-        managerRepo.save(manager);
+        this.updatePassword(manager, password.getNewPassword());
     }
 
     @Override
-    public List<String> getAllDepartments(Hospital hospital) {
-        return hospitalRepo.getAllDepartments(hospital);
+    public void updatePassword(Manager manager, String password) {
+        manager.getLoginUser().setPassword(passwordEncoder.encode(password));
+        managerRepo.save(manager);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class HospitalServiceImpl implements HospitalService {
         return new ManagerDTO(
                 manager.getId(), manager.getFirstName(),
                 manager.getLastName(), manager.getGender(),
-                manager.getEmail(), manager.getMobile(),
+                manager.getLoginUser().getEmail(), manager.getMobile(),
                 manager.getHospital() ==null ?
                         null : manager.getHospital().getHospitalName(),
                 manager.getFullName()
@@ -114,7 +114,7 @@ public class HospitalServiceImpl implements HospitalService {
             manager.setFirstName(managerDTO.getFirstName());
             manager.setLastName(managerDTO.getLastName());
             manager.setGender(managerDTO.getGender());
-            manager.setEmail(managerDTO.getEmail());
+            manager.getLoginUser().setEmail(managerDTO.getEmail());
             manager.setMobile(managerDTO.getMobile());
             managerRepo.save(manager);
         } catch (NullPointerException e) {
@@ -144,6 +144,11 @@ public class HospitalServiceImpl implements HospitalService {
     public Hospital getHospitalById(long id) {
         return hospitalRepo.findHospitalById(id)
                 .orElseThrow(() -> new HospitalManagementException("Hospital not found"));
+    }
+
+    @Override
+    public HospitalDTO getHospitalDtoById(long id) {
+        return getHospitalProfile(getHospitalById(id));
     }
 
     @Override

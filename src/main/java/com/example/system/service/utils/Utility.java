@@ -4,9 +4,11 @@ import com.example.system.configuration.JwtUtils;
 import com.example.system.entity.LoginUser;
 import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class Utility {
 
     private final JwtUtils jwtUtils;
@@ -17,17 +19,6 @@ public class Utility {
     private final ManagerRepo managerRepo;
     private final PharmacistRepo pharmacistRepo;
 
-
-
-    public Utility(JwtUtils jwtUtils, UserRepo userRepo, DoctorRepo doctorRepo, PatientRepo patientRepo, AdminRepo adminRepo, ManagerRepo managerRepo, PharmacistRepo pharmacistRepo) {
-        this.jwtUtils = jwtUtils;
-        this.userRepo = userRepo;
-        this.doctorRepo = doctorRepo;
-        this.patientRepo = patientRepo;
-        this.adminRepo = adminRepo;
-        this.managerRepo = managerRepo;
-        this.pharmacistRepo = pharmacistRepo;
-    }
 
     public Object getUserFromToken(String token) {
         String userName = jwtUtils.getUserNameFromToken(token);
@@ -43,6 +34,27 @@ public class Utility {
             case ROLE_ADMIN -> adminRepo.findByUsername(userName)
                     .orElseThrow(() -> new HospitalManagementException("Admin Not Found"));
             case ROLE_MANAGEMENT -> managerRepo.findByUsername(userName)
+                    .orElseThrow(() -> new HospitalManagementException("Manager Not Found"));
+        };
+    }
+
+    public void verifyEmail(String email) throws HospitalManagementException {
+        userRepo.findByEmail(email).orElseThrow(() -> new HospitalManagementException("No user found with provided email address!"));
+    }
+
+    public Object getUserFromEmail(String email) {
+        LoginUser user = userRepo.findByEmail(email).orElseThrow(
+                () -> new HospitalManagementException("User Not Found"));
+        return switch (user.getRole()){
+            case ROLE_PATIENT -> patientRepo.findByEmail(email)
+                    .orElseThrow(() -> new HospitalManagementException("Patient Not Found"));
+            case ROLE_DOCTOR -> doctorRepo.findByEmail(email)
+                    .orElseThrow(() -> new HospitalManagementException("Doctor Not Found"));
+            case ROLE_PHARMACIST -> pharmacistRepo.findByEmail(email)
+                    .orElseThrow(() -> new HospitalManagementException("Pharmacist Not Found"));
+            case ROLE_ADMIN -> adminRepo.findByEmail(email)
+                    .orElseThrow(() -> new HospitalManagementException("Admin Not Found"));
+            case ROLE_MANAGEMENT -> managerRepo.findByEmail(email)
                     .orElseThrow(() -> new HospitalManagementException("Manager Not Found"));
         };
     }

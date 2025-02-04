@@ -4,7 +4,6 @@ import com.example.system.dto.Gender;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -26,9 +25,6 @@ public class Pharmacist {
     @NotNull
     @Enumerated(EnumType.STRING)
     private Gender gender;
-
-    @Email
-    private String email;
 
     @Pattern(regexp = "^[+]?[0-9\\- ]{7,20}$", message = "Invalid phone number")
     private String mobile;

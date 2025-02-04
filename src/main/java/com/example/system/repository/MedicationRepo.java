@@ -1,6 +1,7 @@
 package com.example.system.repository;
 
 import com.example.system.entity.Medication;
+import com.example.system.entity.Patient;
 import com.example.system.entity.Pharmacy;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -26,4 +27,8 @@ public interface MedicationRepo extends JpaRepository<Medication, Long> {
     List<Pharmacy> findPharmacyWithinRadius(@Param("lat") double latitude,
                                              @Param("lng") double longitude,
                                              @Param("radius") double radius);
+
+    @Query("SELECT m FROM Medication m JOIN m.patients p WHERE p = :patient")
+    List<Medication> getMedicationsByPatient(Patient patient);
+
 }

@@ -3,7 +3,6 @@ package com.example.system.entity;
 import com.example.system.dto.Gender;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -28,17 +27,13 @@ public class Admin {
     @NotNull(message = "Gender cannot be null")
     private Gender gender;
 
-    @Email(message = "Invalid email format")
-    @NotNull(message = "Email cannot be null")
-    private String email;
-
     @Pattern(regexp = "^[+]?[0-9\\- ]{7,20}$", message = "Invalid phone number")
     @NotNull(message = "Mobile number cannot be null")
     private String mobile;
 
     @NotNull
-    @ManyToOne
     @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private LoginUser loginUser = new LoginUser();
 

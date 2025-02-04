@@ -16,6 +16,9 @@ public interface DoctorRepo extends JpaRepository<Doctor, Long> {
     @Query("SELECT d FROM Doctor d JOIN d.loginUser u WHERE u.username = :username")
     Optional<Doctor> findByUsername(String username);
 
+    @Query("select d from Doctor d JOIN d.loginUser u where u.email = :email")
+    Optional<Doctor> findByEmail(String email);
+
     @Query("SELECT d FROM Doctor d LEFT JOIN d.schedules s WHERE " +
             "(:specialty IS NULL OR d.speciality = :specialty) AND " +
             "(:department IS NULL OR d.department = :department) AND " +
@@ -26,6 +29,8 @@ public interface DoctorRepo extends JpaRepository<Doctor, Long> {
 
     @Query("SELECT DISTINCT d.department FROM Doctor d WHERE d.department IS NOT NULL")
     List<String> findAllDepartments();
+
+    List<Doctor> findDoctorsByHospital(Hospital hospital);
 
     @Query("SELECT COUNT(d) FROM Doctor d WHERE d.department = :department")
     int countByDepartment(String department);

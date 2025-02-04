@@ -31,7 +31,7 @@ public class AdminServiceImpl implements AdminService {
         return new AdminDTO(
                 admin.getId(), admin.getFirstName(),
                 admin.getLastName(), admin.getGender(),
-                admin.getEmail(), admin.getMobile(),
+                admin.getLoginUser().getEmail(), admin.getMobile(),
                 admin.getFullName()
         );
     }

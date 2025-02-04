@@ -9,6 +9,7 @@ import com.example.system.repository.*;
 import com.example.system.service.DoctorService;
 import com.example.system.service.HospitalService;
 import com.example.system.service.PatientService;
+import com.example.system.service.PharmacyService;
 import com.example.system.service.utils.Utility;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/patient")
@@ -32,6 +34,7 @@ public class PatientController {
     private final ScheduleRepo scheduleRepo;
     private final PatientService patientService;
     private final HospitalService hospitalService;
+    private final PharmacyService pharmacyService;
 
     @GetMapping("/profile")
     public ResponseEntity<PatientDTO> getPatientProfile(@RequestHeader("Authorization") String token) {
@@ -150,6 +153,16 @@ public class PatientController {
         return ResponseEntity.ok(hospitalService.getAllDepartments());
     }
 
+    @GetMapping("/hospital/{hospitalId}")
+    public ResponseEntity<HospitalDTO> getHospital(@PathVariable long hospitalId) {
+        return ResponseEntity.ok(hospitalService.getHospitalDtoById(hospitalId));
+    }
+
+    @GetMapping("/pharmacy/{pharmacyId}")
+    public ResponseEntity<PharmacyDTO> getPharmacy(@PathVariable long pharmacyId) {
+        return ResponseEntity.ok(pharmacyService.getPharmacyById(pharmacyId));
+    }
+
     @GetMapping("/{department}/hospitals")
     public ResponseEntity<List<HospitalDTO>> getHospitalsByDepartment(@PathVariable String department) {
         return ResponseEntity.ok(hospitalService.getHospitalsByDepartment(department));
@@ -160,6 +173,22 @@ public class PatientController {
                                                                              @PathVariable long hospitalId) {
         Hospital hospital = hospitalService.getHospitalById(hospitalId);
         return ResponseEntity.ok(doctorService.getDoctorsByHospitalAndDepartment(hospital, department));
+    }
+
+    @GetMapping("/{doctorId}/doctor")
+    public ResponseEntity<DoctorDTO> getDoctorById(@PathVariable long doctorId) {
+        return ResponseEntity.ok(doctorService.getDoctorDTOById(doctorId));
+    }
+
+    @GetMapping("/{hospitalId}/doctors")
+    public ResponseEntity<List<DoctorDTO>> getDoctorsByHospital(@PathVariable long hospitalId) {
+        Hospital hospital = hospitalService.getHospitalById(hospitalId);
+        return ResponseEntity.ok(doctorService.getDoctorsByHospital(hospital));
+    }
+
+    @GetMapping("/doctors")
+    public ResponseEntity<List<DoctorDTO>> getDoctors() {
+        return ResponseEntity.ok(doctorService.getAllTheDoctors());
     }
 
     @GetMapping("/hospitals")
@@ -191,5 +220,44 @@ public class PatientController {
         Patient patient = (Patient) utility.getUserFromToken(token);
         if(patient.getMedicalHistories() == null) throw new HospitalManagementException("No medical histories found");
         return ResponseEntity.ok(patientService.getMedicalHistory(patient));
+    }
+
+    @GetMapping("/medications/all")
+    public ResponseEntity<List<MedicationDTO>> getMedications() {
+        return ResponseEntity.ok().body(pharmacyService.getMedications());
+    }
+
+    @GetMapping("/{pharmacyId}/medications")
+    public ResponseEntity<List<MedicationDTO>> getMedicationsByPharmacy(@PathVariable long pharmacyId) {
+        return ResponseEntity.ok(pharmacyService.getMedicationsByPharmacy(pharmacyId));
+    }
+
+    @GetMapping("/medications")
+    public ResponseEntity<List<MedicationDTO>> getMedications(@RequestHeader("Authorization") String token) {
+        Patient patient = (Patient) utility.getUserFromToken(token);
+        return ResponseEntity.ok(pharmacyService.getPatientMedications(patient));
+    }
+
+    @GetMapping("/{medicationId}/medication")
+    public ResponseEntity<MedicationDTO> getMedicationById(@PathVariable long medicationId) {
+        return ResponseEntity.ok(pharmacyService.getMedicationById(medicationId));
+    }
+
+    @PostMapping("/medications/buy")
+    public ResponseEntity<Response> buyMedications(@RequestHeader("Authorization") String token, @RequestBody Map<Long, Long> medicationOrders) {
+        Patient patient = (Patient) utility.getUserFromToken(token);
+        Response response = new Response();
+        try{
+            pharmacyService.buyMedications(patient, medicationOrders);
+            response.setMessage("Successfully bought medications");
+            response.setStatus(HttpStatus.OK);
+        } catch (HospitalManagementException e) {
+            response.setMessage(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setMessage("Error while adding medication" + e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 }

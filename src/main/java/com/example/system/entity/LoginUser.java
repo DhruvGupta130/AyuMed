@@ -2,6 +2,7 @@ package com.example.system.entity;
 
 import com.example.system.dto.UserRole;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,11 @@ public class LoginUser {
     @Column(unique = true)
     @Size(min = 3, max = 20, message = "Username must be between 3 and 20 characters.")
     private String username;
+
+    @NotNull
+    @Column(unique = true)
+    @Email(message = "Invalid email format")
+    private String email;
 
     @NotNull
     @Size(min = 8, message = "Password must be at least 8 characters long.")

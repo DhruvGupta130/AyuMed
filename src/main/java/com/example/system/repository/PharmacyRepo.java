@@ -13,4 +13,5 @@ public interface PharmacyRepo extends JpaRepository<Pharmacy, Long> {
     @Query("SELECT p FROM Pharmacy p WHERE p.pharmacyName LIKE %:keyword% OR :keyword IS null")
     List<Pharmacy> findPharmaciesByKeyword(String keyword);
 
+    Pharmacy getPharmacyById(Long id);
 }

@@ -4,7 +4,6 @@ import com.example.system.dto.Gender;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -29,10 +28,6 @@ public class Manager {
     private Gender gender;
 
     @NotNull
-    @Email(message = "Invalid email format")
-    private String email;
-
-    @NotNull
     @Pattern(regexp = "^[+]?[0-9\\- ]{7,20}$", message = "Invalid phone number")
     private String mobile;
 
@@ -41,8 +36,8 @@ public class Manager {
     private Hospital hospital;
 
     @NotNull
-    @ManyToOne
     @JoinColumn(name = "user_id")
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private LoginUser loginUser = new LoginUser();
 

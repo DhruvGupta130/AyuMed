@@ -14,7 +14,7 @@ public interface HospitalService {
     HospitalDTO getHospitalProfile(Hospital hospital);
 
     void updatePassword(Manager manager, Password password);
-    List<String> getAllDepartments(Hospital hospital);
+    void updatePassword(Manager manager, String password);
     List<String> getAllDepartments();
     List<HospitalPatientDTO> getAllPatients(Hospital hospital);
     void addPatientLabResult(MedicalTest medicalTest, long historyId) throws IOException;
@@ -26,6 +26,7 @@ public interface HospitalService {
     List<HospitalDTO> searchHospital(String keyword);
     List<HospitalDTO> getHospitalsByDepartment(String department);
     Hospital getHospitalById(long id);
+    HospitalDTO getHospitalDtoById(long id);
     List<DoctorDTO> getAllDoctors(Hospital hospital);
     void updateAddress(Manager manager, Address address);
 }

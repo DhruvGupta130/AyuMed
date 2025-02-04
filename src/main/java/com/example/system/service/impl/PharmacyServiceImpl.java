@@ -1,18 +1,10 @@
 package com.example.system.service.impl;
 
-import com.example.system.dto.MedicationDTO;
-import com.example.system.dto.Password;
-import com.example.system.dto.PharmacistDTO;
-import com.example.system.dto.PharmacyDTO;
-import com.example.system.entity.Address;
-import com.example.system.entity.Medication;
-import com.example.system.entity.Pharmacist;
-import com.example.system.entity.Pharmacy;
+import com.example.system.dto.*;
+import com.example.system.entity.*;
 import com.example.system.exception.HospitalManagementException;
-import com.example.system.repository.AddressRepo;
-import com.example.system.repository.MedicationRepo;
-import com.example.system.repository.PharmacistRepo;
-import com.example.system.repository.PharmacyRepo;
+import com.example.system.repository.*;
+import com.example.system.service.PatientService;
 import com.example.system.service.PharmacyService;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
@@ -29,9 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -42,6 +32,8 @@ public class PharmacyServiceImpl implements PharmacyService {
     private final AddressRepo addressRepo;
     private final MedicationRepo medicationRepo;
     private final PasswordEncoder passwordEncoder;
+    private final PatientService patientService;
+    private final PatientRepo patientRepo;
 
     @Override
     @Transactional
@@ -90,7 +82,7 @@ public class PharmacyServiceImpl implements PharmacyService {
         return new PharmacistDTO(
                 pharmacist.getId(), pharmacist.getFirstName(),
                 pharmacist.getLastName(), pharmacist.getGender(),
-                pharmacist.getEmail(), pharmacist.getMobile(),
+                pharmacist.getLoginUser().getEmail(), pharmacist.getMobile(),
                 pharmacist.getFirstName() + " " + pharmacist.getLastName()
         );
     }
@@ -98,7 +90,9 @@ public class PharmacyServiceImpl implements PharmacyService {
     @Override
     public void updatePharmacy(Medication medication, Pharmacist pharmacist) {
         if(pharmacist.getPharmacy()==null) throw new HospitalManagementException("Pharmacy not found");
+        if(medication.isExpired()) throw new HospitalManagementException("Medication is expired");
         medication.setPharmacy(pharmacist.getPharmacy());
+        pharmacist.getPharmacy().getMedications().add(medication);
         medicationRepo.save(medication);
     }
 
@@ -156,7 +150,7 @@ public class PharmacyServiceImpl implements PharmacyService {
     public void setStatus(Pharmacy pharmacy) {
         if(pharmacy.getClosingTime().isBefore(LocalTime.now())
                 || pharmacy.getOpeningTime().isAfter(LocalTime.now())) {
-            pharmacy.setOpen(false);
+            throw new HospitalManagementException("Outside working hours: "+ pharmacy.getClosingTime());
         }else pharmacy.setOpen(!pharmacy.isOpen());
         pharmacyRepo.save(pharmacy);
     }
@@ -165,7 +159,12 @@ public class PharmacyServiceImpl implements PharmacyService {
     public void updatePassword(Pharmacist pharmacist, Password password) {
         if(!passwordEncoder.matches(password.getOldPassword(), pharmacist.getLoginUser().getPassword()))
             throw new HospitalManagementException("Provided password is incorrect");
-        pharmacist.getLoginUser().setPassword(passwordEncoder.encode(password.getNewPassword()));
+        this.updatePassword(pharmacist, password.getNewPassword());
+    }
+
+    @Override
+    public void updatePassword(Pharmacist pharmacist, String password) {
+        pharmacist.getLoginUser().setPassword(passwordEncoder.encode(password));
         pharmacistRepo.save(pharmacist);
     }
 
@@ -175,6 +174,16 @@ public class PharmacyServiceImpl implements PharmacyService {
                 .orElseThrow(() -> new HospitalManagementException("Address not found"));
         address.setId(address1.getId());
         addressRepo.save(address);
+    }
+
+    private Medication getMedication(long id) {
+        return medicationRepo.findById(id)
+                .orElseThrow(() -> new HospitalManagementException("Medication not found"));
+    }
+
+    @Override
+    public MedicationDTO getMedicationById(long id) {
+        return this.getMedicationDTO(getMedication(id));
     }
 
     @Scheduled(fixedRate = 1800000)
@@ -195,7 +204,24 @@ public class PharmacyServiceImpl implements PharmacyService {
 
     @Override
     public List<MedicationDTO> getMedications() {
-        return medicationRepo.findAll().stream().map(this::getMedicationDTO).toList();
+        return medicationRepo.findAll().stream().filter(medication -> medication.getPatients().isEmpty()).map(this::getMedicationDTO).toList();
+    }
+
+    @Override
+    public List<MedicationDTO> getMedicationsByPharmacy(long pharmacyId) {
+        Pharmacy pharmacy = pharmacyRepo.findById(pharmacyId)
+                .orElseThrow(() -> new HospitalManagementException("Pharmacy not found"));
+        return this.getMedicationsByPharmacy(pharmacy);
+    }
+
+    @Override
+    public List<MedicationDTO> getMedicationsByPharmacy(Pharmacy pharmacy) {
+        return pharmacy.getMedications().stream().map(this::getMedicationDTO).toList();
+    }
+
+    @Override
+    public List<PharmacyPatientsDTO> getPharmacyPatients(Pharmacy pharmacy) {
+        return patientService.getPharmacyPatient(pharmacy);
     }
 
     @Override
@@ -211,8 +237,52 @@ public class PharmacyServiceImpl implements PharmacyService {
     }
 
     @Override
+    public PharmacyDTO getPharmacyById(long id) {
+        return getPharmacyProfile(pharmacyRepo.getPharmacyById(id));
+    }
+
+    @Override
     public List<MedicationDTO> getMedicationsByKeyword(String keyword) {
         return medicationRepo.findByKeyword(keyword).stream().map(this::getMedicationDTO).toList();
+    }
+
+    @Override
+    public List<MedicationDTO> getPatientMedications(Patient patient) {
+        return medicationRepo.getMedicationsByPatient(patient).stream().map(this::getMedicationDTO).toList();
+    }
+
+    @Override
+    @Transactional
+    public void buyMedications(Patient patient, Map<Long, Long> medicationOrders) {
+        List<Medication> validMedications = medicationRepo.findAllById(medicationOrders.keySet()).stream()
+                .filter(medication ->
+                        medication.getQuantity() >= medicationOrders.getOrDefault(medication.getId(), 0L)
+                        && medication.getPatients().isEmpty())
+                .peek(medication ->
+                        medication.setQuantity(medication.getQuantity() - medicationOrders.get(medication.getId())))
+                .toList();
+        medicationRepo.saveAll(validMedications);
+        List<Medication> patientMedications = validMedications.stream()
+                .map(medication -> getMedication(medicationOrders.get(medication.getId()), medication))
+                .toList();
+
+        patient.getMedications().addAll(patientMedications);
+        patientRepo.save(patient);
+    }
+
+    private Medication getMedication(long quantity, Medication medication) {
+        Medication patientMedication = new Medication();
+        patientMedication.setMedicationName(medication.getMedicationName());
+        patientMedication.setCompositionName(medication.getCompositionName());
+        patientMedication.setDosageForm(medication.getDosageForm());
+        patientMedication.setStrength(medication.getStrength());
+        patientMedication.setPharmacy(medication.getPharmacy());
+        patientMedication.setQuantity(quantity);
+        patientMedication.setPrice(medication.getPrice() * quantity);
+        patientMedication.setExpiry(medication.getExpiry());
+        patientMedication.setManufacturer(medication.getManufacturer());
+        patientMedication.setBatchNumber(medication.getBatchNumber());
+        return patientMedication;
     }
 
     private MedicationDTO getMedicationDTO(Medication medication) {
@@ -222,7 +292,7 @@ public class PharmacyServiceImpl implements PharmacyService {
                 medication.getStrength(), medication.getQuantity(),
                 medication.getExpiry(), medication.getExpiry().isBefore(LocalDate.now()),
                 medication.getManufacturer(), medication.getPrice(),
-                medication.getBatchNumber()
+                medication.getBatchNumber(), medication.getPharmacy().getPharmacyName()
         );
     }
 }

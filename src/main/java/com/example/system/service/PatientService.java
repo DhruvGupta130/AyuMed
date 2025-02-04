@@ -13,6 +13,7 @@ import java.util.List;
 public interface PatientService {
     void updatePatient(Patient patient, String aadhaarId, String mobile, MultipartFile image);
     void updatePassword(Patient patient, Password password);
+    void updatePassword(Patient patient, String newPassword);
     Patient getPatientById(long id);
     void addMedicalHistory(Doctor doctor, Patient patient, MedicalHistory historyRequest);
     void addLabResults(MedicalTest medicalTest, long historyId) throws IOException;
@@ -20,6 +21,7 @@ public interface PatientService {
     PatientDTO getPatientProfile(Patient patient);
     List<PatientDTO> getDoctorsPatient(Doctor doctor);
     List<HospitalPatientDTO> getHospitalPatient(Hospital hospital);
+    List<PharmacyPatientsDTO> getPharmacyPatient(Pharmacy pharmacy);
     List<LabTestDTO> getMedicalTests(Patient patient);
     List<LabTestDTO> getMedicalTests(MedicalHistory history);
     void addAddress(Patient patient, Address address);

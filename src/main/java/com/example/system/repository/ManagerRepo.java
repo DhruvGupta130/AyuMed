@@ -12,4 +12,7 @@ public interface ManagerRepo extends JpaRepository<Manager, Long> {
 
     @Query("select m from Manager m join m.loginUser u where u.username = :username")
     Optional<Manager> findByUsername(String username);
+
+    @Query("select m from Manager m join m.loginUser u where u.email = :email")
+    Optional<Manager> findByEmail(String email);
 }

@@ -13,15 +13,18 @@ import java.util.List;
 public interface DoctorService {
 
     Doctor getDoctorById(long id);
+    DoctorDTO getDoctorDTOById(long id);
     DoctorDTO getDoctorProfile(Doctor doctor);
     List<DoctorDTO> searchDoctors(String specialty, Boolean available, String department);
     void updateDoctor(Doctor doctor, DoctorUpdateDTO updateDTO);
     void addSchedule(Doctor doctor, List<Schedule> schedules);
     void updateSchedule(Doctor doctor, List<Schedule> schedule);
     void updatePassword(Doctor doctor, Password password);
+    void updatePassword(Doctor doctor, String password);
     List<DoctorDTO> getDoctorsBySearch(String keyword);
     List<DoctorDTO> getDoctorsByDepartment(String department);
     List<DoctorDTO> getDoctorsByHospitalAndDepartment(Hospital hospital, String department);
+    List<DoctorDTO> getDoctorsByHospital(Hospital hospital);
     List<DoctorDTO> getHospitalDoctors(Hospital hospital);
     List<ScheduleDTO> getSchedules(Doctor doctor, String sortBy, String sortDirection);
     void deleteAllSchedules(Doctor doctor);
@@ -29,5 +32,6 @@ public interface DoctorService {
     void registerDoctor(RegistrationDTO doctor);
     void saveFromExcel(MultipartFile file, long hospitalId);
     List<Doctor> getAllDoctors();
+    List<DoctorDTO> getAllTheDoctors();
 }
 

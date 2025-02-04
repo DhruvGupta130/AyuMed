@@ -18,6 +18,7 @@ public class ReminderService {
 
     private final AppointmentRepo appointmentRepo;
     private final EmailService emailService;
+    private final EmailStructures emailStructures;
 
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -29,18 +30,22 @@ public class ReminderService {
         List<Appointment> appointments = appointmentRepo.findAppointmentsByAppointmentDateBetweenAndStatus(now, thirtyMinutesLater, AppointmentStatus.APPROVED);
 
         for (Appointment appointment : appointments) {
-            String patientEmail = appointment.getPatient().getEmail();
+            String patientEmail = appointment.getPatient().getLoginUser().getEmail();
             String patientName = appointment.getPatient().getFirstName() + " " + appointment.getPatient().getLastName();
             String appointmentDate = appointment.getAppointmentDate().format(dateFormatter);
             String appointmentTime = appointment.getAppointmentDate().format(timeFormatter);
 
             String doctorName = appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName();
             String specialty = appointment.getDoctor().getSpeciality();
+            String department = appointment.getDoctor().getDepartment();
             String location = appointment.getDoctor().getLocation();
 
-            // Create email
-            String patientEmailBody = EmailStructures.setAppointmentReminder(patientName, doctorName, specialty, appointmentDate, appointmentTime, location);
+
+            String patientEmailBody = emailStructures.generateAppointmentReminderPatient(patientName, doctorName, specialty, appointmentDate, appointmentTime, location);
             emailService.sendEmail(patientEmail, "Appointment Reminder - AyuMed", patientEmailBody);
+
+            String doctorEmailBody = emailStructures.generateAppointmentReminderDoctor(doctorName, patientName, department, appointmentDate, appointmentTime, location);
+            emailService.sendEmail(patientEmail, "Appointment Reminder - AyuMed", doctorEmailBody);
         }
     }
 }

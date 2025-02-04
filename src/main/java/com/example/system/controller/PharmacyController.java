@@ -1,9 +1,6 @@
 package com.example.system.controller;
 
-import com.example.system.dto.MedicationDTO;
-import com.example.system.dto.PharmacistDTO;
-import com.example.system.dto.PharmacyDTO;
-import com.example.system.dto.Response;
+import com.example.system.dto.*;
 import com.example.system.entity.Medication;
 import com.example.system.entity.Pharmacist;
 import com.example.system.entity.Pharmacy;
@@ -133,8 +130,18 @@ public class PharmacyController {
     }
 
     @GetMapping("/medications")
-    public ResponseEntity<List<MedicationDTO>> getMedications() {
-        return ResponseEntity.ok().body(pharmacyService.getMedications());
+    public ResponseEntity<List<MedicationDTO>> getMedications(@RequestHeader("Authorization") String token) {
+        Pharmacist pharmacist = (Pharmacist) utility.getUserFromToken(token);
+        if(pharmacist == null) throw new HospitalManagementException("Pharmacist not found.");
+        return ResponseEntity.ok().body(pharmacyService.getMedicationsByPharmacy(pharmacist.getPharmacy()));
+    }
+
+    @GetMapping("/patients")
+    public ResponseEntity<List<PharmacyPatientsDTO>> getPatients(@RequestHeader("Authorization") String token) {
+        Pharmacist pharmacist = (Pharmacist) utility.getUserFromToken(token);
+        if (pharmacist.getPharmacy() == null) throw new HospitalManagementException("Please register pharmacy first!");
+        List<PharmacyPatientsDTO> allPatients = pharmacyService.getPharmacyPatients(pharmacist.getPharmacy());
+        return ResponseEntity.ok(allPatients);
     }
 
     @GetMapping

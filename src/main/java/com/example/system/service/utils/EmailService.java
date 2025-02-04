@@ -1,24 +1,34 @@
 package com.example.system.service.utils;
 
-import lombok.AllArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class EmailService {
 
     private final JavaMailSender emailSender;
-    private static final String EMAIL_SERVICE = "AyuMed-Services@6981537.brevosend.com";
+
+    @Value("${email.service.from}")
+    private String fromEmail;
 
     public void sendEmail(String to, String subject, String body) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(EMAIL_SERVICE);
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(body);
+        try {
+            MimeMessage message = emailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-        emailSender.send(message);
+            helper.setFrom(fromEmail);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(body, true);
+            emailSender.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Failed to send email: " + e.getMessage(), e);
+        }
     }
 }

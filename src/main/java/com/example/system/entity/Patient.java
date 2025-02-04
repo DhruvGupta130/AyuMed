@@ -12,6 +12,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -38,9 +39,6 @@ public class Patient {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Email(message = "Invalid email format")
-    private String email;
-
     @Pattern(regexp = "^[+]?[0-9\\- ]{7,20}$", message = "Invalid phone number")
     private String mobile;
 
@@ -54,20 +52,24 @@ public class Patient {
     private String image;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "patient", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "patient", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     private List<MedicalHistory> medicalHistories;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Address address;
 
-    @ManyToOne
     @JoinColumn(name = "user_id")
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private LoginUser loginUser = new LoginUser();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Appointment> appointments;
+
+    @JsonIgnore
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    private List<Medication> medications = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "patient")

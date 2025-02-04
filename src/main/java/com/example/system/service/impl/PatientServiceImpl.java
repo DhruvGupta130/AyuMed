@@ -32,6 +32,7 @@ public class PatientServiceImpl implements PatientService {
     private final PasswordEncoder passwordEncoder;
     private final FileService fileService;
 
+
     @Override
     @Transactional
     public void updatePatient(Patient patient, String aadhaarId, String mobile, MultipartFile image) {
@@ -52,7 +53,12 @@ public class PatientServiceImpl implements PatientService {
     public void updatePassword(Patient patient, Password password) {
         if(!passwordEncoder.matches(password.getOldPassword(), patient.getLoginUser().getPassword()))
             throw new HospitalManagementException("Provided password is incorrect");
-        patient.getLoginUser().setPassword(passwordEncoder.encode(password.getNewPassword()));
+        this.updatePassword(patient, password.getNewPassword());
+    }
+
+    @Override
+    public void updatePassword(Patient patient, String newPassword) {
+        patient.getLoginUser().setPassword(passwordEncoder.encode(newPassword));
         patientRepo.save(patient);
     }
 
@@ -107,7 +113,7 @@ public class PatientServiceImpl implements PatientService {
         return new PatientDTO(
                 patient.getId(), patient.getFirstName(),
                 patient.getLastName(), patient.getDateOfBirth(),
-                patient.getGender(), patient.getEmail(),
+                patient.getGender(), patient.getLoginUser().getEmail(),
                 patient.getMobile(), patient.getAlternateMobile(),
                 hideAadhaarId(patient.getAadhaarId()),
                 patient.getImage(), patient.getFullName(),
@@ -124,6 +130,11 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public List<HospitalPatientDTO> getHospitalPatient(Hospital hospital) {
         return patientRepo.findPatientsByHospital(hospital);
+    }
+
+    @Override
+    public List<PharmacyPatientsDTO> getPharmacyPatient(Pharmacy pharmacy){
+        return patientRepo.findPatientByPharmacy(pharmacy);
     }
 
     @Override
