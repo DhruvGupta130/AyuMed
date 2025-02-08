@@ -8,6 +8,7 @@ import com.example.system.service.PatientService;
 import com.example.system.service.PharmacyService;
 import com.example.system.service.utils.EmailService;
 import lombok.AllArgsConstructor;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -116,7 +117,10 @@ public class PharmacyServiceImpl implements PharmacyService {
         try (InputStream is = file.getInputStream(); Workbook workbook = new XSSFWorkbook(is)) {
             Sheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rows = sheet.iterator();
-            if (rows.hasNext()) rows.next();
+            if (rows.hasNext()) {
+                Row headerRow = rows.next();
+                verifyHeaders(headerRow);
+            }
             while (rows.hasNext()) {
                 Row row = rows.next();
                 LocalDate expiryDate = row.getCell(5).getLocalDateTimeCellValue().toLocalDate();
@@ -158,6 +162,20 @@ public class PharmacyServiceImpl implements PharmacyService {
             medicationRepo.save(medication);
         } catch (Exception e) {
             throw new HospitalManagementException("Error updating medication: " + e.getMessage(), e);
+        }
+    }
+
+    private void verifyHeaders(Row headerRow) {
+        String[] expectedHeaders = {
+                "Medication Name", "Composition Name", "Dosage Form", "Strength",
+                "Quantity", "Expiry Date", "Manufacturer", "Price", "Batch Number"
+        };
+
+        for (int i = 0; i < expectedHeaders.length; i++) {
+            Cell headerCell = headerRow.getCell(i, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+            if (headerCell == null || !expectedHeaders[i].equalsIgnoreCase(headerCell.getStringCellValue().trim())) {
+                throw new HospitalManagementException("Invalid Excel format. Expected column: " + expectedHeaders[i]);
+            }
         }
     }
 

@@ -257,7 +257,7 @@ public class DoctorServiceImpl implements DoctorService {
                 "Specialty", "License Number"
         };
         for (int i = 0; i < expectedHeaders.length; i++) {
-            Cell headerCell = headerRow.getCell(i);
+            Cell headerCell = headerRow.getCell(i, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
             if (headerCell == null || !expectedHeaders[i].equalsIgnoreCase(headerCell.getStringCellValue().trim())) {
                 throw new HospitalManagementException("Invalid Excel file structure. Expected header: " + expectedHeaders[i]);
             }
