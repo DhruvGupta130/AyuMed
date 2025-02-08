@@ -263,7 +263,7 @@ public class PharmacyServiceImpl implements PharmacyService {
 
     @Override
     public List<MedicationDTO> getPatientMedications(Patient patient) {
-        return medicationRepo.getMedicationsByPatient(patient).stream().map(this::getMedicationDTO).toList();
+        return medicationRepo.getMedicationsByPatient(patient).stream().map(this::getMedicationDTO).toList().reversed();
     }
 
     @Override

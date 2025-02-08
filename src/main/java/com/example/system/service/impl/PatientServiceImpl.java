@@ -134,7 +134,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public List<PharmacyPatientsDTO> getPharmacyPatient(Pharmacy pharmacy){
-        return patientRepo.findPatientByPharmacy(pharmacy);
+        return patientRepo.findPatientByPharmacy(pharmacy).reversed();
     }
 
     @Override

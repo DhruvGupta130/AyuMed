@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -167,9 +168,9 @@ public class AuthServiceImpl implements AuthService {
             response.setUsername(user.getUsername());
             response.setMessage("Successfully logged in");
             response.setStatus(HttpStatus.OK);
-        } catch (HospitalManagementException e) {
-            response.setMessage(e.getMessage());
-            response.setStatus(HttpStatus.BAD_REQUEST);
+        } catch (BadCredentialsException e) {
+            response.setMessage("Invalid Username or Password");
+            response.setStatus(HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
             response.setMessage("An unexpected error occurred: " + e.getMessage());
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
