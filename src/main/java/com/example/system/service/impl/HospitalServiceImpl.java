@@ -9,6 +9,7 @@ import com.example.system.repository.ManagerRepo;
 import com.example.system.service.DoctorService;
 import com.example.system.service.HospitalService;
 import com.example.system.service.PatientService;
+import com.example.system.service.utils.EmailService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,8 @@ public class HospitalServiceImpl implements HospitalService {
     private final PasswordEncoder passwordEncoder;
     private final DoctorService doctorService;
     private final PatientService patientService;
+    private final EmailStructures emailStructures;
+    private final EmailService emailService;
 
     @Override
     @Transactional
@@ -35,6 +38,12 @@ public class HospitalServiceImpl implements HospitalService {
             hospital.setManager(manager);
             manager.setHospital(hospital);
             hospitalRepo.save(hospital);
+            String body = emailStructures.generateHospitalWelcomeEmail(hospital.getHospitalName());
+            emailService.sendEmail(
+                        manager.getLoginUser().getEmail(),
+                        "\uD83D\uDE80 %s is Now Live on AyuMed – Welcome Aboard!".formatted(hospital.getHospitalName()),
+                        body
+                    );
         } catch (Exception e) {
             throw new HospitalManagementException(e.getMessage());
         }

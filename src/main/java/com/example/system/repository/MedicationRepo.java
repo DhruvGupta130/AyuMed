@@ -8,13 +8,20 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface MedicationRepo extends JpaRepository<Medication, Long> {
 
-    Optional<Medication> findByBatchNumber(String batchNumber);
+    @Query("SELECT m FROM Medication m WHERE m.patients IS EMPTY " +
+            "AND m.batchNumber = :batchNumber " +
+            "AND m.medicationName = :name " +
+            "AND m.expiry = :expiry")
+    Optional<Medication> findExistingMedication(@Param("batchNumber") String batchNumber,
+                                                @Param("name") String medicationName,
+                                                @Param("expiry") LocalDate expiry);
 
     @Query("SELECT m FROM Medication m WHERE (:keyword IS NULL " +
             "OR m.medicationName LIKE %:keyword% OR m.compositionName LIKE %:keyword%)")

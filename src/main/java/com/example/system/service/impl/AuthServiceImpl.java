@@ -48,76 +48,106 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public void createPatient(RegistrationDTO registrationDTO) {
-        Patient patient = new Patient();
-        setCommonAttributes(patient.getLoginUser(), registrationDTO);
-        patient.setFirstName(registrationDTO.getFirstName());
-        patient.setLastName(registrationDTO.getLastName());
-        patient.setDateOfBirth(registrationDTO.getDateOfBirth());
-        patient.setGender(registrationDTO.getGender());
-        patient.setMobile(registrationDTO.getMobile());
-        patientRepo.save(patient);
-        String registration = emailStructures.generateRegistrationEmail(patient.getFullName());
-        emailService.sendEmail(patient.getLoginUser().getEmail(), "Thank you for your registration in AyuMed", registration);
+        try {
+            Patient patient = new Patient();
+            setCommonAttributes(patient.getLoginUser(), registrationDTO);
+            patient.setFirstName(registrationDTO.getFirstName());
+            patient.setLastName(registrationDTO.getLastName());
+            patient.setDateOfBirth(registrationDTO.getDateOfBirth());
+            patient.setGender(registrationDTO.getGender());
+            patient.setMobile(registrationDTO.getMobile());
+            patientRepo.save(patient);
+            String registration = emailStructures.generateRegistrationEmail(patient.getFullName());
+            emailService.sendEmail(
+                    patient.getLoginUser().getEmail(),
+                    "🎇 Welcome to AyuMed! Your Account is Now Active",
+                    registration
+            );
+        } catch (Exception e) {
+            throw new HospitalManagementException("Failed to create patient", e);
+        }
     }
 
     @Override
     @Transactional
     @PreAuthorize("hasRole('MANAGEMENT')")
     public void createDoctor(RegistrationDTO registrationDTO) {
-        Hospital hospital = hospitalRepo.findById(registrationDTO.getHospitalId()).orElseThrow(
-                ()-> new HospitalManagementException("No Hospital found"));
-        if(hospital.getDoctors()==null) hospital.setDoctors(new ArrayList<>());
-        if(hospital.getDepartments()==null) hospital.setDepartments(new HashSet<>());
-        Doctor doctor = new Doctor();
-        setCommonAttributes(doctor.getLoginUser(), registrationDTO);
-        doctor.setFirstName(registrationDTO.getFirstName());
-        doctor.setLastName(registrationDTO.getLastName());
-        doctor.setMobile(registrationDTO.getMobile());
-        doctor.setSpeciality(registrationDTO.getSpeciality());
-        doctor.setLicenseNumber(registrationDTO.getLicenseNumber());
-        doctor.setHospital(hospital);
-        hospital.getDoctors().add(doctor);
-        hospital.getDepartments().add(registrationDTO.getDepartment());
-        doctor.setGender(registrationDTO.getGender());
-        doctor.setDepartment(registrationDTO.getDepartment());
-        doctorRepo.save(doctor);
+        try {
+            Hospital hospital = hospitalRepo.findById(registrationDTO.getHospitalId()).orElseThrow(
+                    () -> new HospitalManagementException("No Hospital found"));
+            if (hospital.getDoctors() == null) hospital.setDoctors(new ArrayList<>());
+            if (hospital.getDepartments() == null) hospital.setDepartments(new HashSet<>());
+            Doctor doctor = new Doctor();
+            setCommonAttributes(doctor.getLoginUser(), registrationDTO);
+            doctor.setFirstName(registrationDTO.getFirstName());
+            doctor.setLastName(registrationDTO.getLastName());
+            doctor.setMobile(registrationDTO.getMobile());
+            doctor.setSpeciality(registrationDTO.getSpeciality());
+            doctor.setLicenseNumber(registrationDTO.getLicenseNumber());
+            doctor.setHospital(hospital);
+            hospital.getDoctors().add(doctor);
+            hospital.getDepartments().add(registrationDTO.getDepartment());
+            doctor.setGender(registrationDTO.getGender());
+            doctor.setDepartment(registrationDTO.getDepartment());
+            doctorRepo.save(doctor);
+            String registration = emailStructures.generateDoctorWelcomeEmail(doctor.getFullName(), hospital.getHospitalName(), registrationDTO.getUsername(), registrationDTO.getPassword());
+            emailService.sendEmail(
+                    doctor.getLoginUser().getEmail(),
+                    "🩺 Welcome to %s, Dr. %s!".formatted(doctor.getFullName(), hospital.getHospitalName()),
+                    registration
+            );
+        } catch (Exception e) {
+            throw new HospitalManagementException("Failed to create doctor", e);
+        }
     }
 
     @Override
     @Transactional
     public void createAdmin(RegistrationDTO registrationDTO) {
-        Admin admin = new Admin();
-        setCommonAttributes(admin.getLoginUser(), registrationDTO);
-        admin.setFirstName(registrationDTO.getFirstName());
-        admin.setLastName(registrationDTO.getLastName());
-        admin.getLoginUser().setEmail(registrationDTO.getEmail());
-        admin.setMobile(registrationDTO.getMobile());
-        admin.setGender(registrationDTO.getGender());
-        adminRepo.save(admin);
+        try {
+            Admin admin = new Admin();
+            setCommonAttributes(admin.getLoginUser(), registrationDTO);
+            admin.setFirstName(registrationDTO.getFirstName());
+            admin.setLastName(registrationDTO.getLastName());
+            admin.getLoginUser().setEmail(registrationDTO.getEmail());
+            admin.setMobile(registrationDTO.getMobile());
+            admin.setGender(registrationDTO.getGender());
+            adminRepo.save(admin);
+        } catch (Exception e) {
+            throw new HospitalManagementException("Failed to create admin", e);
+        }
     }
 
     @Override
     @Transactional
     public void createManager(RegistrationDTO registrationDTO) {
-        Manager manager = new Manager();
-        setCommonAttributes(manager.getLoginUser(), registrationDTO);
-        manager.setFirstName(registrationDTO.getFirstName());
-        manager.setLastName(registrationDTO.getLastName());
-        manager.setGender(registrationDTO.getGender());
-        manager.setMobile(registrationDTO.getMobile());
-        managerRepo.save(manager);
+        try {
+            Manager manager = new Manager();
+            setCommonAttributes(manager.getLoginUser(), registrationDTO);
+            manager.setFirstName(registrationDTO.getFirstName());
+            manager.setLastName(registrationDTO.getLastName());
+            manager.setGender(registrationDTO.getGender());
+            manager.setMobile(registrationDTO.getMobile());
+            managerRepo.save(manager);
+        } catch (Exception e) {
+            throw new HospitalManagementException("Failed to create manager", e);
+        }
     }
 
     @Override
     @Transactional
     public void createPharmacist(RegistrationDTO registrationDTO) {
-        Pharmacist pharmacist = new Pharmacist();
-        setCommonAttributes(pharmacist.getLoginUser(), registrationDTO);
-        pharmacist.setFirstName(registrationDTO.getFirstName());
-        pharmacist.setLastName(registrationDTO.getLastName());
-        pharmacist.setGender(registrationDTO.getGender());
-        pharmacist.setMobile(registrationDTO.getMobile());
-        pharmacistRepo.save(pharmacist);
+        try {
+            Pharmacist pharmacist = new Pharmacist();
+            setCommonAttributes(pharmacist.getLoginUser(), registrationDTO);
+            pharmacist.setFirstName(registrationDTO.getFirstName());
+            pharmacist.setLastName(registrationDTO.getLastName());
+            pharmacist.setGender(registrationDTO.getGender());
+            pharmacist.setMobile(registrationDTO.getMobile());
+            pharmacistRepo.save(pharmacist);
+        } catch (Exception e) {
+            throw new HospitalManagementException("Failed to create pharmacist", e);
+        }
     }
 
     @Override
@@ -148,10 +178,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private void setCommonAttributes(LoginUser loginUser, RegistrationDTO registrationDTO) {
-        loginUser.setUsername(registrationDTO.getUsername());
-        loginUser.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
-        loginUser.setEmail(registrationDTO.getEmail());
-        loginUser.setRole(registrationDTO.getRole());
-        userRepo.save(loginUser);
+        try {
+            loginUser.setUsername(registrationDTO.getUsername());
+            loginUser.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
+            loginUser.setEmail(registrationDTO.getEmail());
+            loginUser.setRole(registrationDTO.getRole());
+            userRepo.save(loginUser);
+        } catch (Exception e) {
+            throw new HospitalManagementException("Failed to create user", e);
+        }
     }
 }

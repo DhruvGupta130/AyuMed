@@ -6,6 +6,7 @@ import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.*;
 import com.example.system.service.PatientService;
 import com.example.system.service.PharmacyService;
+import com.example.system.service.utils.EmailService;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -34,6 +35,8 @@ public class PharmacyServiceImpl implements PharmacyService {
     private final PasswordEncoder passwordEncoder;
     private final PatientService patientService;
     private final PatientRepo patientRepo;
+    private final EmailStructures emailStructures;
+    private final EmailService emailService;
 
     @Override
     @Transactional
@@ -42,6 +45,12 @@ public class PharmacyServiceImpl implements PharmacyService {
             pharmacy.setPharmacist(pharmacist);
             pharmacist.setPharmacy(pharmacy);
             pharmacyRepo.save(pharmacy);
+            String body = emailStructures.generatePharmacyWelcomeEmail(pharmacy.getPharmacyName());
+            emailService.sendEmail(
+                    pharmacist.getLoginUser().getEmail(),
+                    "\uD83D\uDC8A Welcome to AyuMed Pharmacy Network! Let’s Get Started",
+                    body
+            );
         } catch (Exception e) {
             throw new HospitalManagementException(e.getMessage());
         }
@@ -91,9 +100,14 @@ public class PharmacyServiceImpl implements PharmacyService {
     public void updatePharmacy(Medication medication, Pharmacist pharmacist) {
         if(pharmacist.getPharmacy()==null) throw new HospitalManagementException("Pharmacy not found");
         if(medication.isExpired()) throw new HospitalManagementException("Medication is expired");
-        medication.setPharmacy(pharmacist.getPharmacy());
-        pharmacist.getPharmacy().getMedications().add(medication);
-        medicationRepo.save(medication);
+        Optional<Medication> optional = medicationRepo.findExistingMedication(medication.getBatchNumber(), medication.getMedicationName(), medication.getExpiry());
+        if(optional.isPresent()) {
+            updateMedication(optional.get(), medication.getQuantity());
+        } else {
+            medication.setPharmacy(pharmacist.getPharmacy());
+            pharmacist.getPharmacy().getMedications().add(medication);
+            medicationRepo.save(medication);
+        }
     }
 
     @Override
@@ -108,9 +122,10 @@ public class PharmacyServiceImpl implements PharmacyService {
                 LocalDate expiryDate = row.getCell(5).getLocalDateTimeCellValue().toLocalDate();
                 if(expiryDate.isBefore(LocalDate.now())) continue;
                 String batchNumber = row.getCell(8).getStringCellValue().trim();
-                Optional<Medication> existingMedication = medicationRepo.findByBatchNumber(batchNumber);
+                String medicationName = row.getCell(0).getStringCellValue().trim();
+                Optional<Medication> existingMedication = medicationRepo.findExistingMedication(batchNumber, medicationName, expiryDate);
                 if (existingMedication.isPresent()) {
-                    updateMedication(existingMedication.get(), (int) row.getCell(4).getNumericCellValue());
+                    updateMedication(existingMedication.get(), (long) row.getCell(4).getNumericCellValue());
                 } else {
                     Medication medication = createMedication(row);
                     updatePharmacy(medication, pharmacist);
@@ -137,9 +152,9 @@ public class PharmacyServiceImpl implements PharmacyService {
             throw new HospitalManagementException("Error creating Medication: " + e.getMessage(), e);
         }
     }
-    private void updateMedication(Medication medication, int quantity) {
+    private void updateMedication(Medication medication, long quantity) {
         try {
-            medication.setQuantity(quantity);
+            medication.setQuantity(medication.getQuantity() + quantity);
             medicationRepo.save(medication);
         } catch (Exception e) {
             throw new HospitalManagementException("Error updating medication: " + e.getMessage(), e);
@@ -216,7 +231,7 @@ public class PharmacyServiceImpl implements PharmacyService {
 
     @Override
     public List<MedicationDTO> getMedicationsByPharmacy(Pharmacy pharmacy) {
-        return pharmacy.getMedications().stream().map(this::getMedicationDTO).toList();
+        return pharmacy.getMedications().stream().filter(m -> m.getPatients().isEmpty()).map(this::getMedicationDTO).toList();
     }
 
     @Override
@@ -265,9 +280,14 @@ public class PharmacyServiceImpl implements PharmacyService {
         List<Medication> patientMedications = validMedications.stream()
                 .map(medication -> getMedication(medicationOrders.get(medication.getId()), medication))
                 .toList();
+        double totalAmount = patientMedications.stream()
+                .mapToDouble(Medication::getPrice)
+                .sum();
 
         patient.getMedications().addAll(patientMedications);
         patientRepo.save(patient);
+        String s = emailStructures.generateMedicationBillEmail(patient.getFullName(), patientMedications, totalAmount);
+        emailService.sendEmail(patient.getLoginUser().getEmail(), "Medication Bill", s);
     }
 
     private Medication getMedication(long quantity, Medication medication) {
