@@ -5,6 +5,8 @@ A robust and scalable **Hospital and Outpatient Department (OPD) Management Syst
 ## Key Features 🚀
 
 - **Comprehensive Patient Management**: Register, update, and maintain patient records 📋
+- **OTP Verification**: Email I'd will be validated upon successful registration and when resetting password through forgot password 🔑
+- **Welcome Mails**: After successful registration all the users receives the confirmation mails accordingly 📩
 - **Doctor and Staff Administration**: Efficiently manage doctor schedules, departments, and specialties 🩺
 - **Appointment Scheduling**: Book and track patient appointments for seamless interaction 📅
 - **Upcoming Appointment Reminders**: Patient will receive certain reminders for his upcoming appointments through mail 📤
@@ -14,9 +16,10 @@ A robust and scalable **Hospital and Outpatient Department (OPD) Management Syst
 - **Patient Records**: A dedicated storage for Patient's reports and documents 📃
 - **Feedback Mechanism**: Gather and analyze patient feedback to improve service quality ⭐
 - **Excel Import**: Import bulk doctor or patient data from Excel files using Apache POI 📊
-- **Pharmacy**: Search Pharmacy nearby locations, by medications name⚕️
-- **Real-time Medications & Drugs Tracking**: With the API's support the supply can be traced realtime⌛
+- **Pharmacy**: Search Pharmacy nearby locations, by pharmacy name⚕️
+- **Real-time Medications & Drugs Tracking**: With the APIs support the supply can be traced realtime⌛
 - **Medications Excel Import**: Medications can be managed easily with the Excel import 📃
+- **Multi Search Box**: A search feature at the navigation to display all the combined results, including doctor, hospital, medication and pharmacy 🔎
 
 ## Tech Stack 🛠️
 
