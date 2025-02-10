@@ -94,7 +94,7 @@ public class AuthServiceImpl implements AuthService {
             String registration = emailStructures.generateDoctorWelcomeEmail(doctor.getFullName(), hospital.getHospitalName(), registrationDTO.getUsername(), registrationDTO.getPassword());
             emailService.sendEmail(
                     doctor.getLoginUser().getEmail(),
-                    "🩺 Welcome to %s, Dr. %s!".formatted(doctor.getFullName(), hospital.getHospitalName()),
+                    "🩺 Welcome to %s, Dr. %s!".formatted(hospital.getHospitalName(), doctor.getFullName()),
                     registration
             );
         } catch (Exception e) {

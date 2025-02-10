@@ -23,5 +23,6 @@ public class MedicationDTO {
     private double price;
     private String batchNumber;
     private String pharmacyName;
+    private boolean pharmacyStatus;
 
 }

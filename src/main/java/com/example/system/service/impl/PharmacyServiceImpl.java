@@ -290,7 +290,7 @@ public class PharmacyServiceImpl implements PharmacyService {
         List<Medication> validMedications = medicationRepo.findAllById(medicationOrders.keySet()).stream()
                 .filter(medication ->
                         medication.getQuantity() >= medicationOrders.getOrDefault(medication.getId(), 0L)
-                        && medication.getPatients().isEmpty())
+                        && medication.getPatients().isEmpty() && medication.getPharmacy().isOpen())
                 .peek(medication ->
                         medication.setQuantity(medication.getQuantity() - medicationOrders.get(medication.getId())))
                 .toList();
@@ -330,7 +330,8 @@ public class PharmacyServiceImpl implements PharmacyService {
                 medication.getStrength(), medication.getQuantity(),
                 medication.getExpiry(), medication.getExpiry().isBefore(LocalDate.now()),
                 medication.getManufacturer(), medication.getPrice(),
-                medication.getBatchNumber(), medication.getPharmacy().getPharmacyName()
+                medication.getBatchNumber(), medication.getPharmacy().getPharmacyName(),
+                medication.getPharmacy().isOpen()
         );
     }
 }
