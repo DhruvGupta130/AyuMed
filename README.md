@@ -107,7 +107,7 @@ To get your application up and running, follow these steps:
       ./mvnw spring-boot:run
       ```
 
-   - Make sure you have the correct version of Java installed (Java 11 or above is recommended). You can verify your Java version by running:
+   - Make sure you have the correct version of Java installed (Java 23 or above is recommended). You can verify your Java version by running:
       ```bash
       java -version
      ```
