@@ -2,6 +2,8 @@
 
 A robust and scalable **Hospital and Outpatient Department (OPD) Management System** designed to optimize and streamline hospital operations. This system facilitates efficient handling of patient appointments, doctor schedules, billing, medical histories, and more, tailored for hospitals of all sizes.
 
+FRONTEND URL: https://github.com/DhruvGupta130/hospital-management-frontend
+
 ## Key Features 🚀
 
 - **Comprehensive Patient Management**: Register, update, and maintain patient records 📋
@@ -26,7 +28,7 @@ A robust and scalable **Hospital and Outpatient Department (OPD) Management Syst
 - **Backend**: Java, Spring Boot, Spring Data JPA, Hibernate
 - **Database**: MySQL (configurable with other SQL databases)
 - **File Handling**: Apache POI (for Excel data import)
-- **Frontend**: HTML, CSS, JavaScript (or any preferred frontend framework)
+- **Frontend**: HTML, CSS, JavaScript, React.js, MUI, Antd etc.
 - **Security**: Spring Security (recommended for production)
 - **Testing**: JUnit and Mockito for unit and integration testing
 - **API Testing**: Postman is used for API Testing
