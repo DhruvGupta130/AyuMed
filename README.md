@@ -2,6 +2,7 @@
 
 A robust and scalable **Hospital and Outpatient Department (OPD) Management System** designed to optimize and streamline hospital operations. This system facilitates efficient handling of patient appointments, doctor schedules, billing, medical histories, and more, tailored for hospitals of all sizes.
 
+Live URL: https://ayumed.netlify.app/
 FRONTEND URL: https://github.com/DhruvGupta130/hospital-management-frontend
 
 ## Key Features 🚀
