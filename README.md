@@ -136,18 +136,18 @@ To bulk import medications in the pharmacy, use the following Excel format:
 
 [Download the sample file here](https://iiitranchiacin-my.sharepoint.com/:x:/g/personal/dhruv_2022ug2022_iiitranchi_ac_in/EYKmFAVggipArM6yTPmDwNUBSmxHATk713LIGBbe0bO9tw?e=YAHCxa)
 
-| Medication Name | Composition Name         | Dosage Form | Strength | Quantity | Expiry     | Manufacturer | Price  | Batch Number |
-|-----------------|--------------------------|-------------|----------|----------|------------|--------------|--------|--------------|
-| Paracetamol     | Acetaminophen            | Tablet      | 500mg    | 100      | 2025-07-02 | PharmaCorp   | ₹10.00 | BATCH6043    |
-| Ibuprofen       | Ibuprofen                | Tablet      | 200mg    | 50       | 2025-04-21 | HealthMed    | ₹5.00  | BATCH7089    |
-| Amoxicillin     | Amoxicillin Trihydrate   | Capsule     | 250mg    | 75       | 2025-06-01 | GlobalPharm  | ₹15.00 | BATCH8034    |
-| Cetirizine      | Cetirizine Hydrochloride | Tablet      | 10mg     | 30       | 2024-12-21 | WellnessLabs | ₹7.00  | BATCH2687    |
-| Metformin       | Metformin Hydrochloride  | Tablet      | 500mg    | 120      | 2025-06-08 | LifeCare     | ₹20.00 | BATCH5549    |
-| Atorvastatin    | Atorvastatin Calcium     | Tablet      | 10mg     | 60       | 2025-03-29 | CholSafe     | ₹25.00 | BATCH7330    |
-| Omeprazole      | Omeprazole Magnesium     | Capsule     | 20mg     | 40       | 2025-06-18 | AcidGuard    | ₹30.00 | BATCH4494    |
-| Amlodipine      | Amlodipine Besylate      | Tablet      | 5mg      | 90       | 2025-03-23 | BloodFlow    | ₹18.00 | BATCH1334    |
-| Simvastatin     | Simvastatin              | Tablet      | 20mg     | 80       | 2025-07-28 | HeartHealth  | ₹22.00 | BATCH7100    |
-| Aspirin         | Acetylsalicylic Acid     | Tablet      | 75mg     | 150      | 2025-05-05 | PainAway     | ₹8.00  | BATCH1424    |
+| Medication Name | Composition Name         | Dosage Form | Strength | Quantity | Expiry Date | Manufacturer | Price  | Batch Number |
+|-----------------|--------------------------|-------------|----------|----------|-------------|--------------|--------|--------------|
+| Paracetamol     | Acetaminophen            | Tablet      | 500mg    | 100      | 2025-07-02  | PharmaCorp   | ₹10.00 | BATCH6043    |
+| Ibuprofen       | Ibuprofen                | Tablet      | 200mg    | 50       | 2025-04-21  | HealthMed    | ₹5.00  | BATCH7089    |
+| Amoxicillin     | Amoxicillin Trihydrate   | Capsule     | 250mg    | 75       | 2025-06-01  | GlobalPharm  | ₹15.00 | BATCH8034    |
+| Cetirizine      | Cetirizine Hydrochloride | Tablet      | 10mg     | 30       | 2024-12-21  | WellnessLabs | ₹7.00  | BATCH2687    |
+| Metformin       | Metformin Hydrochloride  | Tablet      | 500mg    | 120      | 2025-06-08  | LifeCare     | ₹20.00 | BATCH5549    |
+| Atorvastatin    | Atorvastatin Calcium     | Tablet      | 10mg     | 60       | 2025-03-29  | CholSafe     | ₹25.00 | BATCH7330    |
+| Omeprazole      | Omeprazole Magnesium     | Capsule     | 20mg     | 40       | 2025-06-18  | AcidGuard    | ₹30.00 | BATCH4494    |
+| Amlodipine      | Amlodipine Besylate      | Tablet      | 5mg      | 90       | 2025-03-23  | BloodFlow    | ₹18.00 | BATCH1334    |
+| Simvastatin     | Simvastatin              | Tablet      | 20mg     | 80       | 2025-07-28  | HeartHealth  | ₹22.00 | BATCH7100    |
+| Aspirin         | Acetylsalicylic Acid     | Tablet      | 75mg     | 150      | 2025-05-05  | PainAway     | ₹8.00  | BATCH1424    |
 
 
 ### How to Use:
