@@ -28,7 +28,7 @@ FRONTEND URL: https://github.com/DhruvGupta130/hospital-management-frontend
 ## Tech Stack 🛠️
 
 - **Backend**: Java, Spring Boot, Spring Data JPA, Hibernate
-- **Database**: MySQL (configurable with other SQL databases)
+- **Database**: MySQL or Postgres (configurable with other SQL databases)
 - **File Handling**: Apache POI (for Excel data import)
 - **Frontend**: HTML, CSS, JavaScript, React.js, MUI, Antd etc.
 - **Security**: Spring Security (recommended for production)
