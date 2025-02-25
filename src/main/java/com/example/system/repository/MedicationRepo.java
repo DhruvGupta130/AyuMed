@@ -23,9 +23,12 @@ public interface MedicationRepo extends JpaRepository<Medication, Long> {
                                                 @Param("name") String medicationName,
                                                 @Param("expiry") LocalDate expiry);
 
-    @Query("SELECT m FROM Medication m WHERE (:keyword IS NULL " +
-            "OR m.medicationName LIKE %:keyword% OR m.compositionName LIKE %:keyword%)")
-    List<Medication> findByKeyword(String keyword);
+    @Query("SELECT m FROM Medication m WHERE " +
+            "(:keyword IS NULL OR :keyword = '' " +
+            "OR LOWER(m.medicationName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(m.compositionName) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+    List<Medication> findByKeyword(@Param("keyword") String keyword);
+
 
     @Query("SELECT p FROM Pharmacy p WHERE " +
             "(6371 * acos(cos(radians(:lat)) * cos(radians(p.address.latitude)) " +

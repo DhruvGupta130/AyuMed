@@ -36,8 +36,11 @@ public interface DoctorRepo extends JpaRepository<Doctor, Long> {
     int countByDepartment(String department);
 
     @Query("SELECT d FROM Doctor d WHERE " +
-            "(d.firstName LIKE %:keyword% OR d.lastName LIKE %:keyword% OR d.department LIKE %:keyword% OR d.speciality LIKE %:keyword%) " +
-            "OR :keyword IS null")
+            "(:keyword IS NULL OR :keyword = '' " +
+            "OR LOWER(d.firstName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(d.lastName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(d.department) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(d.speciality) LIKE LOWER(CONCAT('%', :keyword, '%')))")
     List<Doctor> searchDoctorsByKeyword(@Param("keyword") String keyword);
 
     List<Doctor> getDoctorByHospital(Hospital hospital);
