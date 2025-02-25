@@ -28,9 +28,6 @@ public interface HospitalRepo extends JpaRepository<Hospital, Long> {
     @Query("SELECT h FROM Hospital h WHERE :department MEMBER OF h.departments")
     List<Hospital> findHospitalByDepartment(String department);
 
-    @Query("SELECT h.departments FROM Hospital h WHERE h = :hospital")
-    List<String> getAllDepartments(Hospital hospital);
-
     @Query("SELECT DISTINCT h.departments FROM Hospital h")
     List<String> getAllDepartments();
 
