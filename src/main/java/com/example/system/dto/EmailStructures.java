@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -19,6 +20,9 @@ public class EmailStructures {
 
     @Value("${hospital.website.url}")
     private String websiteUrl;
+
+    private static final DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("HH:mm");
+    private static final DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("hh:mm a");
 
     // =================== OTP EMAIL ===================
     public String generateOtpEmail(String otp, long validTime) {
@@ -202,6 +206,9 @@ public class EmailStructures {
     // =================== APPOINTMENT CONFIRMATION (PATIENT) ===================
     public String generateAppointmentConfirmationPatient(String patientName, String doctorName, String specialty,
                                                          String appointmentDate, String appointmentTime, String location) {
+
+        appointmentTime = LocalTime.parse(appointmentTime, inputFormatter).format(outputFormatter);
+
         return """
         <html>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
@@ -249,6 +256,8 @@ public class EmailStructures {
     // =================== APPOINTMENT CONFIRMATION (DOCTOR) ===================
     public String generateAppointmentConfirmationDoctor(String doctorName, String patientName, String department,
                                                         String appointmentDate, String appointmentTime, String location) {
+        appointmentTime = LocalTime.parse(appointmentTime, inputFormatter).format(outputFormatter);
+
         return """
         <html>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
@@ -298,6 +307,8 @@ public class EmailStructures {
     public String generateAppointmentStatusUpdatePatient(String patientName, String doctorName, String specialty,
                                                          String appointmentDate, String appointmentTime, String location,
                                                          String status) {
+        appointmentTime = LocalTime.parse(appointmentTime, inputFormatter).format(outputFormatter);
+
         return """
         <html>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
@@ -347,6 +358,8 @@ public class EmailStructures {
                                                          String specialty, String appointmentDate,
                                                          String appointmentTime, String location,
                                                          String reason) {
+        appointmentTime = LocalTime.parse(appointmentTime, inputFormatter).format(outputFormatter);
+
         return """
         <html>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
@@ -398,6 +411,8 @@ public class EmailStructures {
                                                         String department, String appointmentDate,
                                                         String appointmentTime, String location,
                                                         String reason) {
+        appointmentTime = LocalTime.parse(appointmentTime, inputFormatter).format(outputFormatter);
+
         return """
         <html>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
@@ -449,6 +464,8 @@ public class EmailStructures {
     public String generateAppointmentReminderPatient(String patientName, String doctorName,
                                                      String specialty, String appointmentDate,
                                                      String appointmentTime, String location) {
+        appointmentTime = LocalTime.parse(appointmentTime, inputFormatter).format(outputFormatter);
+
         return """
         <html>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
@@ -499,6 +516,8 @@ public class EmailStructures {
     public String generateAppointmentReminderDoctor(String doctorName, String patientName,
                                                     String department, String appointmentDate,
                                                     String appointmentTime, String location) {
+        appointmentTime = LocalTime.parse(appointmentTime, inputFormatter).format(outputFormatter);
+
         return """
         <html>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
