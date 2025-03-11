@@ -199,7 +199,15 @@ If you'd like to contribute, please follow these steps:
 
 Your contributions will help enhance functionality, add new features, improve code quality, and fix bugs. Thank you for considering contributing!
 
+## 📄 License
+This project is licensed under the MIT License.
+
+## 💬 Contact
+For questions or suggestions, feel free to reach out:
+- **Email:** dhruvgupta130@gmail.com
+- **LinkedIn:** [Dhruv Gupta](https://www.linkedin.com/in/dhruvgupta130)
+
 ---
 
-Thank you for checking out this project! Stay tuned for more updates as we continue development! 🎉
+🚀 Built with passion by Dhruv Gupta
 
