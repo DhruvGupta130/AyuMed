@@ -11,7 +11,7 @@ services:
       MYSQL_USER: dhruv
       MYSQL_PASSWORD: hospital
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - hospital-data:/var/lib/mysql
     networks:
@@ -29,7 +29,7 @@ services:
 
   # Spring Boot Backend
   hospital-backend:
-    build: ./Backend-SpringBoot
+    build: ./Backend - SpringBoot
     container_name: hospital-backend
     environment:
       # Database Configuration
@@ -55,13 +55,13 @@ services:
 
   # Frontend (React.js)
   frontend:
-    build: ./Frontend-React
+    build: ./Frontend - React.js
     container_name: frontend
     ports:
       - "5173:5173"
     environment:
       VITE_API_GATEWAY_URL: http://localhost:8080
-      VITE_GOOGLE_MAPS_API_KEY: your-google-maps-api-key-here
+      VITE_GOOGLE_MAPS_API_KEY: <GOOGLE_MAPS_API_KEY>
     depends_on:
       - hospital-backend
     networks:
