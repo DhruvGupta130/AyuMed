@@ -20,9 +20,27 @@ import ForgotPassword from "./auth/ForgotPassword.jsx";
 import SearchPage from "./Pages/SearchPage.jsx";
 import "./Styles/Sidebar.css";
 import PharmacyListPage from "./Pages/PharmacyListPage.jsx";
+import {useEffect} from "react";
+import './Api & Services/axiosInterceptor.js'; // Only needs to be imported once
 
 
 const App = () => {
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            const expiry = payload.exp * 1000;
+
+            if (Date.now() >= expiry) {
+                alert('Your session has expired. Please log in again.');
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';
+            }
+        }
+    }, []);
+
     return (
         <Router>
             <Navbar />

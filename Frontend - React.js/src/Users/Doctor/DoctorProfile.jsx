@@ -166,11 +166,11 @@ const DoctorProfile = () => {
             <Col xs={24} md={12} style={{ display: 'flex', flexDirection: 'column' }}>
               <Card title={<Title level={3}>Hospital Information</Title>} style={{ flex: 1 }}>
                 <Avatar
-                  size={240}
-                  src={displayImage(hospital?.images?.[0])}
-                  icon={!hospital?.images ? <LocalHospital /> : null}
-                  shape="square"
-                  style={{ marginBottom: "16px", borderRadius: "10px" }}
+                    size={240}
+                    src={hospital?.images?.[0] ? displayImage(hospital.images[0]) : null}
+                    icon={(!hospital?.images || hospital.images.length === 0) ? <LocalHospital /> : null}
+                    shape="square"
+                    style={{ marginBottom: "16px", borderRadius: "10px" }}
                 />
                 {[ 
                   { label: "Hospital Name", value: hospital.hospitalName },
