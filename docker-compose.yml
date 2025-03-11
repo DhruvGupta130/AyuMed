@@ -1,41 +1,75 @@
+version: '3.8'
+
 services:
   # MySQL Database
   hospital-db:
     image: mysql:8.0
     container_name: hospital-db
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: hospital_db
       MYSQL_USER: dhruv
-      MYSQL_PASSWORD: yourpassword
+      MYSQL_PASSWORD: hospital
     ports:
       - "3306:3306"
     volumes:
       - hospital-data:/var/lib/mysql
+    networks:
+      - hospital-network
+
+  # SMTP Server for Testing (Mailhog)
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - "1025:1025" # SMTP port
+      - "8025:8025" # Web UI to view emails
+    networks:
+      - hospital-network
 
   # Spring Boot Backend
   hospital-backend:
-    image: dhruvgupta/hospital-backend:latest
+    build: ./Backend-SpringBoot
     container_name: hospital-backend
     environment:
-      DATASOURCE.URL: jdbc:mysql://hospital-db:3306/hospital_db
-      DATASOURCE.USERNAME: dhruv
-      DATASOURCE.PASSWORD: yourpassword
+      # Database Configuration
+      DATASOURCE_URL: jdbc:mysql://hospital-db:3306/hospital_db
+      DATASOURCE_USERNAME: dhruv
+      DATASOURCE_PASSWORD: hospital
 
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect
-
-      # Email Service Config
-      MAIL.HOST: smtp.yourmailprovider.com
-      MAIL.USERNAME: your-email@example.com
-      MAIL.PASSWORD: your-email-password
+      # Mail Configuration
+      MAIL_HOST: mailhog
+      MAIL_PORT: 1025
+      MAIL_USERNAME: test@hospital.com
+      MAIL_PASSWORD: test-password
 
       # Frontend URL
-      FRONTEND_URL: http://localhost:3000
+      FRONTEND_URL: http://localhost:5173
     ports:
       - "8080:8080"
     depends_on:
       - hospital-db
+      - mailhog
+    networks:
+      - hospital-network
+
+  # Frontend (React.js)
+  frontend:
+    build: ./Frontend-React
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_GATEWAY_URL: http://localhost:8080
+      VITE_GOOGLE_MAPS_API_KEY: your-google-maps-api-key-here
+    depends_on:
+      - hospital-backend
+    networks:
+      - hospital-network
 
 volumes:
   hospital-data:
+
+networks:
+  hospital-network:
+    driver: bridge
