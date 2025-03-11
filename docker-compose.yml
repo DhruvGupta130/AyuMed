@@ -1,0 +1,41 @@
+services:
+  # MySQL Database
+  hospital-db:
+    image: mysql:8.0
+    container_name: hospital-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: hospital_db
+      MYSQL_USER: dhruv
+      MYSQL_PASSWORD: yourpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - hospital-data:/var/lib/mysql
+
+  # Spring Boot Backend
+  hospital-backend:
+    image: dhruvgupta/hospital-backend:latest
+    container_name: hospital-backend
+    environment:
+      DATASOURCE.URL: jdbc:mysql://hospital-db:3306/hospital_db
+      DATASOURCE.USERNAME: dhruv
+      DATASOURCE.PASSWORD: yourpassword
+
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect
+
+      # Email Service Config
+      MAIL.HOST: smtp.yourmailprovider.com
+      MAIL.USERNAME: your-email@example.com
+      MAIL.PASSWORD: your-email-password
+
+      # Frontend URL
+      FRONTEND_URL: http://localhost:3000
+    ports:
+      - "8080:8080"
+    depends_on:
+      - hospital-db
+
+volumes:
+  hospital-data:

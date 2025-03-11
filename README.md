@@ -4,8 +4,6 @@ A robust and scalable **Hospital and Outpatient Department (OPD) Management Syst
 
 Live URL: https://ayumed.netlify.app/
 
-FRONTEND URL: https://github.com/DhruvGupta130/hospital-management-frontend
-
 ## Key Features 🚀
 
 - **Comprehensive Patient Management**: Register, update, and maintain patient records 📋
@@ -31,23 +29,41 @@ FRONTEND URL: https://github.com/DhruvGupta130/hospital-management-frontend
 - **Database**: MySQL or Postgres (configurable with other SQL databases)
 - **File Handling**: Apache POI (for Excel data import)
 - **Frontend**: HTML, CSS, JavaScript, React.js, MUI, Antd etc.
-- **Security**: Spring Security (recommended for production)
+- **Security**: Spring Security with JWT authentication, role-based access control
+- **Email Service**:  SMTP configuration via Brevo (Sendinblue) for automated notifications
 - **Testing**: JUnit and Mockito for unit and integration testing
 - **API Testing**: Postman is used for API Testing
 
 ## Project Structure 📂
 
-- `src/main/java`: Contains core Java classes, including entities, services, controllers, and repositories
-   - `entities/`: Java classes representing the database tables, such as Patient, Doctor, Appointment, and Billing
-   - `services/`: Business logic and service layer classes
-   - `controllers/`: REST API endpoints for handling requests
-   - `repositories/`: Data access layer for interacting with the database
-- `src/main/resources`: Stores application configuration files
-   - `application.properties`: Configures database connections, server ports, and other settings
-   - `data.sql`: Optional file for seeding initial data (patients, doctors, etc.) into the database
-   - `schema.sql`: Optional file for defining database schemas, if not using JPA auto-configuration
-- `src/test`: Contains test cases to ensure code reliability and quality
-
+```
+.
+├── Backend - SpringBoot
+│   ├── src
+│   │   ├── controller
+│   │   ├── exception
+│   │   ├── configuration
+│   │   ├── entity
+│   │   ├── dto
+│   │   ├── service
+│   │   ├── repository
+│   ├── resources
+├── Frontend - React.js
+│   ├── src
+│   │   ├── Api & Services
+│   │   ├── auth
+│   │   ├── Components
+│   │   ├── Pages
+│   │   ├── Profile
+│   │   ├── Styles
+│   │   ├── Users
+│   │   │   ├── Doctor
+│   │   │   ├── Manager
+│   │   │   ├── Patient
+│   │   │   ├── Pharmacist
+│   ├── public
+├── docker-compose.yml
+```
 
 ## Configuration Files 🔧
 
@@ -104,7 +120,7 @@ To get your application up and running, follow these steps:
    ```
 
 3. **Run the Application**:
-   - To start the application, you can use your Integrated Development Environment (IDE) or run the following command in your terminal:
+   - To start the spring-application, you can use your Integrated Development Environment (IDE) or run the following command in your terminal:
       ```bash
       ./mvnw spring-boot:run
       ```
@@ -112,6 +128,16 @@ To get your application up and running, follow these steps:
    - Make sure you have the correct version of Java installed (Java 23 or above is recommended). You can verify your Java version by running:
       ```bash
       java -version
+     ```
+   
+   - To start the react-application, you can use your Integrated Development Environment (IDE) or run the following command in your terminal:
+       ```bash
+       npm run dev
+       ```
+
+   - Make sure you have the correct version of Node.js installed. You can verify your Node.js version by running:
+      ```bash
+      npm --version
      ```
 
 4. **Access the API Documentation**:
