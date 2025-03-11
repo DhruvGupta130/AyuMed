@@ -65,7 +65,7 @@ public class AuthServiceImpl implements AuthService {
                     registration
             );
         } catch (Exception e) {
-            throw new HospitalManagementException("Failed to create patient", e);
+            throw new HospitalManagementException("Failed to create patient: " + e.getMessage(), e);
         }
     }
 
@@ -98,7 +98,7 @@ public class AuthServiceImpl implements AuthService {
                     registration
             );
         } catch (Exception e) {
-            throw new HospitalManagementException("Failed to create doctor", e);
+            throw new HospitalManagementException("Failed to create doctor: " + e.getMessage(), e);
         }
     }
 
@@ -115,7 +115,7 @@ public class AuthServiceImpl implements AuthService {
             admin.setGender(registrationDTO.getGender());
             adminRepo.save(admin);
         } catch (Exception e) {
-            throw new HospitalManagementException("Failed to create admin", e);
+            throw new HospitalManagementException("Failed to create admin: " + e.getMessage(), e);
         }
     }
 
@@ -131,7 +131,7 @@ public class AuthServiceImpl implements AuthService {
             manager.setMobile(registrationDTO.getMobile());
             managerRepo.save(manager);
         } catch (Exception e) {
-            throw new HospitalManagementException("Failed to create manager", e);
+            throw new HospitalManagementException("Failed to create manager: " + e.getMessage(), e);
         }
     }
 
@@ -147,7 +147,7 @@ public class AuthServiceImpl implements AuthService {
             pharmacist.setMobile(registrationDTO.getMobile());
             pharmacistRepo.save(pharmacist);
         } catch (Exception e) {
-            throw new HospitalManagementException("Failed to create pharmacist", e);
+            throw new HospitalManagementException("Failed to create pharmacist: " + e.getMessage(), e);
         }
     }
 
@@ -186,7 +186,7 @@ public class AuthServiceImpl implements AuthService {
             loginUser.setRole(registrationDTO.getRole());
             userRepo.save(loginUser);
         } catch (Exception e) {
-            throw new HospitalManagementException("Failed to create user", e);
+            throw new HospitalManagementException("Failed to create user: " + e.getMessage(), e);
         }
     }
 }

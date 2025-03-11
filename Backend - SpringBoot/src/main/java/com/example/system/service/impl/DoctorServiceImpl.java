@@ -96,7 +96,7 @@ public class DoctorServiceImpl implements DoctorService {
             deleteSelectedSchedules(doctor, scheduleIds);
             addSchedule(doctor, schedules);
         } catch (Exception e) {
-            throw new HospitalManagementException("Error while updating schedule", e);
+            throw new HospitalManagementException("Error while updating schedule: " + e.getMessage(), e);
         }
     }
 
