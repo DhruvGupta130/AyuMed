@@ -1,0 +1,72 @@
+/* NotFound.css */
+.not-found-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  background: linear-gradient(135deg, #ff5f6d, #ffc3a0);
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  animation: gradientAnimation 5s ease infinite;
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background: linear-gradient(135deg, #ff5f6d, #ffc3a0);
+  }
+  50% {
+    background: linear-gradient(135deg, #6a82fb, #fc5c7d);
+  }
+  100% {
+    background: linear-gradient(135deg, #ff5f6d, #ffc3a0);
+  }
+}
+
+.not-found-content {
+  padding: 50px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 1.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.not-found-title {
+  font-size: 120px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #ff4f6d;
+  letter-spacing: 5px;
+}
+
+.not-found-message {
+  font-size: 18px;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.not-found-link {
+  font-size: 18px;
+  color: #3498db;
+  text-decoration: none;
+  padding: 12px 24px;
+  border: 2px solid #3498db;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.not-found-link:hover {
+  background-color: #3498db;
+  color: white;
+  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}

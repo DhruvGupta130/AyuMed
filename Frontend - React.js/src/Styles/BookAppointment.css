@@ -1,0 +1,159 @@
+/* Main Section */
+.ba-section {
+    padding: 48px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    max-width: 1200px; /* Constrain the width */
+    margin: 40px auto; /* Center the section */
+}
+
+/* Image Section */
+.ba-image-content {
+    flex: 1;
+    max-width: 100%;
+    text-align: center;
+}
+
+.ba-image {
+    width: 100%;
+    height: auto;
+    max-width: 500px; /* Constrain the max image width */
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Text Section */
+.ba-text-content {
+    flex: 1;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.ba-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+}
+
+.ba-title > span {
+    position: relative;
+    padding-bottom: 8px;
+}
+
+.ba-title span::before {
+    content: '';
+    position: absolute;
+    width: 50%;
+    height: 3px;
+    background-color: #9D2553;
+    left: 0;
+    bottom: 0;
+    border-radius: 4px;
+}
+
+.ba-description {
+    color: #555;
+    font-family: 'Rubik', sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+}
+
+/* Checklist */
+.ba-checklist {
+    list-style-type: none;
+    padding: 0;
+    margin: 24px 0;
+}
+
+.ba-checks {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    font-family: 'Rubik', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+}
+
+.check-icon {
+    color: #1E8FFD;
+    margin-right: 10px;
+}
+
+/* Book Appointment Button */
+.ba-appointment-btn {
+    padding: 16px 24px;
+    background-color: #1A8EFD;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-family: 'Rubik', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px; /* Add margin to separate the button */
+}
+
+.ba-appointment-btn:hover {
+    background-color: #1361a3;
+    transform: scale(1.05);
+}
+
+.ba-appointment-btn:active {
+    background-color: #105b8e;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 1000px) {
+    .ba-section {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 32px;
+    }
+
+    .ba-image-content,
+    .ba-text-content {
+        width: 100%;
+    }
+
+    .ba-image {
+        width: 70%;
+        max-width: 400px;
+        margin-bottom: 32px;
+    }
+
+    .ba-title {
+        font-size: 28px;
+    }
+
+    .ba-description {
+        font-size: 16px;
+    }
+
+    .ba-checks {
+        font-size: 16px;
+    }
+
+    .ba-appointment-btn {
+        font-size: 16px;
+        padding: 14px 20px;
+    }
+}

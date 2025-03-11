@@ -1,0 +1,145 @@
+/* Sidebar Styling */
+.sidebar {
+  width: 240px;
+  height: 100vh;
+  background: linear-gradient(135deg, #2a3f54, #1f2a38);
+  position: fixed;
+  top: 80px;
+  left: 0;
+  color: white;
+  font-size: large;
+  z-index: 100;
+  transition: all 0.3s ease-in-out;
+  overflow: hidden;
+}
+
+.sidebar-wrapper {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sidebar-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #00c853;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.sidebar-NavLink {
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+  padding: 1rem 20px;
+  margin-bottom: 8px;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.sidebar-NavLink:hover {
+  background-color: #1b2b3b;
+  color: #00c853;
+  transform: translateX(5px); /* Subtle animation */
+}
+
+.sidebar-NavLink.active {
+  background-color: #00c853;
+  color: #ffffff;
+}
+
+.sidebar-icon {
+  margin-right: 15px;
+  font-size: 20px;
+  transition: transform 0.3s ease;
+}
+
+.sidebar-NavLink:hover .sidebar-icon {
+  transform: scale(1.2); /* Slight icon scaling effect */
+}
+
+.sidebar-text {
+  flex: 1;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Collapsed Sidebar */
+.sidebar.collapsed {
+  width: 80px;
+}
+
+.sidebar.collapsed .sidebar-text {
+  display: none;
+}
+
+.sidebar.collapsed .sidebar-icon {
+  margin: 0 auto;
+}
+
+/* Responsive Sidebar Toggle */
+.sidebar-toggle {
+  display: none;
+  position: absolute;
+  padding: 8px;
+  font-size: x-large;
+  border-radius: 5px;
+  top: 80px;
+  left: 0;
+  background-color: wheat;
+  color: #2a3f54;
+  cursor: pointer;
+  z-index: 1;
+  margin: 0;
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 80px;
+    text-wrap: nowrap;
+  }
+  .sidebar-NavLink{
+    margin-bottom: 12px;
+  }
+  .sidebar-NavLink.active, .sidebar-NavLink:hover{
+    padding-right: 50px;
+  }
+  
+}
+
+@media (max-width: 768px) {
+
+  .sidebar-toggle {
+    display: inline-block;
+  }
+
+  .sidebar {
+    position: fixed; 
+    left: -240px; 
+    height: 100vh;
+    z-index: 1000;
+    transition: left 0.3s ease;
+  }
+
+  .sidebar.show {
+    left: 0;
+  }
+
+  .sidebar-toggle {
+    display: block; 
+  }
+
+  .sidebar.collapsed {
+    width: 60px;
+  }
+
+}

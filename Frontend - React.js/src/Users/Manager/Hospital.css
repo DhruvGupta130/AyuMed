@@ -1,0 +1,104 @@
+
+
+.doctors-details, .hospital-details, .profile-container, .hospital-patients{
+  margin-left: 240px;
+  padding: 20px;
+}
+
+.hospital-title{
+  padding: 20px 20px 0 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease-in-out;
+}
+
+  /* Main container */
+.doctors-details {
+  padding: 16px;
+  background-color: #f4f4f4;
+  min-height: 100vh;
+}
+
+.button-box{
+  display: flex;
+  justify-content: space-between;
+  gap: 50px;
+  margin: 20px;
+}
+
+/* Card for Bulk Upload Section */
+.bulk-register-card {
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  border-radius: 4px;
+}
+
+/* File upload drag-and-drop styling */
+.ant-upload-drag-icon {
+  font-size: 24px;
+  color: #1890ff;
+}
+
+/* File upload text */
+.ant-upload-text {
+  font-size: 16px;
+}
+
+/* Buttons for file upload */
+.upload-button {
+  width: 100%;
+  margin-top: 16px;
+}
+
+/* ManagerProfile.css */
+
+.profile-field {
+  margin-bottom: 15px;
+}
+
+.profile-field strong {
+  color: #555;
+}
+
+.profile-field span {
+  font-size: 18px;
+  color: #000;
+}
+
+.edit-button {
+  padding: 10px 20px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 20px;
+}
+
+
+  
+  
+  @media (max-width: 1024px) {
+
+    .hospital-details, .doctors-details, .profile-container, .hospital-patients{
+      margin-left: 80px;
+    }
+
+  }
+  
+  @media (max-width: 768px) {
+
+    .hospital-details, .doctors-details, .profile-container, .hospital-patients{
+      margin-left: 0;
+    }
+    .profile-card{
+      width: 100%;
+    }
+
+    .button-box{
+      display: block;
+      flex-direction: column;
+    }
+  
+  }
+
+  
+  

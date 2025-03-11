@@ -1,0 +1,44 @@
+.testimonials-container {
+    padding: 50px 20px;
+    background: #ECF2FF;
+    text-align: center;
+}
+
+.testimonials-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: #1A8EFD;
+    margin-bottom: 30px;
+}
+
+.reviews {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.review-card {
+    max-width: 300px;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: left;
+}
+
+.review-feedback {
+    font-family: 'Rubik', sans-serif;
+    font-size: 16px;
+    color: #4D4B4B;
+    margin-bottom: 12px;
+    line-height: 1.5rem;
+}
+
+.review-author {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    color: #1A8EFD;
+}

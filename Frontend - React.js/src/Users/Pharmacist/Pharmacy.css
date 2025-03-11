@@ -1,0 +1,42 @@
+.Pharmacy-details, .Medications-details{
+  margin-left: 240px;
+  padding: 20px;
+}
+.Pharmacy-title{
+  padding: 20px 20px 0 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease-in-out;
+}
+
+:where(.css-dev-only-do-not-override-cdzvx5).ant-steps .ant-steps-item-content {
+  display: block;
+}
+
+:where(.css-dev-only-do-not-override-cdzvx5).ant-steps .ant-steps-item-title {
+  display: block;
+  white-space: normal;
+  overflow: visible;
+  word-wrap: break-word;
+}
+
+
+.highlight-row {
+  background-color: #ffcccc !important; 
+}
+
+
+@media (max-width: 1024px) {
+
+  .Pharmacy-details, .Medications-details{
+    margin-left: 80px;
+  }
+
+}
+@media (max-width: 768px) {
+
+  .Pharmacy-details, .Medications-details{
+    margin-left: 0;
+  }
+  
+}

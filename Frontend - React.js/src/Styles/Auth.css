@@ -1,0 +1,225 @@
+/* General Auth Container */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding-bottom: 13em; 
+  background-color: #f0f8ff; 
+  padding-top: 60px;
+}
+
+.auth-box {
+  background-color: white;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  height: fit-content;
+  max-width: 500px;
+  box-sizing: border-box;
+}
+
+/* Title Styling */
+.auth-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2C3E50; 
+}
+
+.auth-title span {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.auth-title span::before{
+  content: '';
+  position: absolute;
+  width: 50%;
+  height: 2px;
+  background-color: #1e3a8a;
+  left: 0;
+  bottom: -8px;
+  border-radius: 4px;
+}
+
+/* Input Fields Styling */
+.input-field {
+  margin-bottom: 20px;
+}
+
+.input-field label {
+  font-family: 'Rubik', sans-serif;
+  font-size: 16px; 
+  color: #5D6D7E; 
+  display: block;
+  margin-bottom: 8px;
+}
+
+.input-field input {
+  width: 100%;
+  padding: 14px; 
+  font-size: 16px;
+  border: 1px solid #A9CCE3; 
+  border-radius: 6px;
+  box-sizing: border-box;
+  background-color: #D5E8F1;
+  transition: border-color 0.3s ease; 
+}
+
+.input-field input:focus {
+  border-color: #2980B9; 
+  background-color: #E8F6FA; 
+  outline: none;
+}
+
+/* Dropdown Styling */
+.select-field {
+  margin-bottom: 20px;
+}
+
+.select-field label {
+  font-family: 'Rubik', sans-serif;
+  font-size: 16px;
+  color: #5D6D7E;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.select-field select {
+  width: 100%;
+  padding: 14px; 
+  font-size: 16px;
+  border: 1px solid #A9CCE3; 
+  border-radius: 6px;
+  box-sizing: border-box;
+  background-color: #D5E8F1; 
+  transition: border-color 0.3s ease; 
+  cursor: pointer;
+}
+
+.select-field select:focus {
+  border-color: #2980B9; 
+  background-color: #E8F6FA;
+  outline: none;
+}
+
+/* Submit Button Styling */
+.auth-btn {
+  width: 100%;
+  padding: 14px; 
+  background-color: #2980B9;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.auth-btn:hover {
+  background-color: #1F618D;
+}
+
+/* Error Message Styling */
+.error-message {
+  color: #E74C3C;
+  font-size: 16px;
+  margin-bottom: 16px;
+  text-align: center;
+  background-color: #FADBD8; 
+  padding: 10px;
+  border-radius: 4px;
+}
+
+/* Footer Link Styling */
+.auth-footer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: large;
+}
+
+.auth-footer a {
+  color: #2980B9; 
+  text-decoration: none;
+  font-weight: 600; 
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+/* Style for select dropdowns */
+select {
+  width: 100%;
+  padding: 12px; 
+  font-size: 16px;
+  border: 1px solid #A9CCE3;
+  border-radius: 6px;
+  background-color: #D5E8F1; 
+  transition: border-color 0.3s ease; 
+  appearance: none; 
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+select:focus {
+  border-color: #2980B9; 
+  background-color: #E8F6FA; 
+  outline: none;
+}
+
+/* Custom arrow for select dropdown */
+select::-ms-expand {
+  display: none;
+}
+
+/* Optional: Add a custom arrow to dropdown */
+select::after {
+  content: '\25BC'; 
+  font-size: 18px;
+  color: #2980B9; 
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* Container for select dropdown */
+.input-field {
+  position: relative; 
+}
+
+/* Loader styling */
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8); 
+  z-index: 999; 
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #2980B9; 
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+/* Animation for spinning */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+

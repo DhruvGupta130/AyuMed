@@ -1,0 +1,72 @@
+/* Unauthorized.css */
+.unauthorized-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  background: linear-gradient(135deg, #8e44ad, #3498db);
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  animation: gradientAnimation2 5s ease infinite;
+}
+
+@keyframes gradientAnimation2 {
+  0% {
+    background: linear-gradient(135deg, #8e44ad, #3498db);
+  }
+  50% {
+    background: linear-gradient(135deg, #f39c12, #e74c3c);
+  }
+  100% {
+    background: linear-gradient(135deg, #8e44ad, #3498db);
+  }
+}
+
+.unauthorized-content {
+  padding: 50px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  animation: fadeIn2 1.5s ease-in-out;
+}
+
+@keyframes fadeIn2 {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.unauthorized-title {
+  font-size: 120px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #e74c3c;
+  letter-spacing: 5px;
+}
+
+.unauthorized-message {
+  font-size: 18px;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.unauthorized-link {
+  font-size: 18px;
+  color: #16a085;
+  text-decoration: none;
+  padding: 12px 24px;
+  border: 2px solid #16a085;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.unauthorized-link:hover {
+  background-color: #16a085;
+  color: white;
+  box-shadow: 0 5px 15px rgba(22, 160, 133, 0.3);
+}

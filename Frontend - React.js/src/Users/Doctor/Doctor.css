@@ -1,0 +1,39 @@
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.profile-col {
+  width: 48%;
+  margin-top: 20px;
+}
+
+.profile-section {
+  min-width: fit-content;
+  padding: 20px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  min-height: fit-content;
+}
+
+.appointment-container {
+  margin-left: 240px;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.doctor-appointments{
+  padding: 20px;
+}
+
+.profile-field {
+  margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+  .profile-row{
+    display: block;
+  }
+}
+

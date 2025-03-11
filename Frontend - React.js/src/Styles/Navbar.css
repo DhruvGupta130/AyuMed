@@ -1,0 +1,227 @@
+.navbar-section {
+  padding: 0 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80px;
+  background-color: white;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+}
+.navbar-title a {
+  margin-right: 1.2em;
+  color: #1A8EFD;
+  letter-spacing: .6px;
+  text-decoration: none;
+  font-size: 40px;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-weight: bold;
+}
+.navbar-sign {
+  color: #111111;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+.navbar-items {
+  list-style-type: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  font-family: 'Rubik', sans-serif;
+}
+.navbar-items > li {
+  list-style-type: none;
+}
+.navbar-links {
+  text-decoration: none;
+  color: black;
+  font-size: 18px;
+  letter-spacing: .8px;
+}
+.navbar-links:hover {
+  color: #0cc2ea;
+}
+.navbar-btn {
+  padding: 14px 20px;
+  color: white;
+  border: 1px solid transparent;
+  border-radius: 28px;
+  outline: transparent;
+  background-color: #1A8EFD;
+  font-size: 18px;
+  font-family: 'Rubik', sans-serif;
+  letter-spacing: .8px;
+  cursor: pointer;
+  transition: all .4s ease;
+  text-decoration: none;
+}
+.navbar-btn:hover {
+    color: #1A8EFD;
+    background-color: white;
+    border: 1px solid #1A8EFD;
+}
+/* Mobile Navbar */
+.mobile-navbar {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  height: fit-content;
+  position: fixed;
+  right: -100%;
+  padding: 10px;
+  border-radius: 15px;
+  background-color: white;
+  justify-content: flex-start;
+  align-items: flex-end;
+  transition: left .5s ease-in-out;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Optional: shadow for better visibility */
+}
+.mobile-navbar-options {
+  display: none;
+  position: fixed;
+  font-size: xx-large;
+  background: white;
+  border: none;
+  width: auto;
+  top: 15px;
+  right: 30px;
+  z-index: 100;
+}
+.mobile-navbar-options .hamb-icon:hover {
+  color: rgb(255, 22, 22);
+}
+.navbar-options{
+  display: none;
+  position: absolute;
+  font-size: xx-large;
+  top: 0;
+  right: 28px;
+  cursor: pointer;
+  padding: 20px 0;
+}
+.open-nav {
+  top: 80px;
+  right: 0;
+  z-index: 100;
+}
+.mobile-navbar-links {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  font-size: 24px;
+  gap: 24px;
+  justify-content: flex-start;
+  align-items: center;
+}
+.mobile-navbar-links .avatar-img{
+  height: 80px;
+  width: 80px;
+}
+.mobile-navbar-links li a {
+  text-decoration: none;
+  color: black;
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  letter-spacing: .8px;
+  transition: color .3s ease-in-out;
+}
+.mobile-navbar-links li a:hover {
+  color: #0cc2ea;
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.search-input {
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 30px;
+  outline: none;
+  width: 180px;
+  transition: all 0.3s ease-in-out;
+}
+
+.search-input:focus {
+  width: 250px; /* Increase width on focus */
+  border-color: #1A8EFD;
+}
+
+.search-btn {
+  background-color: transparent;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.search-btn:hover{
+  background-color: #1A8EFD;
+  color: white;
+  .search-icon {
+    color: white;
+  }
+}
+
+.search-icon {
+  color: #1A8EFD;
+  font-size: 18px;
+}
+
+/* Avatar container */
+.avatar {
+  display: flex;
+  align-items: center;
+}
+
+/* Avatar image styling */
+.avatar-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%; /* Makes the image circular */
+  object-fit: cover; /* Ensures the image covers the area without stretching */
+  border: 2px solid transparent; /* Adds a border on hover */
+  transition: border 0.3s ease; /* Smooth transition for border change */
+}
+
+/* Hover effect for avatar */
+.avatar-link:hover .avatar-img {
+  border-color: #4caf50; /* Green border on hover */
+}
+
+/* Avatar as a link */
+.avatar-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer; /* Changes cursor to indicate it's clickable */
+}
+
+
+/* Responsive */
+@media screen and (max-width: 1024px) {
+  .mobile-navbar-options{
+    display: block;
+  }
+  .navbar-btn, .navbar-items {
+      display: none;
+  }
+  .mobile-nav {
+      display: block;
+  }
+  .navbar-options{
+    display: block;
+    }
+}
