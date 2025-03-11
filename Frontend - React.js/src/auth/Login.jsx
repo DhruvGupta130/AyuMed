@@ -44,11 +44,7 @@ function Login() {
       localStorage.setItem('role', response.data?.role);
     } catch (error) {
         console.error("Login error:", error);
-        if (error.response?.data?.message) {
-          message.error(error.response.data.message || "Login failed.");
-        } else {
-          message.error('An error occurred. Please try again.');
-        }
+        message.error(error?.response?.data?.message || 'An error occurred. Please try again.');
     } finally {
         setLoading(false);
     }

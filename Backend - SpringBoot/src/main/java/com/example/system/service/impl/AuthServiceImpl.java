@@ -157,7 +157,7 @@ public class AuthServiceImpl implements AuthService {
         LoginResponse response = new LoginResponse();
         try {
             LoginUser user = userRepo.findByUsername(request.getUsername())
-                    .orElseThrow(() -> new HospitalManagementException("Invalid UserName or Password"));
+                    .orElseThrow(() -> new BadCredentialsException("Invalid UserName or Password"));
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
             );
