@@ -201,7 +201,10 @@ Once completed, the Hospital Management System will offer:
 - **Medical Records** making a centralized platform for storing all the records in an encrypted way for easy accessibility.
 
 ## Contribution Guidelines 🤝
-As the project is still under active development, we welcome feedback and suggestions to help shape its direction. Contributions at this stage are focused on ideas and suggestions that could enhance the project's functionality.
+We welcome feedback and suggestions to help shape its direction. Contributions at this stage are focused on ideas and suggestions that could enhance the project's functionality. Please read the [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to get involved.
+1. Fork the repository.
+2. Make your changes.
+3. Submit a pull request.
 
 If you'd like to contribute, please follow these steps:
 
