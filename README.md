@@ -229,7 +229,7 @@ If you'd like to contribute, please follow these steps:
 Your contributions will help enhance functionality, add new features, improve code quality, and fix bugs. Thank you for considering contributing!
 
 ## 📄 License
-This project is licensed under the MIT License.
+This project is licensed under the [MIT License](LICENSE.txt) .
 
 ## 💬 Contact
 For questions or suggestions, feel free to reach out:
