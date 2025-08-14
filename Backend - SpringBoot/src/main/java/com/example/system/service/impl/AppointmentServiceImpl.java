@@ -148,7 +148,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         String time = schedule.getAppointmentTime(slotIndex).format(TIME_FORMATTER);
         String location = doctor.getLocation();
 
-        emailService.sendEmail(patient.getLoginUser().getEmail(), "Appointment Confirmation - AyuMed",
+        emailService.triggerEmail(patient.getLoginUser().getEmail(), "Appointment Confirmation - AyuMed",
                 emailStructures.generateAppointmentConfirmationPatient(
                         patient.getFullName(),
                         doctor.getFullName(),
@@ -156,7 +156,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                         date, time, location
                 )
         );
-        emailService.sendEmail(doctor.getLoginUser().getEmail(), "New Appointment Scheduled - AyuMed",
+        emailService.triggerEmail(doctor.getLoginUser().getEmail(), "New Appointment Scheduled - AyuMed",
                 emailStructures.generateAppointmentConfirmationDoctor(
                         doctor.getFullName(),
                         patient.getFullName(),
@@ -182,7 +182,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         String time = appointment.getAppointmentDate().format(TIME_FORMATTER);
         String location = appointment.getDoctor().getLocation();
 
-        emailService.sendEmail(appointment.getPatient().getLoginUser().getEmail(), "Appointment Status Updated - AyuMed",
+        emailService.triggerEmail(appointment.getPatient().getLoginUser().getEmail(), "Appointment Status Updated - AyuMed",
                 emailStructures.generateAppointmentStatusUpdatePatient(
                         appointment.getPatient().getFullName(),
                         appointment.getDoctor().getFullName(),
@@ -220,7 +220,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         String time = appointment.getAppointmentDate().format(TIME_FORMATTER);
         String location = appointment.getDoctor().getLocation();
 
-        emailService.sendEmail(appointment.getPatient().getLoginUser().getEmail(), "Appointment Cancelled - AyuMed",
+        emailService.triggerEmail(appointment.getPatient().getLoginUser().getEmail(), "Appointment Cancelled - AyuMed",
                 emailStructures.generateAppointmentCancellationPatient(
                         appointment.getPatient().getFullName(),
                         appointment.getDoctor().getFullName(),
@@ -229,7 +229,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                 )
         );
 
-        emailService.sendEmail(appointment.getDoctor().getLoginUser().getEmail(), "Appointment Successfully Cancelled - AyuMed",
+        emailService.triggerEmail(appointment.getDoctor().getLoginUser().getEmail(), "Appointment Successfully Cancelled - AyuMed",
                 emailStructures.generateAppointmentCancellationDoctor(
                         appointment.getPatient().getFullName(),
                         appointment.getDoctor().getFullName(),

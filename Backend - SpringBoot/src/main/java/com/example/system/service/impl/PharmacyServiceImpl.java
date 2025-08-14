@@ -23,7 +23,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -47,7 +50,7 @@ public class PharmacyServiceImpl implements PharmacyService {
             pharmacist.setPharmacy(pharmacy);
             pharmacyRepo.save(pharmacy);
             String body = emailStructures.generatePharmacyWelcomeEmail(pharmacy.getPharmacyName());
-            emailService.sendEmail(
+            emailService.triggerEmail(
                     pharmacist.getLoginUser().getEmail(),
                     "\uD83D\uDC8A Welcome to AyuMed Pharmacy Network! Let’s Get Started",
                     body
@@ -62,19 +65,19 @@ public class PharmacyServiceImpl implements PharmacyService {
     public void updatePharmacy(PharmacyDTO pharmacyDTO, Pharmacist pharmacist) {
         Pharmacy pharmacy = pharmacyRepo.findById(pharmacist.getPharmacy().getId())
                 .orElseThrow(() -> new HospitalManagementException("Pharmacy not found"));
-        if(pharmacyDTO.getPharmacyName()!=null) pharmacy.setPharmacyName(pharmacyDTO.getPharmacyName());
-        if(pharmacyDTO.getEmail()!=null) pharmacy.setEmail(pharmacyDTO.getEmail());
-        if(pharmacyDTO.getMobile()!=null) pharmacy.setMobile(pharmacyDTO.getMobile());
-        if(pharmacyDTO.getClosingTime()!=null) pharmacy.setClosingTime(pharmacyDTO.getClosingTime());
-        if(pharmacyDTO.getOpeningTime()!=null) pharmacy.setOpeningTime(pharmacyDTO.getOpeningTime());
-        if(pharmacyDTO.getImages()!=null) pharmacy.setImages(pharmacyDTO.getImages());
+        if (pharmacyDTO.getPharmacyName() != null) pharmacy.setPharmacyName(pharmacyDTO.getPharmacyName());
+        if (pharmacyDTO.getEmail() != null) pharmacy.setEmail(pharmacyDTO.getEmail());
+        if (pharmacyDTO.getMobile() != null) pharmacy.setMobile(pharmacyDTO.getMobile());
+        if (pharmacyDTO.getClosingTime() != null) pharmacy.setClosingTime(pharmacyDTO.getClosingTime());
+        if (pharmacyDTO.getOpeningTime() != null) pharmacy.setOpeningTime(pharmacyDTO.getOpeningTime());
+        if (pharmacyDTO.getImages() != null) pharmacy.setImages(pharmacyDTO.getImages());
         pharmacy.setOpen(true);
         pharmacyRepo.save(pharmacy);
     }
 
     @Override
     public PharmacyDTO getPharmacyProfile(Pharmacy pharmacy) {
-        if(pharmacy == null) throw new HospitalManagementException("Pharmacy not found");
+        if (pharmacy == null) throw new HospitalManagementException("Pharmacy not found");
         return new PharmacyDTO(
                 pharmacy.getId(), pharmacy.getPharmacyName(),
                 pharmacy.getOverview(), pharmacy.getServices(),
@@ -99,10 +102,10 @@ public class PharmacyServiceImpl implements PharmacyService {
 
     @Override
     public void updatePharmacy(Medication medication, Pharmacist pharmacist) {
-        if(pharmacist.getPharmacy()==null) throw new HospitalManagementException("Pharmacy not found");
-        if(medication.isExpired()) throw new HospitalManagementException("Medication is expired");
+        if (pharmacist.getPharmacy() == null) throw new HospitalManagementException("Pharmacy not found");
+        if (medication.isExpired()) throw new HospitalManagementException("Medication is expired");
         Optional<Medication> optional = medicationRepo.findExistingMedication(medication.getBatchNumber(), medication.getMedicationName(), medication.getExpiry());
-        if(optional.isPresent()) {
+        if (optional.isPresent()) {
             updateMedication(optional.get(), medication.getQuantity());
         } else {
             medication.setPharmacy(pharmacist.getPharmacy());
@@ -124,7 +127,7 @@ public class PharmacyServiceImpl implements PharmacyService {
             while (rows.hasNext()) {
                 Row row = rows.next();
                 LocalDate expiryDate = row.getCell(5).getLocalDateTimeCellValue().toLocalDate();
-                if(expiryDate.isBefore(LocalDate.now())) continue;
+                if (expiryDate.isBefore(LocalDate.now())) continue;
                 String batchNumber = row.getCell(8).getStringCellValue().trim();
                 String medicationName = row.getCell(0).getStringCellValue().trim();
                 Optional<Medication> existingMedication = medicationRepo.findExistingMedication(batchNumber, medicationName, expiryDate);
@@ -139,6 +142,7 @@ public class PharmacyServiceImpl implements PharmacyService {
             throw new HospitalManagementException("Error reading the Excel file: " + e.getMessage(), e);
         }
     }
+
     private Medication createMedication(Row row) {
         try {
             Medication medication = new Medication();
@@ -156,6 +160,7 @@ public class PharmacyServiceImpl implements PharmacyService {
             throw new HospitalManagementException("Error creating Medication: " + e.getMessage(), e);
         }
     }
+
     private void updateMedication(Medication medication, long quantity) {
         try {
             medication.setQuantity(medication.getQuantity() + quantity);
@@ -181,16 +186,16 @@ public class PharmacyServiceImpl implements PharmacyService {
 
     @Override
     public void setStatus(Pharmacy pharmacy) {
-        if(pharmacy.getClosingTime().isBefore(LocalTime.now())
+        if (pharmacy.getClosingTime().isBefore(LocalTime.now())
                 || pharmacy.getOpeningTime().isAfter(LocalTime.now())) {
-            throw new HospitalManagementException("Outside working hours: "+ pharmacy.getClosingTime());
-        }else pharmacy.setOpen(!pharmacy.isOpen());
+            throw new HospitalManagementException("Outside working hours: " + pharmacy.getClosingTime());
+        } else pharmacy.setOpen(!pharmacy.isOpen());
         pharmacyRepo.save(pharmacy);
     }
 
     @Override
     public void updatePassword(Pharmacist pharmacist, Password password) {
-        if(!passwordEncoder.matches(password.getOldPassword(), pharmacist.getLoginUser().getPassword()))
+        if (!passwordEncoder.matches(password.getOldPassword(), pharmacist.getLoginUser().getPassword()))
             throw new HospitalManagementException("Provided password is incorrect");
         this.updatePassword(pharmacist, password.getNewPassword());
     }
@@ -228,7 +233,7 @@ public class PharmacyServiceImpl implements PharmacyService {
     }
 
     private void updateStatus(Pharmacy pharmacy) {
-        if(pharmacy.getClosingTime().isBefore(LocalTime.now())
+        if (pharmacy.getClosingTime().isBefore(LocalTime.now())
                 || pharmacy.getOpeningTime().isAfter(LocalTime.now())) {
             pharmacy.setOpen(false);
             pharmacyRepo.save(pharmacy);
@@ -237,7 +242,12 @@ public class PharmacyServiceImpl implements PharmacyService {
 
     @Override
     public List<MedicationDTO> getMedications() {
-        return medicationRepo.findAll().stream().filter(medication -> medication.getPatients().isEmpty()).map(this::getMedicationDTO).toList();
+        return medicationRepo.findAll()
+                .stream()
+                .filter(medication -> medication.getPatients().isEmpty())
+                .filter(medication -> !medication.isExpired())
+                .map(this::getMedicationDTO)
+                .toList();
     }
 
     @Override
@@ -249,7 +259,11 @@ public class PharmacyServiceImpl implements PharmacyService {
 
     @Override
     public List<MedicationDTO> getMedicationsByPharmacy(Pharmacy pharmacy) {
-        return pharmacy.getMedications().stream().filter(m -> m.getPatients().isEmpty()).map(this::getMedicationDTO).toList();
+        return pharmacy.getMedications()
+                .stream()
+                .filter(m -> m.getPatients().isEmpty())
+                .map(this::getMedicationDTO)
+                .toList();
     }
 
     @Override
@@ -290,7 +304,7 @@ public class PharmacyServiceImpl implements PharmacyService {
         List<Medication> validMedications = medicationRepo.findAllById(medicationOrders.keySet()).stream()
                 .filter(medication ->
                         medication.getQuantity() >= medicationOrders.getOrDefault(medication.getId(), 0L)
-                        && medication.getPatients().isEmpty() && medication.getPharmacy().isOpen())
+                                && medication.getPatients().isEmpty() && medication.getPharmacy().isOpen())
                 .peek(medication ->
                         medication.setQuantity(medication.getQuantity() - medicationOrders.get(medication.getId())))
                 .toList();
@@ -305,7 +319,7 @@ public class PharmacyServiceImpl implements PharmacyService {
         patient.getMedications().addAll(patientMedications);
         patientRepo.save(patient);
         String s = emailStructures.generateMedicationBillEmail(patient.getFullName(), patientMedications, totalAmount);
-        emailService.sendEmail(patient.getLoginUser().getEmail(), "Medication Bill", s);
+        emailService.triggerEmail(patient.getLoginUser().getEmail(), "Medication Bill", s);
     }
 
     private Medication getMedication(long quantity, Medication medication) {
@@ -324,11 +338,13 @@ public class PharmacyServiceImpl implements PharmacyService {
     }
 
     private MedicationDTO getMedicationDTO(Medication medication) {
+        boolean isExpired = medication.getExpiry() != null
+                && medication.getExpiry().isBefore(LocalDate.now());
         return new MedicationDTO(
                 medication.getId(), medication.getMedicationName(),
                 medication.getCompositionName(), medication.getDosageForm(),
                 medication.getStrength(), medication.getQuantity(),
-                medication.getExpiry(), medication.getExpiry().isBefore(LocalDate.now()),
+                medication.getExpiry(), isExpired,
                 medication.getManufacturer(), medication.getPrice(),
                 medication.getBatchNumber(), medication.getPharmacy().getPharmacyName(),
                 medication.getPharmacy().isOpen()

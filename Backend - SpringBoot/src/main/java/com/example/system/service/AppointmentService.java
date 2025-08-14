@@ -27,7 +27,7 @@ public interface AppointmentService {
 
     class AppointmentSpecifications{
         public static Specification<Appointment> betweenDates(LocalDate startDate, LocalDate endDate) {
-            return (root, _, criteriaBuilder) -> {
+            return (root, criteriaQuery, criteriaBuilder) -> {
                 if (startDate == null && endDate == null) {
                     return criteriaBuilder.conjunction();
                 } else if (startDate != null && endDate != null) {
@@ -41,7 +41,7 @@ public interface AppointmentService {
         }
 
         public static Specification<Appointment> hasStatus(AppointmentStatus status) {
-            return (root, _, criteriaBuilder) -> {
+            return (root, criteriaQuery, criteriaBuilder) -> {
                 if (status == null) {
                     return criteriaBuilder.conjunction();
                 }
@@ -50,7 +50,7 @@ public interface AppointmentService {
         }
 
         public static Specification<Appointment> byDoctorId(Long doctorId) {
-            return (root, _, criteriaBuilder) -> {
+            return (root, criteriaQuery, criteriaBuilder) -> {
                 if (doctorId == null) {
                     return criteriaBuilder.conjunction();
                 }

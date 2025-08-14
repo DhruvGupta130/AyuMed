@@ -57,7 +57,7 @@ public class SecurityConfig {
     }
 
     private CorsConfigurationSource corsConfiguration() {
-        return _ -> {
+        return request -> {
             CorsConfiguration config = new CorsConfiguration();
             config.addAllowedOriginPattern(frontendUrl);
             config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));

@@ -59,7 +59,7 @@ public class AuthServiceImpl implements AuthService {
             patient.setMobile(registrationDTO.getMobile());
             patientRepo.save(patient);
             String registration = emailStructures.generateRegistrationEmail(patient.getFullName());
-            emailService.sendEmail(
+            emailService.triggerEmail(
                     patient.getLoginUser().getEmail(),
                     "🎇 Welcome to AyuMed! Your Account is Now Active",
                     registration
@@ -92,7 +92,7 @@ public class AuthServiceImpl implements AuthService {
             doctor.setDepartment(registrationDTO.getDepartment());
             doctorRepo.save(doctor);
             String registration = emailStructures.generateDoctorWelcomeEmail(doctor.getFullName(), hospital.getHospitalName(), registrationDTO.getUsername(), registrationDTO.getPassword());
-            emailService.sendEmail(
+            emailService.triggerEmail(
                     doctor.getLoginUser().getEmail(),
                     "🩺 Welcome to %s, Dr. %s!".formatted(hospital.getHospitalName(), doctor.getFullName()),
                     registration

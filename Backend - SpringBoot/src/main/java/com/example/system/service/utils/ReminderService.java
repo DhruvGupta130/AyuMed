@@ -42,10 +42,10 @@ public class ReminderService {
 
 
             String patientEmailBody = emailStructures.generateAppointmentReminderPatient(patientName, doctorName, specialty, appointmentDate, appointmentTime, location);
-            emailService.sendEmail(patientEmail, "Appointment Reminder - AyuMed", patientEmailBody);
+            emailService.triggerEmail(patientEmail, "Appointment Reminder - AyuMed", patientEmailBody);
 
             String doctorEmailBody = emailStructures.generateAppointmentReminderDoctor(doctorName, patientName, department, appointmentDate, appointmentTime, location);
-            emailService.sendEmail(patientEmail, "Appointment Reminder - AyuMed", doctorEmailBody);
+            emailService.triggerEmail(patientEmail, "Appointment Reminder - AyuMed", doctorEmailBody);
         }
     }
 }

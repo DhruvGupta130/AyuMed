@@ -39,7 +39,7 @@ public class HospitalServiceImpl implements HospitalService {
             manager.setHospital(hospital);
             hospitalRepo.save(hospital);
             String body = emailStructures.generateHospitalWelcomeEmail(hospital.getHospitalName());
-            emailService.sendEmail(
+            emailService.triggerEmail(
                         manager.getLoginUser().getEmail(),
                         "\uD83D\uDE80 %s is Now Live on AyuMed – Welcome Aboard!".formatted(hospital.getHospitalName()),
                         body

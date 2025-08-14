@@ -61,6 +61,6 @@ public class Medication {
     private Pharmacy pharmacy;
 
     public boolean isExpired() {
-        return LocalDate.now().isAfter(this.expiry);
+        return !LocalDate.now().isBefore(this.expiry);
     }
 }

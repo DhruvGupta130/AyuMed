@@ -102,7 +102,7 @@ public class HospitalController {
     public ResponseEntity<Response> registerDoctor(@RequestHeader("Authorization") String token, @RequestBody RegistrationDTO registrationDTO) {
         Response response = new Response();
         try {
-            userRepo.findByUsername(registrationDTO.getUsername()).ifPresent(_ -> {
+            userRepo.findByUsername(registrationDTO.getUsername()).ifPresent(user -> {
                 throw new HospitalManagementException("User already exists");
             });
             Manager manager = (Manager) utility.getUserFromToken(token);

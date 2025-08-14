@@ -245,7 +245,7 @@ public class DoctorServiceImpl implements DoctorService {
         if (genderString != null && !genderString.isEmpty()) {
             try {
                 return Gender.valueOf(genderString.toUpperCase());
-            } catch (Exception _) {}
+            } catch (Exception ignored) {}
         }
         return Gender.OTHER;
     }

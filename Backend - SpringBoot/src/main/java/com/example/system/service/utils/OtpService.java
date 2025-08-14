@@ -26,7 +26,7 @@ public class OtpService {
         long expiryTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(OTP_EXPIRATION_MINUTES);
         OtpData otpData = new OtpData(otp, expiryTime);
         otpStorage.put(key, otpData);
-        emailService.sendEmail(key, subject, emailStructures.generateOtpEmail(otp, OTP_EXPIRATION_MINUTES));
+        emailService.triggerEmail(key, subject, emailStructures.generateOtpEmail(otp, OTP_EXPIRATION_MINUTES));
     }
 
     public boolean validateOtp(String key, String otp) {
