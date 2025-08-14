@@ -27,8 +27,8 @@ services:
 
   # Spring Boot Backend
   hospital-backend:
-    image: dhruvgupta130/hospital
-    # build: ./Backend - SpringBoot
+    # image: dhruvgupta130/hospital
+    build: ./Backend - SpringBoot
     container_name: hospital-backend
     environment:
       # Database Configuration
