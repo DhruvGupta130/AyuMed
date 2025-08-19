@@ -1,6 +1,5 @@
 import { Card, Typography, Carousel, Tooltip } from "antd";
 import { HomeOutlined, PhoneOutlined, EnvironmentOutlined } from "@ant-design/icons";
-import { displayImage } from "../Api & Services/Api";
 import PropTypes from "prop-types";
 
 const { Title, Text } = Typography;
@@ -28,7 +27,7 @@ const HospitalCard = ({ hospital, onSelect, selected }) => {
           {hospital.images.map((image, index) => (
             <div key={index}>
               <img
-                src={displayImage(image)}
+                src={image}
                 alt={hospital.hospitalName}
                 style={{
                   width: "100%",

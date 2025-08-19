@@ -1,11 +1,11 @@
-import {useState, useEffect, useCallback} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import axios from 'axios';
-import { URL } from '../Api & Services/Api.js';
-import { Input, Button, Spin, Alert, Row, Col, Typography, InputNumber } from 'antd';
-import { Box } from '@mui/material';
-import { SearchOutlined } from '@ant-design/icons';
+import {Alert, Button, Col, Input, InputNumber, Row, Spin, Typography} from 'antd';
+import {Box} from '@mui/material';
+import {SearchOutlined} from '@ant-design/icons';
 import SearchResultCard from '../Components/SearchResultCard.jsx';
 import {useLocation} from "react-router-dom";
+import {BACKEND_URL} from "../configuration.js";
 
 const { Title, Text } = Typography;
 
@@ -87,7 +87,7 @@ const HospitalListPage = () => {
     if (userLocation.lat && userLocation.lon) {
       setLoading(true);
       try {
-        const response = await axios.get(`${URL}/nearby/hospital`, {
+        const response = await axios.get(`${BACKEND_URL}/nearby/hospital`, {
           params: { latitude: userLocation.lat, longitude: userLocation.lon, radius },
         });
         setHospitals(response.data);

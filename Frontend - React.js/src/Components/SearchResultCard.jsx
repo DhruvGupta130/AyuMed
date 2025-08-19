@@ -6,7 +6,6 @@ import MedicationIcon from "@mui/icons-material/Medication";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import PersonIcon from "@mui/icons-material/Person";
 import { LocalPharmacy } from "@mui/icons-material";
-import { displayImage } from "../Api & Services/Api.js";
 import { convertTo12HourFormat } from "../Api & Services/Services.js";
 
 const getFormattedDetails = (value) => (value ? value : "N/A");
@@ -44,7 +43,7 @@ function SearchResultCard({ result, type }) {
     }
   }, [images.length]);
 
-  const imageSrc = images[imageIndex] ? displayImage(images[imageIndex]) : null;
+  const imageSrc = images[imageIndex] ? images[imageIndex] : null;
 
   const title = (() => {
     switch (type) {

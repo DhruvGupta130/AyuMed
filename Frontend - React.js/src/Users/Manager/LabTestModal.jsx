@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { Modal, Form, Input, Button, Upload, message } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import {useState} from "react";
+import {Button, Form, Input, message, Modal, Upload} from "antd";
+import {UploadOutlined} from "@ant-design/icons";
 import axios from "axios";
-import { hospitalURL, URL } from "../../Api & Services/Api";
+import {hospitalURL} from "../../Api & Services/Api";
 import PropTypes from "prop-types";
+import {BACKEND_URL} from "../../configuration.js";
 
 const LabTestModal = ({ labModalVisible, setLabModalVisible, recordId }) => {
   const [fileList, setFileList] = useState([]);
@@ -122,7 +123,7 @@ const LabTestModal = ({ labModalVisible, setLabModalVisible, recordId }) => {
           <Upload
             listType="picture"
             fileList={fileList}
-            action={`${URL}/upload-image`}
+            action={`${BACKEND_URL}/upload-image`}
             onChange={handleFileChange}
             multiple={false}
           >

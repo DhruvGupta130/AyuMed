@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { Card, Row, Col, Typography, Button, Carousel, Layout, Tag, Divider, Space, Modal, message, Spin } from "antd";
 import { PhoneOutlined, MailOutlined, GlobalOutlined, HomeOutlined, FieldTimeOutlined, ShopOutlined, SafetyCertificateOutlined, HeartOutlined, HddOutlined, MedicineBoxOutlined, LaptopOutlined, StarOutlined, UserSwitchOutlined } from "@ant-design/icons";
-import { displayImage, patientURL } from "../../Api & Services/Api.js";
+import { patientURL } from "../../Api & Services/Api.js";
 import { convertTo12HourFormat, stringToList } from "../../Api & Services/Services.js";
 import { MenuItem, TextField } from "@mui/material";
 import DoctorProfileCard from "../../Components/DoctorProfileCard.jsx";
@@ -147,7 +147,7 @@ const HospitalProfilePage = () => {
                       <Carousel autoplay effect="fade" style={{ borderRadius: 8, flex: 1}}>
                         {hospital.images.map((image, index) => (
                           <div key={index}>
-                            <img src={displayImage(image)} alt="Hospital" style={{ width: "100%", borderRadius: 8, objectFit: "cover", height: 450 }} />
+                            <img src={image} alt="Hospital" style={{ width: "100%", borderRadius: 8, objectFit: "cover", height: 450 }} />
                           </div>
                         ))}
                       </Carousel>

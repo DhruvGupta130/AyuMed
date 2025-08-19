@@ -15,7 +15,7 @@ import {
 } from "antd";
 import { format } from "date-fns";
 import axios from "axios";
-import { displayImage, doctorURL } from "../../Api & Services/Api.js";
+import { doctorURL } from "../../Api & Services/Api.js";
 import { formatGender, getAvatarText } from "../../Api & Services/Services.js";
 import {
   CheckCircleOutlined,
@@ -165,7 +165,7 @@ const Appointment = ({ appointment, refresh }) => {
       cover={
         <div style={{ textAlign: "center", padding: "15px" }}>
           {appointment.patientImage ? (
-            <Avatar src={displayImage(appointment.patientImage)} size={150} shape="square" />
+            <Avatar src={appointment.patientImage} size={150} shape="square" />
           ) : (
             <Avatar size={120} shape="square" style={{ backgroundColor: "#f56a00" }}>
               {getAvatarText(appointment.patientName)}

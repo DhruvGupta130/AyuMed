@@ -14,7 +14,6 @@ import java.util.List;
 public interface RecordService {
 
     void uploadFile(Patient patient, MultipartFile file, String description) throws IOException;
-    RecordsDTO getPatientRecords(PatientRecord patientRecord);
     Resource downloadFile(Long fileId) throws IOException;
     void deleteFile(Long fileId) throws IOException;
     List<RecordsDTO> getFilesByPatientId(Patient patient);

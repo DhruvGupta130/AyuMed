@@ -5,7 +5,6 @@ import "../Styles/Navbar.css";
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar } from "@mui/material";
 import { red } from "@mui/material/colors";
-import { IMAGE_URL } from "../Api & Services/Api.js";
 import { fetchManagerProfileData } from "../Users/Manager/fetchManagerProfileData.jsx";
 import { fetchDoctorProfileData } from "../Users/Doctor/fetchDoctorProfileData.jsx";
 import { fetchPharmacistProfileData } from "../Users/Pharmacist/fetchPharmacistProfileData.jsx";
@@ -129,7 +128,7 @@ function Navbar() {
             <Link to={profile} className="avatar-link">
               {user.image ? (
                 <img
-                  src={`${IMAGE_URL}${user.image}`}
+                  src={`${user.image}`}
                   alt={user.fullName}
                   className="avatar-img"
                 />
@@ -167,7 +166,7 @@ function Navbar() {
                 <div className="avatar">
                   {user.image ? (
                     <img
-                      src={`${IMAGE_URL}${user.image}`}
+                      src={`${user.image}`}
                       alt={user.fullName}
                       className="avatar-img"
                     />

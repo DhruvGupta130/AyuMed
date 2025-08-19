@@ -1,5 +1,4 @@
 import { Avatar, Button, Card, Row, Space, Tag, Typography } from "antd";
-import { displayImage } from "../Api & Services/Api";
 import { CheckCircleFilled, GlobalOutlined, MailOutlined, PhoneOutlined, UserOutlined } from "@ant-design/icons";
 import PropTypes from "prop-types";
 
@@ -18,7 +17,7 @@ const DoctorProfileCard = ({ doctors, setOpenModal, setSelectedDoctor }) => {
             }}
         >
             <div style={{textAlign: 'center'}}>
-            <Avatar size={100} icon={<UserOutlined />} src={displayImage(doctor.image)} />
+            <Avatar size={100} icon={<UserOutlined />} src={doctor.image} />
             <Title level={4} style={{ marginTop: 10 }}>{doctor.fullName}</Title>
             <Tag color="purple">{doctor.speciality}</Tag>
             <Tag color="purple">{doctor.department}</Tag>

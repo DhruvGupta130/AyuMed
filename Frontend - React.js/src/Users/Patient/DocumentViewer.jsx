@@ -1,12 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
-import { Button, LinearProgress, Dialog, DialogContent, DialogTitle, CircularProgress, Alert} from "@mui/material";
-import { Delete, Download, Preview, UploadTwoTone } from "@mui/icons-material";
-import { patientURL } from "../../Api & Services/Api.js";
-import { format } from "date-fns";
+import {useCallback, useEffect, useState} from "react";
+import {Alert, Button, CircularProgress, Dialog, DialogContent, DialogTitle, LinearProgress} from "@mui/material";
+import {Delete, Download, Preview, UploadTwoTone} from "@mui/icons-material";
+import {patientURL} from "../../Api & Services/Api.js";
+import {format} from "date-fns";
 import PropTypes from "prop-types";
-import { Worker, Viewer } from "@react-pdf-viewer/core";
+import {Viewer, Worker} from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import axios from "axios";
+import {BACKEND_URL} from "../../configuration.js";
 
 const DocumentViewer = ({ onUploadClick }) => {
   const [documents, setDocuments] = useState([]);
@@ -33,7 +34,7 @@ const DocumentViewer = ({ onUploadClick }) => {
       }
   
       const blob = response.data;
-      const fileURL = window.URL.createObjectURL(blob);
+      const fileURL = BACKEND_URL.createObjectURL(blob);
   
       if (isPreview) {
         setPreviewFile({ id, fileURL, fileType: blob.type });

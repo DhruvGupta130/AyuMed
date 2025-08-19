@@ -1,9 +1,20 @@
-import { useEffect, useState } from "react";
-import { Row, Col, Card, Typography } from "antd";
-import { LocalHospital, Healing, Visibility, Favorite, Psychology, Vaccines, MedicalServices, Work, HealthAndSafety, LocalHospitalSharp } from "@mui/icons-material";
+import {useEffect, useState} from "react";
+import {Card, Col, Row, Typography} from "antd";
+import {
+    Favorite,
+    Healing,
+    HealthAndSafety,
+    LocalHospital,
+    LocalHospitalSharp,
+    MedicalServices,
+    Psychology,
+    Vaccines,
+    Visibility,
+    Work
+} from "@mui/icons-material";
 import axios from "axios";
-import { URL } from "../Api & Services/Api";
-import { Box } from "@mui/material";
+import {Box} from "@mui/material";
+import {BACKEND_URL} from "../configuration.js";
 
 const { Title, Paragraph } = Typography;
 
@@ -62,7 +73,7 @@ function DepartmentsSection() {
 
   const fetchDepartments = async () => {
     try {
-      const response = await axios.get(`${URL}/departments`);
+      const response = await axios.get(`${BACKEND_URL}/departments`);
       console.log(response.data);
       setDepartments(response.data);
     } catch (error) {

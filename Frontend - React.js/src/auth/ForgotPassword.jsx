@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { message } from 'antd';
-import { URL } from "../Api & Services/Api.js";
-import { Link, useNavigate } from 'react-router-dom';
-import { CircularProgress, Box, Alert } from '@mui/material';
+import {useEffect, useState} from 'react';
+import {message} from 'antd';
+import {Link, useNavigate} from 'react-router-dom';
+import {Alert, Box, CircularProgress} from '@mui/material';
 import '../Styles/Auth.css';
 import axios from "axios";
+import {BACKEND_URL} from "../configuration.js";
 
 function ForgotPassword() {
     const [email, setEmail] = useState('');
@@ -43,7 +43,7 @@ function ForgotPassword() {
     
             setLoading(true);
             try {
-                const response = await axios.post(`${URL}/forgot-password?email=${email}`);
+                const response = await axios.post(`${BACKEND_URL}/forgot-password?email=${email}`);
                 message.success(response.data?.message || "OTP has been sent!");
                 setStep(2);
                 setResendTimer(30); // Start 30s countdown
@@ -80,7 +80,7 @@ function ForgotPassword() {
     
             setLoading(true);
             try {
-                const response = await axios.put(`${URL}/update/password?email=${email}&otp=${otp}&password=${newPassword}`);
+                const response = await axios.put(`${BACKEND_URL}/update/password?email=${email}&otp=${otp}&password=${newPassword}`);
                 message.success(response.data?.message || "Password updated successfully!");
                 navigate("/login");
             } catch (error) {
@@ -100,7 +100,7 @@ function ForgotPassword() {
         }
         setLoading(true);
         try {
-            const response = await axios.post(`${URL}/forgot-password?email=${email}`);
+            const response = await axios.post(`${BACKEND_URL}/forgot-password?email=${email}`);
             message.success(response.data?.message || "OTP has been resent!");
             setResendTimer(30); // Restart 30s countdown
         } catch (error) {
@@ -118,7 +118,7 @@ function ForgotPassword() {
         }
         setLoading(true);
         try {
-            const response = await axios.get(`${URL}/get-username?email=${email}`);
+            const response = await axios.get(`${BACKEND_URL}/get-username?email=${email}`);
             setSuccess(response.data?.message || "No user found with this email.");
         } catch (error) {
             message.error(error.response?.data?.message || "An error occurred. Please try again.");

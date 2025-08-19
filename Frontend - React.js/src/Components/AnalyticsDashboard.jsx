@@ -1,17 +1,24 @@
-import  { useRef, useEffect, useState } from "react";
-import { Bar, Pie } from "react-chartjs-2";
+import {useEffect, useRef, useState} from "react";
+import {Bar, Pie} from "react-chartjs-2";
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-  LineElement,
-  PointElement,
+    ArcElement,
+    BarElement,
+    CategoryScale,
+    Chart as ChartJS,
+    Legend,
+    LinearScale,
+    LineElement,
+    PointElement,
+    Title,
+    Tooltip,
 } from "chart.js";
+import {Card, Col, Divider, Row, Statistic} from "antd";
+import {CalendarOutlined, MedicineBoxOutlined, SolutionOutlined, UserOutlined,} from "@ant-design/icons";
+import axios from "axios";
+import "../Styles/Dashboard.css";
+import {Alert, CircularProgress} from "@mui/material";
+import PropTypes from "prop-types";
+import {BACKEND_URL} from "../configuration.js";
 
 ChartJS.register(
   CategoryScale, 
@@ -24,19 +31,6 @@ ChartJS.register(
   LineElement,
   PointElement
 );
-
-import { Card, Row, Col, Statistic, Divider } from "antd";
-import {
-  UserOutlined,
-  SolutionOutlined,
-  CalendarOutlined,
-  MedicineBoxOutlined,
-} from "@ant-design/icons";
-import axios from "axios";
-import { URL } from "../Api & Services/Api";
-import "../Styles/Dashboard.css";
-import { Alert, CircularProgress } from "@mui/material";
-import PropTypes from "prop-types";
 
 // 📊 Dynamic Chart Wrapper
 const DynamicChart = ({ ChartComponent, data }) => {
@@ -77,12 +71,12 @@ const AnalyticsDashboard = () => {
     const fetchData = async () => {
       try {
         const [statsRes, perfRes, apptRes, demoRes, trendRes, departRes] = await Promise.all([
-          axios.get(`${URL}/statistics`),
-          axios.get(`${URL}/performance`),
-          axios.get(`${URL}/appointments/analysis`),
-          axios.get(`${URL}/demographics`),
-          axios.get(`${URL}/trends`),
-          axios.get(`${URL}/stats/departments`),
+          axios.get(`${BACKEND_URL}/statistics`),
+          axios.get(`${BACKEND_URL}/performance`),
+          axios.get(`${BACKEND_URL}/appointments/analysis`),
+          axios.get(`${BACKEND_URL}/demographics`),
+          axios.get(`${BACKEND_URL}/trends`),
+          axios.get(`${BACKEND_URL}/stats/departments`),
         ]);
 
         setStatistics(statsRes.data);

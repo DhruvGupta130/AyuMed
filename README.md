@@ -4,24 +4,30 @@ A robust and scalable **Hospital and Outpatient Department (OPD) Management Syst
 
 Live URL: https://ayumed.netlify.app/
 
-## Key Features 🚀
+## ✨ Key Features
 
-- **Comprehensive Patient Management**: Register, update, and maintain patient records 📋
-- **OTP Verification**: Email I'd will be validated upon successful registration and when resetting password through forgot password 🔑
-- **Welcome Mails**: After successful registration all the users receives the confirmation mails accordingly 📩
-- **Doctor and Staff Administration**: Efficiently manage doctor schedules, departments, and specialties 🩺
-- **Appointment Scheduling**: Book and track patient appointments for seamless interaction 📅
-- **Upcoming Appointment Reminders**: Patient will receive certain reminders for his upcoming appointments through mail 📤
-- **Billing and Payments**: Manage billing, track payments, and generate invoices 💳
-- **Search Hospital Nearby**: Get Hospitals nearby your location by selecting the radius 🌍
-- **Medical History and Test Records**: Securely store patient medical histories and test results 🧬
-- **Patient Records**: A dedicated storage for Patient's reports and documents 📃
-- **Feedback Mechanism**: Gather and analyze patient feedback to improve service quality ⭐
-- **Excel Import**: Import bulk doctor or patient data from Excel files using Apache POI 📊
-- **Pharmacy**: Search Pharmacy nearby locations, by pharmacy name⚕️
-- **Real-time Medications & Drugs Tracking**: With the APIs support the supply can be traced realtime⌛
-- **Medications Excel Import**: Medications can be managed easily with the Excel import 📃
-- **Multi Search Box**: A search feature at the navigation to display all the combined results, including doctor, hospital, medication and pharmacy 🔎
+### 🧑‍⚕️ Patient & Doctor Management
+- Comprehensive patient records & profiles 📋
+- Doctor & staff schedules, specialties, and departments 🩺
+- Appointment booking with reminders 📅
+
+### 💳 Billing & Payments
+- Automated billing & invoice generation 💳
+- Track payment status & history 📊
+
+### 🏥 Hospital Services
+- Search hospitals nearby 🌍
+- Pharmacy management with real-time drug tracking ⚕️
+- Bulk data import (doctors, patients, medications) via Excel 📑
+
+### 📂 Records & Storage
+- Secure medical history & test results 🧬 stored in **Cloudinary**
+- Patient reports & documents 📃 with encrypted Cloudinary storage
+
+### 📧 Notifications & Feedback
+- OTP verification for login & password reset 🔑
+- Welcome & reminder emails 📩
+- Patient feedback mechanism ⭐
 
 ## Tech Stack 🛠️
 
@@ -34,6 +40,13 @@ Live URL: https://ayumed.netlify.app/
 - **Testing**: JUnit and Mockito for unit and integration testing
 - **API Testing**: Postman is used for API Testing
 
+## 🎥 Demo
+![Hospital Management System Banner](https://res.cloudinary.com/dft2nlkmz/image/upload/v1755622126/Screenshot_2025-08-19_220306_vhjkn9.png)
+![Login Page](https://res.cloudinary.com/dft2nlkmz/image/upload/v1755622275/Screenshot_2025-08-19_222101_uwod4g.png)
+*Login / Registration page with OTP verification*
+
+![Dashboard](https://res.cloudinary.com/dft2nlkmz/image/upload/v1755622445/FireShot_Capture_009_-_Vite_React_-_ayumed.netlify.app_m2naee.png)
+*Dashboard showing appointments and statistics*
 ## Project Structure 📂
 
 ```
@@ -65,6 +78,17 @@ Live URL: https://ayumed.netlify.app/
 ├── docker-compose.yml
 ```
 
+## 🏗️ System Architecture
+
+```mermaid
+flowchart TD
+    User((Patient/Doctor)) -->|React UI| Frontend[React.js Frontend]
+    Frontend --> Backend[Spring Boot API]
+    Backend --> DB[(MySQL/Postgres)]
+    Backend --> Cloudinary[(Cloudinary Storage)]
+    Backend --> Email[SMTP Service - Brevo]
+```
+
 ## Configuration Files 🔧
 
 ### `application.properties`
@@ -86,7 +110,9 @@ spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
 
-file.storage.path= storage/patients
+cloudinary.cloud_name=${CLOUD_NAME}
+cloudinary.api_key=${CLOUDINARY_API_KEY}
+cloudinary.api_secret=${CLOUDINARY_API_SECRET}
 
 ```
 
@@ -200,11 +226,12 @@ Once completed, the Hospital Management System will offer:
 - **Aadhaar Authentication** for added security and details fetching
 - **Medical Records** making a centralized platform for storing all the records in an encrypted way for easy accessibility.
 
-## Contribution Guidelines 🤝
-We welcome feedback and suggestions to help shape its direction. Contributions at this stage are focused on ideas and suggestions that could enhance the project's functionality. Please read the [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to get involved.
-1. Fork the repository.
-2. Make your changes.
-3. Submit a pull request.
+## 🤝 Contribution Guidelines
+We welcome contributions! 🎉
+
+- 🐛 **Bug Reports** → Open a GitHub Issue
+- 💡 **Feature Requests** → Use the Discussions tab
+- 🛠️ **Code Contributions** → Fork & create a PR
 
 If you'd like to contribute, please follow these steps:
 
@@ -227,6 +254,8 @@ If you'd like to contribute, please follow these steps:
 5. **Open a Pull Request**: Go to the original repository and click "New Pull Request".
 
 Your contributions will help enhance functionality, add new features, improve code quality, and fix bugs. Thank you for considering contributing!
+
+⭐ If you like this project, don’t forget to **star** the repo!
 
 ## 📄 License
 This project is licensed under the [MIT License](LICENSE.txt) .

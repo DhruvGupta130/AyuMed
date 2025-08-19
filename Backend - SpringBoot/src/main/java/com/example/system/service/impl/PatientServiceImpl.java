@@ -41,7 +41,7 @@ public class PatientServiceImpl implements PatientService {
         if (image != null && !image.isEmpty()) {
             try {
                 File imageFile = fileService.saveFile(image);
-                patient.setImage(imageFile.getFilePath());
+                patient.setImage(imageFile.getFileUrl());
             } catch (Exception e) {
                 throw new HospitalManagementException(e.getMessage());
             }

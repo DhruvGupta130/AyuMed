@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
+import {useEffect, useState} from 'react';
 import axios from 'axios';
-import { Button, Form, Input, Modal, message, Upload, Steps, Alert, Spin, Checkbox } from 'antd';
-import { GOOGLE_API_KEY, hospitalURL, URL } from "../../Api & Services/Api.js";
-import { AimOutlined, LoadingOutlined, UploadOutlined } from '@ant-design/icons';
-import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
+import {Alert, Button, Checkbox, Form, Input, message, Modal, Spin, Steps, Upload} from 'antd';
+import {GOOGLE_API_KEY, hospitalURL} from "../../Api & Services/Api.js";
+import {AimOutlined, LoadingOutlined, UploadOutlined} from '@ant-design/icons';
+import {GoogleMap, Marker, useJsApiLoader} from '@react-google-maps/api';
 import HospitalInfo from './HospitalInfo';
-import { generateLabel } from '../../Api & Services/Services.js';
-import { fetchHospitalProfileData } from './fetchManagerProfileData.jsx';
+import {generateLabel} from '../../Api & Services/Services.js';
+import {fetchHospitalProfileData} from './fetchManagerProfileData.jsx';
+import {BACKEND_URL} from "../../configuration.js";
 
 const googleMapsLibraries = ['places'];
 
@@ -100,7 +101,7 @@ const Hospital = () => {
 
   const handleRemoveImage = async (file) => {
     try {
-      const response = await axios.delete(`${URL}/delete-image`, {
+      const response = await axios.delete(`${BACKEND_URL}/delete-image`, {
         data: {
           fileName: file.name,
         },
@@ -537,7 +538,7 @@ const Hospital = () => {
         <Form layout="vertical">
           <Form.Item label="Hospital Images" key="Hospital Images">
             <Upload
-              action={`${URL}/upload-image`}
+              action={`${BACKEND_URL}/upload-image`}
               listType="picture-card"
               fileList={fileList}
               onChange={handleImageChange}

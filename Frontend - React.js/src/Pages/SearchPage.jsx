@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
-import { URL } from "../Api & Services/Api.js";
-import { useLocation } from "react-router-dom";
-import { Container, Typography, Divider, CircularProgress, Box } from "@mui/material";
+import {useLocation} from "react-router-dom";
+import {Box, CircularProgress, Container, Divider, Typography} from "@mui/material";
 import SearchResultCard from "../Components/SearchResultCard.jsx";
 import "../Styles/SearchPage.css";
+import {BACKEND_URL} from "../configuration.js";
 
 function SearchPage() {
   const [searchResults, setSearchResults] = useState({
@@ -28,7 +28,7 @@ function SearchPage() {
   const fetchSearchResults = async (keyword) => {
     setLoading(true);
     try {
-      const response = await axios.get(`${URL}/search`, {
+      const response = await axios.get(`${BACKEND_URL}/search`, {
         params: { keyword },
       });
       setSearchResults(response.data);

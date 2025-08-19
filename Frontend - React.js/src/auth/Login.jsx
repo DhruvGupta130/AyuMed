@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
 import '../Styles/Auth.css';
-import { URL } from "../Api & Services/Api.js";
-import { CircularProgress, Box } from '@mui/material';
+import {Box, CircularProgress} from '@mui/material';
 import axios from 'axios';
-import { message } from 'antd';
+import {message} from 'antd';
+import {BACKEND_URL} from "../configuration.js";
 
 function Login() {
   const [username, setUsername] = useState('');
@@ -38,7 +38,7 @@ function Login() {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${URL}/login`, { username, password });
+      const response = await axios.post(`${BACKEND_URL}/login`, { username, password });
       localStorage.setItem('token', response.data?.token);
       localStorage.setItem('isAuthenticated', "true");
       localStorage.setItem('role', response.data?.role);

@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { URL } from "../Api & Services/Api.js";
+import {useEffect, useState} from "react";
+import {Link, useNavigate} from "react-router-dom";
 import axios from 'axios';
 import "../Styles/Auth.css";
-import { message } from "antd";
-import { Box, CircularProgress } from "@mui/material";
+import {message} from "antd";
+import {Box, CircularProgress} from "@mui/material";
+import {BACKEND_URL} from "../configuration.js";
 
 
 function Register() {
@@ -68,7 +68,7 @@ function Register() {
     setLoading(true);
 
     try {
-      const otpResponse = await axios.post(`${URL}/otp/send`, { email: formData.email });
+      const otpResponse = await axios.post(`${BACKEND_URL}/otp/send`, { email: formData.email });
       message.success(otpResponse.data?.message);
       setOtpSent(true);
       setResendTimer(30);
@@ -103,7 +103,7 @@ function Register() {
         dateOfBirth: formData.dateOfBirth,
         otp: otp
       };
-      await axios.post(`${URL}/register`, userData);
+      await axios.post(`${BACKEND_URL}/register`, userData);
       message.success("User registered successfully");
       navigate("/login");
     } catch (error) {

@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
-import { Avatar, Button, Modal, Box, TextField, Typography, Alert } from '@mui/material';
-import { red } from '@mui/material/colors';
+import {useEffect, useState} from 'react';
+import {Alert, Avatar, Box, Button, Modal, TextField, Typography} from '@mui/material';
+import {red} from '@mui/material/colors';
 import axios from 'axios';
-import { displayImage, patientURL } from "../../Api & Services/Api.js";
+import {patientURL} from "../../Api & Services/Api.js";
 import PropTypes from 'prop-types';
-import { Image } from '@mui/icons-material';
+import {Image} from '@mui/icons-material';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import {getAvatarText} from "../../Api & Services/Services.js";
+import {BACKEND_URL} from "../../configuration.js";
 
 const PatientDetailsCard = ({ patient, refreshProfileData }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -53,7 +54,7 @@ const PatientDetailsCard = ({ patient, refreshProfileData }) => {
     const file = e.target.files[0];
     if (file) {
       try {
-        const previewURL = (window.URL || window.webkitURL).createObjectURL(file); 
+        const previewURL = (BACKEND_URL || window.webkitURL).createObjectURL(file);
         setImagePreview(previewURL);
         setImageFile(file); 
       } catch (error) {
@@ -110,7 +111,7 @@ const PatientDetailsCard = ({ patient, refreshProfileData }) => {
       <h2>My Profile</h2>
       <div className="patient-header">
         {patient.image ? (
-          <img src={displayImage(patient.image)} alt={`${patient.fullName}`} className="patient-image" />
+          <img src={patient.image} alt={`${patient.fullName}`} className="patient-image" />
         ) : (
           <Avatar className='patient-image' variant='rounded' sx={{ bgcolor: red[700]}}>
             {getAvatarText(patient.fullName)}

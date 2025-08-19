@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Card, Col, Row, Typography, Spin, Divider, Avatar } from "antd";
 import { StarFilled, UserOutlined } from "@ant-design/icons";
 import axios from "axios";
-import { displayImage, doctorURL } from "../../Api & Services/Api";
+import { doctorURL } from "../../Api & Services/Api";
 import { StarBorder } from "@mui/icons-material";
 
 const { Text } = Typography;
@@ -62,7 +62,7 @@ const FeedbackPage = () => {
                     <div style={{ display: "flex", justifyContent: "center" }}>
                       <Avatar
                         size={100}
-                        src={displayImage(feedback.patient.image)}
+                        src={feedback.patient.image}
                         icon={<UserOutlined />}
                         style={{
                           border: "2px solid #fadb14",

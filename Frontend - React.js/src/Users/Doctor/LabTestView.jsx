@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from 'react';
 import { Modal, Table, message } from 'antd';
 import axios from 'axios';
-import {doctorURL, IMAGE_URL} from '../../Api & Services/Api';
+import {doctorURL} from '../../Api & Services/Api';
 import { Button } from '@mui/material';
 import { Download } from '@mui/icons-material';
 import PropTypes from "prop-types";
@@ -42,7 +42,7 @@ const LabTestView = ({ visible, setVisible, medicalId}) => {
         if (!test?.filePath) return console.error("Test result or file path not found");
 
         try {
-          const response = await fetch(`${IMAGE_URL}${test.filePath}`);
+          const response = await fetch(`${test.filePath}`);
           if (!response.ok) throw new Error("Failed to fetch the file");
 
           const blob = await response.blob();

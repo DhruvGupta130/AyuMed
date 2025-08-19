@@ -1,7 +1,6 @@
 import React from "react";
 import { Card, Typography, Avatar } from "antd";
 import { UserOutlined } from "@ant-design/icons";
-import { displayImage } from "../Api & Services/Api";
 import PropTypes from "prop-types";
 
 const { Title, Text } = Typography;
@@ -22,7 +21,7 @@ const DoctorCard = ({ doctor, onSelect, selected }) => {
     >
       <Avatar
         size={100}
-        src={displayImage(doctor.image) || null} 
+        src={doctor.image || null}
         icon={!doctor.image && <UserOutlined />}
         style={{ backgroundColor: "#d9d9d9" }}
       />

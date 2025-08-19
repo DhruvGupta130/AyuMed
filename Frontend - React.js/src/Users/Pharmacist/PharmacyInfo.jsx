@@ -1,5 +1,5 @@
 import { Card, Row, Col, Typography, Button, Carousel, Layout, message, Tag, Divider } from 'antd';
-import { displayImage, pharmacyURL } from '../../Api & Services/Api';
+import { pharmacyURL } from '../../Api & Services/Api';
 import { 
   PhoneOutlined, MailOutlined, GlobalOutlined, HomeOutlined, FieldTimeOutlined, ShopOutlined, 
   MedicineBoxOutlined, InfoCircleOutlined, BankOutlined,
@@ -76,7 +76,7 @@ const PharmacyInfo = ({ Pharmacy, refreshPharmacyData }) => {
                         {Pharmacy.images.map((image, index) => (
                           <div key={index}>
                             <img 
-                              src={displayImage(image)} 
+                              src={image}
                               alt={`Hospital Image ${index + 1}`} 
                               style={{ width: "100%", height: "300px", objectFit: "cover", borderRadius: "16px" }}
                             />

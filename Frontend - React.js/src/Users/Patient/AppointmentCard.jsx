@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { Avatar, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import { red } from "@mui/material/colors";
 import PropTypes from "prop-types";
-import { displayImage, patientURL } from "../../Api & Services/Api.js";
+import { patientURL } from "../../Api & Services/Api.js";
 import axios from "axios";
 import { useState } from "react";
 import { message } from "antd";
@@ -65,7 +65,7 @@ const AppointmentCard = ({ appointment, refresh, setSuccess }) => {
       <div className="image-container">
         {appointment.doctorImage ? (
           <img
-            src={displayImage(appointment.doctorImage)}
+            src={appointment.doctorImage}
             alt={`Dr. ${appointment.doctorName}`}
             className="card-photo"
           />

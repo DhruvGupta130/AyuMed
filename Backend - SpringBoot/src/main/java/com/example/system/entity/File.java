@@ -19,7 +19,8 @@ public class File {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String fileName;
-    private String filePath;
+    private String publicId;
+    private String fileUrl;
     private long fileSize;
 
     @CreationTimestamp

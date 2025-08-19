@@ -13,7 +13,7 @@ import {
   HeartTwoTone,
   ShoppingCartOutlined
 } from "@ant-design/icons";
-import { displayImage, patientURL } from "../../Api & Services/Api.js";
+import { patientURL } from "../../Api & Services/Api.js";
 import { stringToList } from "../../Api & Services/Services.js";
 import { LocalPharmacyOutlined } from "@mui/icons-material";
 
@@ -110,7 +110,7 @@ const PharmacyProfilePage = () => {
                       <Carousel autoplay effect="fade" style={{ borderRadius: 8 }}>
                         {pharmacy.images.map((image, index) => (
                           <div key={index} style={{ height: 250 }}>
-                                <img src={displayImage(image)} alt="Pharmacy" style={{ width: "100%", borderRadius: 8, objectFit: "cover", height: 380 }} />
+                                <img src={image} alt="Pharmacy" style={{ width: "100%", borderRadius: 8, objectFit: "cover", height: 380 }} />
                           </div>
                         ))}
                       </Carousel>

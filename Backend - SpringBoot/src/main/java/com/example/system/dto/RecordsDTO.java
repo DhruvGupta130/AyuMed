@@ -1,23 +1,28 @@
 package com.example.system.dto;
 
 import com.example.system.entity.Patient;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import com.example.system.entity.PatientRecord;
 
 import java.util.Date;
 
-@Getter
-@Setter
-@AllArgsConstructor
-public class RecordsDTO {
-
-    private Long id;
-    private Patient patient;
-    private String fileName;
-    private String filePath;
-    private Date uploadDate;
-    private String fileType;
-    private String description;
-
+public record RecordsDTO(
+        Long id,
+        Patient patient,
+        String fileName,
+        String fileUrl,
+        Date uploadDate,
+        String fileType,
+        String description
+) {
+    public RecordsDTO(PatientRecord patientRecord) {
+        this(
+                patientRecord.getId(),
+                patientRecord.getPatient(),
+                patientRecord.getFileName(),
+                patientRecord.getFileUrl(),
+                patientRecord.getUploadDate(),
+                patientRecord.getFileType(),
+                patientRecord.getDescription()
+        );
+    }
 }

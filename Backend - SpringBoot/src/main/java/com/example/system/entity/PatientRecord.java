@@ -21,11 +21,9 @@ public class PatientRecord {
     private Patient patient;
 
     private String fileName;
-
-    private String filePath;
-
+    private String publicId;
+    private String fileUrl;
     private Date uploadDate;
-
     private String fileType;
 
     @Column(length = 1000)

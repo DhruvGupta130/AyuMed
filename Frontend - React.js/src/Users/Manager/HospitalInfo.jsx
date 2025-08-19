@@ -1,6 +1,5 @@
 import { Card, Row, Col, Typography, Button, Carousel, Layout, Tag, Divider } from 'antd';
-import { displayImage } from "../../Api & Services/Api.js";
-import { 
+import {
   PhoneOutlined, MailOutlined, GlobalOutlined, HomeOutlined, FieldTimeOutlined, ShopOutlined, 
   SafetyCertificateOutlined, HeartOutlined, HddOutlined, EnvironmentOutlined, BankOutlined, 
   CompassOutlined, CheckCircleOutlined, LaptopOutlined, StarOutlined, MedicineBoxOutlined, InfoCircleOutlined
@@ -39,7 +38,7 @@ const HospitalInfo = ({ hospital }) => {
                         {hospital.images.map((image, index) => (
                           <div key={index}>
                             <img 
-                              src={displayImage(image)} 
+                              src={image}
                               alt={`Hospital Image ${index + 1}`} 
                               style={{ width: "100%", height: "300px", objectFit: "cover", borderRadius: "16px" }}
                             />

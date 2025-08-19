@@ -1,12 +1,28 @@
-import { useEffect, useState } from "react";
-import { Card, Spin, Alert, Typography, Button, Modal, Form, Input, message, Select, Avatar, Upload, Row, Col } from "antd";
-import { UserOutlined, UserSwitchOutlined, UploadOutlined } from "@ant-design/icons";
+import {useEffect, useState} from "react";
+import {
+    Alert,
+    Avatar,
+    Button,
+    Card,
+    Col,
+    Form,
+    Input,
+    message,
+    Modal,
+    Row,
+    Select,
+    Spin,
+    Typography,
+    Upload
+} from "antd";
+import {UploadOutlined, UserOutlined, UserSwitchOutlined} from "@ant-design/icons";
 import axios from "axios";
-import { displayImage, doctorURL, URL } from "../../Api & Services/Api.js";
+import {doctorURL} from "../../Api & Services/Api.js";
 import "./Doctor.css";
-import { LocalHospital } from "@mui/icons-material";
-import { fetchDoctorHospital, fetchDoctorProfileData } from "./fetchDoctorProfileData";
-import { generateLabel } from "../../Api & Services/Services.js";
+import {LocalHospital} from "@mui/icons-material";
+import {fetchDoctorHospital, fetchDoctorProfileData} from "./fetchDoctorProfileData";
+import {generateLabel} from "../../Api & Services/Services.js";
+import {BACKEND_URL} from "../../configuration.js";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -83,7 +99,7 @@ const DoctorProfile = () => {
 
   const handleRemoveImage = async (file) => {
     try {
-      await axios.delete(`${URL}/delete-image`, { data: { fileName: file.name } });
+      await axios.delete(`${BACKEND_URL}/delete-image`, { data: { fileName: file.name } });
       message.success("Image removed successfully.");
     } catch (err) {
       message.error("Failed to remove image. Please try again.");
@@ -130,7 +146,7 @@ const DoctorProfile = () => {
               <Card title={<Title level={3}>Doctor Profile</Title>} style={{ flex: 1 }}>
                 <Avatar
                   size={200}
-                  src={displayImage(doctor?.image)}
+                  src={doctor?.image}
                   icon={!doctor?.image ? <UserOutlined /> : null}
                   shape="square"
                   style={{ marginBottom: "16px", borderRadius: "10px" }}
@@ -167,7 +183,7 @@ const DoctorProfile = () => {
               <Card title={<Title level={3}>Hospital Information</Title>} style={{ flex: 1 }}>
                 <Avatar
                     size={240}
-                    src={hospital?.images?.[0] ? displayImage(hospital.images[0]) : null}
+                    src={hospital?.images?.[0] ? hospital.images[0] : null}
                     icon={(!hospital?.images || hospital.images.length === 0) ? <LocalHospital /> : null}
                     shape="square"
                     style={{ marginBottom: "16px", borderRadius: "10px" }}
@@ -203,7 +219,7 @@ const DoctorProfile = () => {
         <Form layout="vertical" form={form}>
           <Form.Item label="Doctor Image">
             <Upload
-              action={`${URL}/upload-image`}
+              action={`${BACKEND_URL}/upload-image`}
               listType="picture-card"
               onChange={handleImageChange}
               onRemove={handleRemoveImage}
