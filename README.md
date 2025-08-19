@@ -144,7 +144,7 @@ Live URL: https://ayumed.netlify.app/
 
 ```mermaid
 flowchart TD
-    User((Patient/Doctor)) -->|React UI| Frontend[React.js Frontend]
+    User((Patient/Doctor/Pharmacist/Manager)) -->|React UI| Frontend[React.js Frontend]
     Frontend --> Backend[Spring Boot API]
     Backend --> DB[(MySQL/Postgres)]
     Backend --> Cloudinary[(Cloudinary Storage)]
