@@ -167,6 +167,7 @@ flowchart TD
     class Frontend frontend
     class Backend service
     class DB,Cloudinary,Email infra
+
 ```
 
 ## Configuration Files 🔧
