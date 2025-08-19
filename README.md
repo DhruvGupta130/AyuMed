@@ -144,11 +144,29 @@ Live URL: https://ayumed.netlify.app/
 
 ```mermaid
 flowchart TD
-    User((Patient/Doctor/Pharmacist/Manager)) -->|React UI| Frontend[React.js Frontend]
-    Frontend --> Backend[Spring Boot API]
-    Backend --> DB[(MySQL/Postgres)]
-    Backend --> Cloudinary[(Cloudinary Storage)]
-    Backend --> Email[SMTP Service - Brevo]
+
+    %% Users
+    User((Patient / Doctor / Pharmacist / Manager))
+
+    %% Frontend
+    User -->|Browser Access| Frontend[React.js Frontend]
+    Frontend -->|REST/HTTPS| Backend[Spring Boot Backend]
+
+    %% Core Backend
+    Backend --> DB[(Postgres / MySQL Database)]
+    Backend --> Cloudinary[(Cloudinary - File Storage)]
+    Backend --> Email[SMTP (Brevo) - Email/OTP Service]
+
+    %% Notes
+    classDef infra fill=#fdf6e3,stroke=#657b83,stroke-width=2px;
+    classDef service fill=#e6f7ff,stroke=#1890ff,stroke-width=2px;
+    classDef frontend fill=#f0fff4,stroke=#52c41a,stroke-width=2px;
+    classDef user fill=#fff5f5,stroke=#ff4d4f,stroke-width=2px;
+
+    class User user
+    class Frontend frontend
+    class Backend service
+    class DB,Cloudinary,Email infra
 ```
 
 ## Configuration Files 🔧
