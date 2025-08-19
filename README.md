@@ -1,4 +1,4 @@
-# 🏥 Hospital and OPD Management System
+# 🏥 AYUMED - Hospital and OPD Management System
 
 A robust and scalable **Hospital and Outpatient Department (OPD) Management System** designed to optimize and streamline
 hospital operations. This system facilitates efficient handling of patient appointments, doctor schedules, billing,
