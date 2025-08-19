@@ -149,15 +149,15 @@ flowchart TD
     User((Patient / Doctor / Pharmacist / Manager))
 
     %% Frontend
-    User -->|Browser Access| Frontend[React.js Frontend]
-    Frontend -->|REST/HTTPS| Backend[Spring Boot Backend]
+    User -->|Browser Access| Frontend["React.js Frontend"]
+    Frontend -->|REST / HTTPS| Backend["Spring Boot Backend"]
 
     %% Core Backend
-    Backend --> DB[(Postgres / MySQL Database)]
-    Backend --> Cloudinary[(Cloudinary - File Storage)]
-    Backend --> Email[SMTP (Brevo) - Email/OTP Service]
+    Backend --> DB[("Postgres / MySQL Database")]
+    Backend --> Cloudinary["Cloudinary (File Storage)"]
+    Backend --> Email["SMTP (Brevo) - Email / OTP Service"]
 
-    %% Notes
+    %% Notes / Styling
     classDef infra fill=#fdf6e3,stroke=#657b83,stroke-width=2px;
     classDef service fill=#e6f7ff,stroke=#1890ff,stroke-width=2px;
     classDef frontend fill=#f0fff4,stroke=#52c41a,stroke-width=2px;
