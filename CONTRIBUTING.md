@@ -14,7 +14,7 @@ Create a personal copy of this project by clicking the **"Fork"** button in the 
 ### 2️⃣ 🐑 Clone Your Fork
 Download your forked repository to your local machine:
 ```bash
-git clone https://github.com/your-username/HospitalManagementSystem.git
+git clone https://github.com/your-username/AyuMed.git
 cd HospitalManagementSystem
 ```
 
