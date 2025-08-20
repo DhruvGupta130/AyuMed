@@ -1,4 +1,4 @@
-# 🏥 Contributing to Hospital Management System
+# 🏥 Contributing to AyuMed
 
 Thank you for your interest in contributing to **Hospital Management System**! 💙 We value your effort in making this project better and more efficient. Before you get started, please take a moment to go through our contribution guidelines.
 
@@ -15,7 +15,7 @@ Create a personal copy of this project by clicking the **"Fork"** button in the 
 Download your forked repository to your local machine:
 ```bash
 git clone https://github.com/your-username/AyuMed.git
-cd HospitalManagementSystem
+cd AyuMed
 ```
 
 ---
