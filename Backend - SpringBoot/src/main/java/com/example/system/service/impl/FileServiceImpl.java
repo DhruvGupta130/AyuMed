@@ -7,8 +7,6 @@ import com.example.system.exception.HospitalManagementException;
 import com.example.system.repository.FileRepo;
 import com.example.system.service.FileService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
